@@ -18,6 +18,7 @@ import type { StudioActionsResult } from "@/hooks/useStudioActions";
 import type { HostConnectorActions } from "@/hooks/useHostConnector";
 import type { HostPlugin } from "@/services/pluginHostClient";
 import type { StudioSessionDomainRuntimeState } from "@/types/musicHubStudioRuntime";
+import type { StudioModeModel } from "@/types/musicHubStudioModes";
 import type {
   StudioDetailPanelState,
   StudioMixerState,
@@ -60,6 +61,7 @@ interface UseStudioBehaviorModelsOptions {
   loopStart: number;
   loopEnd: number;
   totalBeats: number;
+  studioModeModel: StudioModeModel;
 }
 
 export function useStudioBehaviorModels({
@@ -96,6 +98,7 @@ export function useStudioBehaviorModels({
   loopStart,
   loopEnd,
   totalBeats,
+  studioModeModel,
 }: UseStudioBehaviorModelsOptions) {
   const mixerViewModel = useStudioMixerViewModel({
     tracks: mixerState.tracks,
@@ -208,6 +211,7 @@ export function useStudioBehaviorModels({
   const lessonPanelModel = useStudioLessonPanelModel({
     lesson: guideBridge.lesson,
     runtime: guideBridge.runtime,
+    preferredCollapsed: studioModeModel.shell.guidePreferredCollapsed,
     onCommandRecorded,
   });
 

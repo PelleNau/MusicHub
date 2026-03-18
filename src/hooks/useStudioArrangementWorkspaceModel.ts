@@ -2,11 +2,13 @@ import { useMemo } from "react";
 import type { SessionTrack } from "@/types/studio";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
 import type { MeterLevel } from "@/services/pluginHostSocket";
+import type { StudioMarkerModelResult } from "@/hooks/useStudioMarkerModel";
 import type { StudioBrowserActionsModelResult } from "@/hooks/useStudioBrowserActionsModel";
 import type { StudioTrackActionsModelResult } from "@/hooks/useStudioTrackActionsModel";
 
 interface UseStudioArrangementWorkspaceModelOptions {
   browserActionsModel: StudioBrowserActionsModelResult;
+  browserPreferredCollapsed: boolean;
   grid: {
     gridMode: "adaptive" | "fixed";
     fixedDivision: GridDivision;
@@ -58,10 +60,12 @@ interface UseStudioArrangementWorkspaceModelOptions {
   onNativeArmToggle?: (trackId: string, armed: boolean) => void;
   assetImportInputProps: React.InputHTMLAttributes<HTMLInputElement>;
   lessonInstruction?: string;
+  markerModel: StudioMarkerModelResult;
 }
 
 export function useStudioArrangementWorkspaceModel({
   browserActionsModel,
+  browserPreferredCollapsed,
   grid,
   timelineContainerProps,
   timelineRef,
@@ -82,6 +86,7 @@ export function useStudioArrangementWorkspaceModel({
   onNativeArmToggle,
   assetImportInputProps,
   lessonInstruction,
+  markerModel,
 }: UseStudioArrangementWorkspaceModelOptions) {
   return useMemo(() => ({
     browserProps: {
@@ -89,6 +94,7 @@ export function useStudioArrangementWorkspaceModel({
       onAddHostPlugin: browserActionsModel.onAddHostPlugin,
       hostPlugins: browserActionsModel.hostPlugins,
       onRefreshHostPlugins: browserActionsModel.onRefreshHostPlugins,
+      preferredCollapsed: browserPreferredCollapsed,
     },
     gridProps: {
       gridMode: grid.gridMode,
@@ -108,6 +114,7 @@ export function useStudioArrangementWorkspaceModel({
     totalBeats,
     pixelsPerBeat,
     beatsPerBar,
+    browserPreferredCollapsed,
     activeDivision: grid.activeDivision,
     tripletMode: grid.tripletMode,
     playheadBeatGetter,
@@ -153,11 +160,13 @@ export function useStudioArrangementWorkspaceModel({
       onSetAsLoop: trackActionsModel.track.onSetAsLoop,
     },
     snapBeats: grid.snapBeats,
+    markerModel,
     timelineHeaderActions: {
       createAudioTrack: trackActionsModel.timelineHeader.createAudioTrack,
       createMidiTrack: trackActionsModel.timelineHeader.createMidiTrack,
       createReturnTrack: trackActionsModel.timelineHeader.createReturnTrack,
       openAudioUpload: trackActionsModel.timelineHeader.openAudioUpload,
+      addMarkerAtPlayhead: markerModel.addMarkerAtCurrentBeat,
     },
     assetImportInputProps,
   }), [
@@ -174,6 +183,7 @@ export function useStudioArrangementWorkspaceModel({
     grid,
     lessonInstruction,
     loopRegionProps,
+    markerModel,
     onNativeArmToggle,
     onNativeMonitorToggle,
     onSeek,

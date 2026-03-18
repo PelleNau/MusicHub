@@ -1,0 +1,8 @@
+* @PelleNau
+
+/src/pages/Studio.tsx @PelleNau
+/src/hooks/useStudio* @PelleNau
+/src/components/studio/* @PelleNau
+/src/services/pluginHost* @PelleNau
+/src-tauri/* @PelleNau
+/docs/project/* @PelleNau

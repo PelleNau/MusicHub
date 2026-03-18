@@ -4,6 +4,8 @@ import { DetailPanel } from "@/components/studio/DetailPanel";
 import { StudioBottomTabButtons } from "@/components/studio/StudioBottomTabButtons";
 
 interface StudioBottomWorkspaceProps {
+  mode: "guided" | "standard" | "focused";
+  showTabs: boolean;
   bottomTab: "mixer" | "detail";
   setBottomTab: (tab: "mixer" | "detail") => void;
   showPianoRoll: boolean;
@@ -18,6 +20,8 @@ interface StudioBottomWorkspaceProps {
 }
 
 export function StudioBottomWorkspace({
+  mode,
+  showTabs,
   bottomTab,
   setBottomTab,
   showPianoRoll,
@@ -31,14 +35,16 @@ export function StudioBottomWorkspace({
   detailPanelProps,
 }: StudioBottomWorkspaceProps) {
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-card/40">
-      <div className="shrink-0 flex items-center border-b border-border bg-card/80">
-        <StudioBottomTabButtons
-          bottomTab={bottomTab}
-          setBottomTab={setBottomTab}
-          showPianoRoll={showPianoRoll}
-        />
-      </div>
+    <div className="flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-card/40" data-studio-mode={mode}>
+      {showTabs ? (
+        <div className="shrink-0 flex items-center border-b border-border bg-card/80">
+          <StudioBottomTabButtons
+            bottomTab={bottomTab}
+            setBottomTab={setBottomTab}
+            showPianoRoll={showPianoRoll}
+          />
+        </div>
+      ) : null}
 
       <div className="flex-1 min-h-0 overflow-hidden">
         {showMixer ? (

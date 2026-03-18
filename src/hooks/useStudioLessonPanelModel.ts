@@ -8,12 +8,14 @@ import type { StudioLessonPanelState } from "@/domain/studio/studioViewContracts
 interface UseStudioLessonPanelModelOptions {
   lesson?: LessonDefinition;
   runtime: GuideLessonRuntime;
+  preferredCollapsed?: boolean;
   onCommandRecorded?: (command: MusicHubCommand, ack: MusicHubCommandAck) => void;
 }
 
 export function useStudioLessonPanelModel({
   lesson,
   runtime,
+  preferredCollapsed = false,
   onCommandRecorded,
 }: UseStudioLessonPanelModelOptions) {
   const [collapsed, setCollapsed] = useState(false);
@@ -25,9 +27,9 @@ export function useStudioLessonPanelModel({
 
   useEffect(() => {
     if (lesson) {
-      setCollapsed(false);
+      setCollapsed(preferredCollapsed);
     }
-  }, [lesson]);
+  }, [lesson, preferredCollapsed]);
 
   const currentStep = runtime.state.currentStep;
   const lessonState = useMemo<StudioLessonPanelState>(() => {

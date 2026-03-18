@@ -1,10 +1,18 @@
 import { useCallback, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
+import type { StudioMode } from "@/types/musicHubStudioModes";
+
+function parseStudioMode(value: string | null): StudioMode | null {
+  return value === "guided" || value === "standard" || value === "focused"
+    ? value
+    : null;
+}
 
 export function useStudioRouteModel() {
   const [searchParams, setSearchParams] = useSearchParams();
   const sessionId = searchParams.get("id");
   const lessonId = searchParams.get("lesson");
+  const routeMode = parseStudioMode(searchParams.get("mode"));
   const [activeSessionId, setActiveSessionId] = useState<string | null>(sessionId);
 
   const startLesson = useCallback(
@@ -37,13 +45,14 @@ export function useStudioRouteModel() {
   return useMemo(
     () => ({
       lessonId,
+      routeMode,
       activeSessionId,
       startLesson,
       dismissLesson,
       openSessions,
       selectSession,
     }),
-    [activeSessionId, dismissLesson, lessonId, openSessions, selectSession, startLesson],
+    [activeSessionId, dismissLesson, lessonId, openSessions, routeMode, selectSession, startLesson],
   );
 }
 

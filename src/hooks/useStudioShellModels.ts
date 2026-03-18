@@ -21,6 +21,8 @@ import type { StudioGuideBridgeResult } from "@/hooks/useStudioGuideBridge";
 import type { StudioMixerPanelStateResult } from "@/hooks/useStudioMixerPanelState";
 import type { useTimelineGrid } from "@/hooks/useTimelineGrid";
 import type { StudioSessionMetrics } from "@/types/musicHubStudioRuntime";
+import type { StudioMarkerModelResult } from "@/hooks/useStudioMarkerModel";
+import type { StudioModeModel } from "@/types/musicHubStudioModes";
 import type { SessionTrack } from "@/types/studio";
 
 interface UseStudioShellModelsOptions {
@@ -83,6 +85,8 @@ interface UseStudioShellModelsOptions {
   mixerPanelState: StudioMixerPanelStateResult;
   pianoRollViewModel: StudioPianoRollViewModelResult | null;
   detailPanelModel: StudioDetailPanelModelResult;
+  markerModel: StudioMarkerModelResult;
+  studioModeModel: StudioModeModel;
 }
 
 export function useStudioShellModels({
@@ -132,6 +136,8 @@ export function useStudioShellModels({
   mixerPanelState,
   pianoRollViewModel,
   detailPanelModel,
+  markerModel,
+  studioModeModel,
 }: UseStudioShellModelsOptions) {
   const headerModel = useStudioHeaderModel({
     lessonState: lessonPanelModel.lessonState,
@@ -181,6 +187,7 @@ export function useStudioShellModels({
 
   const arrangementWorkspaceModel = useStudioArrangementWorkspaceModel({
     browserActionsModel,
+    browserPreferredCollapsed: studioModeModel.shell.browserPreferredCollapsed,
     grid,
     timelineContainerProps,
     timelineRef,
@@ -201,6 +208,7 @@ export function useStudioShellModels({
     onNativeArmToggle,
     assetImportInputProps,
     lessonInstruction,
+    markerModel,
   });
 
   const bottomWorkspaceModel = useStudioBottomWorkspaceModel({
@@ -221,6 +229,7 @@ export function useStudioShellModels({
   });
 
   return {
+    studioModeModel,
     headerModel,
     connectionActionsModel,
     transportBarModel,

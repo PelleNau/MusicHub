@@ -11,6 +11,7 @@ export interface AppSettings {
   textureOpacity: number;  // 0–100
   cardBgAlpha: number;     // 0–50
   blendMode: BlendMode;    // default "luminosity"
+  studioModePreference: "auto" | "guided" | "standard" | "focused";
 }
 
 const STORAGE_KEY = "app-settings";
@@ -23,6 +24,7 @@ const DEFAULTS: AppSettings = {
   textureOpacity: 35,
   cardBgAlpha: 6,
   blendMode: "luminosity",
+  studioModePreference: "auto",
 };
 
 function loadSettings(): AppSettings {
