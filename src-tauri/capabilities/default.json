@@ -1,0 +1,21 @@
+{
+  "identifier": "default",
+  "description": "Default capability for The Flightcase",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "dialog:default",
+    "fs:default",
+    "window-state:default",
+    {
+      "identifier": "shell:allow-spawn",
+      "allow": [
+        {
+          "name": "plugin_host",
+          "sidecar": true
+        }
+      ]
+    },
+    "shell:allow-execute"
+  ]
+}

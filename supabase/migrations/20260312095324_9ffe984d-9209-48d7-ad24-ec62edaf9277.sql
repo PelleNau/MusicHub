@@ -1,0 +1,1 @@
+ALTER TABLE public.session_tracks ADD COLUMN IF NOT EXISTS automation_lanes jsonb DEFAULT '[]'::jsonb;

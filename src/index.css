@@ -1,0 +1,320 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 96%;
+  }
+
+  :root {
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 96%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 96%;
+
+    --popover: 0 0% 10%;
+    --popover-foreground: 0 0% 96%;
+
+    --primary: 166 100% 50%;
+    --primary-foreground: 0 0% 5%;
+    --playhead: 166 100% 50%;
+
+    --secondary: 0 0% 16%;
+    --secondary-foreground: 0 0% 85%;
+
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 60%;
+
+    --accent: 340 85% 60%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 26%;
+    --input: 0 0% 22%;
+    --ring: 166 100% 50%;
+
+    --sidebar-background: 0 0% 8%;
+    --sidebar-foreground: 0 0% 85%;
+    --sidebar-primary: 166 100% 50%;
+    --sidebar-primary-foreground: 0 0% 5%;
+    --sidebar-accent: 0 0% 16%;
+    --sidebar-accent-foreground: 0 0% 96%;
+    --sidebar-border: 0 0% 24%;
+    --sidebar-ring: 166 100% 50%;
+
+    --warning: 45 100% 55%;
+    --warning-foreground: 0 0% 5%;
+
+    --success: 166 100% 50%;
+    --success-foreground: 0 0% 5%;
+
+    /* Studio control surfaces */
+    --studio-surface: 0 0% 100% / 0.08;
+    --studio-surface-hover: 0 0% 100% / 0.12;
+    --studio-surface-active: 0 0% 100% / 0.15;
+    --studio-border: 0 0% 100% / 0.15;
+    --studio-text-dim: 0 0% 100% / 0.55;
+    --studio-text-muted: 0 0% 100% / 0.65;
+    --studio-knob-bg: 0 0% 100% / 0.08;
+    --studio-knob-track: 0 0% 100% / 0.10;
+    --studio-needle: 0 0% 100% / 0.70;
+
+    --chrome: 0 0% 10%;
+    --chrome-foreground: 0 0% 96%;
+
+    /* Theme-aware shadows — dark mode */
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.15), 0 1px 3px 0 hsl(0 0% 0% / 0.10);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.20), 0 2px 4px -2px hsl(0 0% 0% / 0.12);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.25), 0 4px 6px -4px hsl(0 0% 0% / 0.10);
+    --shadow-xl: 0 20px 25px -5px hsl(0 0% 0% / 0.30), 0 8px 10px -6px hsl(0 0% 0% / 0.12);
+  }
+
+  .light {
+    --background: 220 14% 92%;
+    --foreground: 220 14% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220 14% 10%;
+
+    --popover: 220 14% 100%;
+    --popover-foreground: 220 14% 10%;
+
+    --primary: 166 100% 38%;
+    --primary-foreground: 0 0% 100%;
+    --playhead: 0 85% 55%;
+
+    --secondary: 220 10% 88%;
+    --secondary-foreground: 220 14% 10%;
+
+    --muted: 220 10% 88%;
+    --muted-foreground: 220 10% 40%;
+
+    --accent: 340 85% 55%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 14% 80%;
+    --input: 220 14% 87%;
+    --ring: 166 100% 38%;
+
+    --sidebar-background: 220 14% 90%;
+    --sidebar-foreground: 220 14% 10%;
+    --sidebar-primary: 166 100% 38%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 220 10% 90%;
+    --sidebar-accent-foreground: 220 14% 10%;
+    --sidebar-border: 220 14% 80%;
+    --sidebar-ring: 166 100% 38%;
+
+    --warning: 45 100% 48%;
+    --warning-foreground: 0 0% 100%;
+
+    --success: 166 100% 32%;
+    --success-foreground: 0 0% 100%;
+
+    /* Studio control surfaces — boosted for depth */
+    --studio-surface: 220 14% 10% / 0.08;
+    --studio-surface-hover: 220 14% 10% / 0.14;
+    --studio-surface-active: 220 14% 10% / 0.18;
+    --studio-border: 220 14% 10% / 0.16;
+    --studio-text-dim: 220 14% 10% / 0.55;
+    --studio-text-muted: 220 14% 10% / 0.65;
+    --studio-knob-bg: 220 14% 10% / 0.08;
+    --studio-knob-track: 220 14% 10% / 0.12;
+    --studio-needle: 220 14% 10% / 0.70;
+
+    --chrome: 220 14% 88%;
+    --chrome-foreground: 220 14% 10%;
+
+    /* Theme-aware shadows — strengthened for visible depth */
+    --shadow-sm: 0 1px 2px 0 hsl(220 14% 10% / 0.08), 0 1px 3px 0 hsl(220 14% 10% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(220 14% 10% / 0.12), 0 2px 4px -2px hsl(220 14% 10% / 0.06);
+    --shadow-lg: 0 10px 15px -3px hsl(220 14% 10% / 0.14), 0 4px 6px -4px hsl(220 14% 10% / 0.05);
+    --shadow-xl: 0 20px 25px -5px hsl(220 14% 10% / 0.18), 0 8px 10px -6px hsl(220 14% 10% / 0.06);
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: var(--app-font-size, 14px);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  code, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+}
+
+/* Subtle noise/grain texture overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0.015;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 256px 256px;
+}
+
+/* Fade-in animation */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes fade-only {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-only {
+  animation: fade-only 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: hsl(0 0% 20%);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(0 0% 30%);
+}
+
+.light ::-webkit-scrollbar-thumb {
+  background: hsl(220 14% 75%);
+}
+.light ::-webkit-scrollbar-thumb:hover {
+  background: hsl(220 14% 60%);
+}
+
+/* Mockup animations */
+@keyframes pulse-ring {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3); }
+  50% { box-shadow: 0 0 0 4px hsl(var(--primary) / 0); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes glow {
+  0%, 100% { border-color: hsl(var(--primary) / 0.3); box-shadow: 0 0 8px hsl(var(--primary) / 0.1); }
+  50% { border-color: hsl(var(--primary) / 0.7); box-shadow: 0 0 20px hsl(var(--primary) / 0.25); }
+}
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-pulse-ring { animation: pulse-ring 1.5s ease-in-out infinite; }
+.animate-float { animation: float 4s ease-in-out infinite; }
+.animate-glow { animation: glow 2s ease-in-out infinite; }
+.animate-spin-slow { animation: spin-slow 8s linear infinite; }
+@keyframes path-draw {
+  from { stroke-dashoffset: 300; opacity: 0; }
+  to { stroke-dashoffset: 0; opacity: 1; }
+}
+.animate-path-draw { animation: path-draw 0.6s ease-out forwards; }
+
+/* ── Dawn Lagoon — shimmering ocean blue for mockup pages ── */
+.dawn-lagoon {
+  --background: 205 65% 10%;
+  --foreground: 200 30% 95%;
+
+  --card: 207 50% 14%;
+  --card-foreground: 200 30% 95%;
+
+  --popover: 207 50% 14%;
+  --popover-foreground: 200 30% 95%;
+
+  --primary: 198 85% 52%;
+  --primary-foreground: 205 70% 6%;
+
+  --secondary: 210 40% 18%;
+  --secondary-foreground: 200 40% 88%;
+
+  --muted: 210 30% 16%;
+  --muted-foreground: 205 25% 50%;
+
+  --accent: 175 70% 45%;
+  --accent-foreground: 0 0% 100%;
+
+  --destructive: 0 70% 55%;
+  --destructive-foreground: 0 0% 100%;
+
+  --border: 210 35% 22%;
+  --input: 210 32% 20%;
+  --ring: 198 85% 52%;
+
+  --warning: 42 90% 55%;
+  --warning-foreground: 205 70% 6%;
+
+  --success: 168 60% 42%;
+  --success-foreground: 0 0% 100%;
+
+  --chrome: 208 55% 8%;
+  --chrome-foreground: 200 30% 92%;
+
+  --sidebar-background: 208 55% 7%;
+  --sidebar-foreground: 200 30% 90%;
+  --sidebar-primary: 198 85% 52%;
+  --sidebar-primary-foreground: 205 70% 6%;
+  --sidebar-accent: 210 40% 16%;
+  --sidebar-accent-foreground: 200 30% 90%;
+  --sidebar-border: 210 35% 20%;
+  --sidebar-ring: 198 85% 52%;
+
+  --shadow-sm: 0 1px 3px 0 hsl(210 60% 4% / 0.35), 0 1px 2px 0 hsl(210 60% 4% / 0.20);
+  --shadow-md: 0 4px 8px -1px hsl(210 60% 4% / 0.40), 0 2px 4px -2px hsl(210 60% 4% / 0.22);
+  --shadow-lg: 0 12px 20px -4px hsl(210 60% 4% / 0.45), 0 4px 8px -4px hsl(210 60% 4% / 0.20);
+  --shadow-xl: 0 22px 30px -6px hsl(210 60% 4% / 0.50), 0 8px 12px -6px hsl(210 60% 4% / 0.22);
+}
+
+/* Ocean gradient background */
+.dawn-lagoon-bg {
+  background:
+    radial-gradient(ellipse at 20% 15%, hsl(198 85% 52% / 0.10) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 25%, hsl(175 70% 45% / 0.08) 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 85%, hsl(220 50% 18% / 0.15) 0%, transparent 50%),
+    linear-gradient(170deg, hsl(200 60% 13%) 0%, hsl(205 65% 10%) 30%, hsl(210 60% 8%) 65%, hsl(220 50% 7%) 100%);
+}
+
+.dawn-lagoon ::-webkit-scrollbar-thumb {
+  background: hsl(210 35% 28%);
+}
+.dawn-lagoon ::-webkit-scrollbar-thumb:hover {
+  background: hsl(210 35% 38%);
+}
+
+/* Texture utilities removed — textures now applied inline via GlassCard */

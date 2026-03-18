@@ -1,0 +1,1 @@
+ALTER TABLE public.session_clips ADD COLUMN IF NOT EXISTS is_muted BOOLEAN NOT NULL DEFAULT false;

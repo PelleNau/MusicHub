@@ -1,0 +1,1 @@
+ALTER TABLE public.session_clips ADD COLUMN alias_of uuid REFERENCES public.session_clips(id) ON DELETE SET NULL DEFAULT NULL;

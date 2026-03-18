@@ -1,0 +1,37 @@
+project_id = "siwfibfbvdshrbkclcdu"
+
+[functions.identify-gear]
+verify_jwt = false
+
+[functions.find-product-image]
+verify_jwt = false
+
+[functions.playground-chat]
+verify_jwt = false
+
+[functions.parse-ableton-project]
+verify_jwt = false
+
+[functions.analyze-project]
+verify_jwt = false
+
+[functions.research-product]
+verify_jwt = false
+
+[functions.distill-product]
+verify_jwt = false
+
+[functions.download-manual]
+verify_jwt = false
+
+[functions.gear-chat]
+verify_jwt = false
+
+[functions.digest-manual]
+verify_jwt = false
+
+[functions.batch-research]
+verify_jwt = false
+
+[functions.generate-amp-art]
+verify_jwt = false
