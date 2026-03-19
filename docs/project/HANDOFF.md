@@ -185,11 +185,16 @@ Unless explicitly overridden by the user:
 164. catalog expansion still limits live Studio handoff to the lessons that actually exist in the current runtime
 165. the real learning catalog now covers all six modules in Courses 3, 4, 5, and 6 instead of leaving later-stage courses as one-module placeholders
 166. every module across the full six-course curriculum now carries shell policy, primary-surface, visible-surface, status, and honest availability metadata in `src/data/learningCatalog.ts`
+167. live Studio lesson coverage now includes `studio.audio-edit-basics` and `studio.instrument-chain-basics`
+168. `src/content/lessons/studio/index.ts` now registers five live Studio lessons instead of only the initial three
+169. the Guide selector snapshot now includes compatibility `panels`, `tracks`, and selection fields so the current lesson DSL paths resolve against real runtime data
+170. the Guide anchor registry now exposes alias targets like `first-midi-track`, `first-audio-track`, `first-midi-clip`, `first-audio-clip`, and `mixer-strip:any`
+171. `Recording Basics` remains curriculum-only because there is still no first-class record-start command/ack path in the Studio runtime
 
 ## Current Next Work
 
 1. refine the lesson-entry flow against the incoming Figma layouts and tighten preflight/resume UX
-2. start selecting the next real lesson implementations so runtime coverage begins catching up to the now-complete catalog
+2. implement the next real Studio lesson after audio and instrument entry, with `Recording Basics` blocked until record actions become observable in the command/runtime seam
 3. keep replacing mock or legacy learning surfaces with real shell-based pages
 4. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
 5. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus

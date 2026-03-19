@@ -226,10 +226,13 @@ Phase 2 architecture consolidation
 - the real catalog now covers all six modules in Courses 3, 4, 5, and 6 instead of leaving the later courses as one-module placeholders
 - every module across the full six-course curriculum now carries shell policy, primary-surface, visible-surface, and availability metadata in `src/data/learningCatalog.ts`
 - catalog expansion still keeps live Studio entry limited to the lessons that actually exist in the current runtime
+- live Studio lesson coverage now includes `Audio Editing Fundamentals` and `Instruments, Presets, and Chains`
+- the Guide selector snapshot and anchor registry now expose compatibility aliases used by the existing lesson DSL, instead of depending on exact raw runtime IDs only
+- `Recording Basics` still remains curriculum-only because the Studio command/runtime seam does not yet expose first-class record-start behavior
 
 ## Next Milestone
 
-Refine the lesson-entry flow against the incoming Figma layouts and start selecting the next real lesson implementations now that the catalog covers the full six-course curriculum.
+Refine the lesson-entry flow against the incoming Figma layouts and continue increasing real lesson/runtime coverage, starting with the remaining Studio Fluency gaps after audio and instrument entry.
 
 ## Primary Risk
 
