@@ -24,7 +24,10 @@ export function StudioGuideSidebar({
 
   if (guideBridge.runtime.state.lessonStatus === "completed" && guideBridge.lesson) {
     return (
-      <div className="w-72 border-l border-border bg-card overflow-auto" data-studio-mode={mode}>
+      <div
+        className="ml-3 w-80 overflow-auto rounded-[24px] border border-emerald-500/20 bg-card/90 shadow-[0_24px_80px_-36px_rgba(16,185,129,0.45)] backdrop-blur-xl"
+        data-studio-mode={mode}
+      >
         <ModuleCompletionCelebration
           title={guideBridge.lesson.title}
           objectives={guideBridge.lesson.objectives ?? []}
@@ -36,7 +39,7 @@ export function StudioGuideSidebar({
   }
 
   return (
-    <div data-studio-mode={mode}>
+    <div className="ml-3 flex h-full" data-studio-mode={mode}>
       <StudioLessonPanel
         state={lessonPanelModel.lessonState}
         onToggleCollapsed={lessonPanelModel.toggleCollapsed}

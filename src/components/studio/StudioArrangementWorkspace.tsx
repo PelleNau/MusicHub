@@ -1,8 +1,8 @@
 import { Flag, Plus, Undo2, Upload } from "lucide-react";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
+import type { StudioMarkerModelResult } from "@/hooks/useStudioMarkerModel";
 import type { AutomationPoint, SessionTrack } from "@/types/studio";
 import type { MeterLevel } from "@/services/pluginHostSocket";
-import type { StudioMarkerModelResult } from "@/hooks/useStudioMarkerModel";
 import { BrowserPanel } from "@/components/studio/BrowserPanel";
 import { GridContextMenu } from "@/components/studio/GridOverlay";
 import { LoopRegion } from "@/components/studio/LoopRegion";
@@ -44,12 +44,15 @@ interface StudioArrangementWorkspaceProps {
   loopRegionProps: React.ComponentProps<typeof LoopRegion>;
   displayTracks: SessionTrack[];
   displayReturnTracks: SessionTrack[];
-  trackViewStateById: Record<string, {
-    selected: boolean;
-    meter: MeterLevel | null;
-    nativeMonitoring: boolean;
-    nativeArmed: boolean;
-  }>;
+  trackViewStateById: Record<
+    string,
+    {
+      selected: boolean;
+      meter: MeterLevel | null;
+      nativeMonitoring: boolean;
+      nativeArmed: boolean;
+    }
+  >;
   selectedClipIds: Set<string>;
   emptyStateInstruction?: string;
   trackLaneProps: {
@@ -118,7 +121,7 @@ export function StudioArrangementWorkspace({
   displayReturnTracks,
   trackViewStateById,
   selectedClipIds,
-  emptyState,
+  emptyStateInstruction,
   trackLaneProps,
   snapBeats,
   arrangementWrapper,
@@ -127,13 +130,43 @@ export function StudioArrangementWorkspace({
   markerModel,
 }: StudioArrangementWorkspaceProps) {
   return (
-    <div className="flex-1 flex min-h-0 overflow-hidden" data-studio-mode={mode}>
+    <div
+      className="flex min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(15,23,42,0.14),transparent_22%)]"
+      data-studio-mode={mode}
+    >
       {showBrowserPanel ? <BrowserPanel {...browserProps} /> : null}
 
-      <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
+      <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
+          <div className="border-b border-border/60 bg-card/65 px-4 py-3 backdrop-blur-sm">
+            <div className="flex items-center justify-between gap-3">
+              <div className="min-w-0">
+                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/45">
+                  Main Workspace
+                </div>
+                <div className="mt-1 text-sm font-medium text-foreground">
+                  {emptyStateInstruction
+                    ? "Follow the current lesson step in the timeline."
+                    : "Arrange clips, shape timing, and build the session."}
+                </div>
+              </div>
+              <div className="hidden shrink-0 items-center gap-2 md:flex">
+                <span className="rounded-full border border-border/60 bg-background/70 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
+                  Timeline
+                </span>
+                <span className="rounded-full border border-border/60 bg-background/70 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
+                  Arrangement
+                </span>
+              </div>
+            </div>
+          </div>
           <GridContextMenu {...gridProps}>
-            <div ref={timelineRef} data-timeline className="flex-1 overflow-auto min-h-0 relative" {...timelineContainerProps}>
+            <div
+              ref={timelineRef}
+              data-timeline
+              className="relative min-h-0 flex-1 overflow-auto bg-background/35"
+              {...timelineContainerProps}
+            >
               {arrangementWrapper(
                 <>
                   <TimelineCanvas
@@ -173,11 +206,13 @@ export function StudioArrangementWorkspace({
                   >
                     {displayTracks.length === 0 ? (
                       <div className="flex h-full min-h-[120px] items-center justify-center">
-                        <div className="text-center space-y-1">
+                        <div className="max-w-sm rounded-2xl border border-border/70 bg-card/80 px-5 py-4 text-center shadow-sm backdrop-blur-sm">
                           {emptyStateInstruction ? (
                             <>
-                              <p className="text-sm text-foreground/70">{emptyStateInstruction}</p>
-                              <p className="text-xs text-muted-foreground">Follow the guide to get started</p>
+                              <p className="text-sm font-medium text-foreground/80">{emptyStateInstruction}</p>
+                              <p className="mt-1 text-xs text-muted-foreground">
+                                Follow the guide to build the first track before opening more panels.
+                              </p>
                             </>
                           ) : (
                             <p className="font-mono text-[11px] text-foreground/45">Add a track to get started</p>
@@ -206,7 +241,9 @@ export function StudioArrangementWorkspace({
                           onRenameTrack={trackLaneProps.onRenameTrack}
                           onDeleteTrack={trackLaneProps.onDeleteTrack}
                           onColorChange={trackLaneProps.onColorChange}
-                          onClipMove={(clipId, newStartBeats, deltaY) => trackLaneProps.onClipMove(clipId, track.id, newStartBeats, deltaY)}
+                          onClipMove={(clipId, newStartBeats, deltaY) =>
+                            trackLaneProps.onClipMove(clipId, track.id, newStartBeats, deltaY)
+                          }
                           onClipResize={trackLaneProps.onClipResize}
                           onReorder={trackLaneProps.onReorder}
                           onClipSelect={trackLaneProps.onClipSelect}
@@ -234,26 +271,45 @@ export function StudioArrangementWorkspace({
                     )}
                   </TimelineCanvas>
 
-                  <div className="flex border-b border-border/60">
-                    <div className="w-52 shrink-0 border-r border-border/60 bg-card px-2 py-2 flex gap-1 sticky left-0 z-10">
-                      <button className="flex-1 flex items-center justify-center gap-1 rounded-[3px] h-6 font-mono text-[10px] text-foreground/65 border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-border hover:text-foreground/80 transition-colors" onClick={timelineHeaderActions.createAudioTrack}>
+                  <div className="flex border-t border-border/60 bg-card/70 backdrop-blur-sm">
+                    <div className="sticky left-0 z-10 flex w-52 shrink-0 gap-1 border-r border-border/60 bg-card/90 px-2 py-2">
+                      <button
+                        className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        onClick={timelineHeaderActions.createAudioTrack}
+                      >
                         <Plus className="h-3 w-3" /> Audio
                       </button>
-                      <button className="flex-1 flex items-center justify-center gap-1 rounded-[3px] h-6 font-mono text-[10px] text-foreground/65 border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-border hover:text-foreground/80 transition-colors" onClick={timelineHeaderActions.createMidiTrack}>
+                      <button
+                        className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        onClick={timelineHeaderActions.createMidiTrack}
+                      >
                         <Plus className="h-3 w-3" /> MIDI
                       </button>
-                      <button className="flex items-center justify-center gap-1 rounded-[3px] h-6 px-2 font-mono text-[10px] text-foreground/65 border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-border hover:text-foreground/80 transition-colors" onClick={timelineHeaderActions.createReturnTrack}>
+                      <button
+                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 px-2 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        onClick={timelineHeaderActions.createReturnTrack}
+                      >
                         <Undo2 className="h-3 w-3" /> Return
                       </button>
-                      <button className="flex items-center justify-center gap-1 rounded-[3px] h-6 px-2 font-mono text-[10px] text-foreground/65 border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-border hover:text-foreground/80 transition-colors" onClick={timelineHeaderActions.openAudioUpload}>
+                      <button
+                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 px-2 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        onClick={timelineHeaderActions.openAudioUpload}
+                      >
                         <Upload className="h-3 w-3" /> Audio
                       </button>
-                      <button className="flex items-center justify-center gap-1 rounded-[3px] h-6 px-2 font-mono text-[10px] text-foreground/65 border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-border hover:text-foreground/80 transition-colors" onClick={timelineHeaderActions.addMarkerAtPlayhead}>
+                      <button
+                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 px-2 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        onClick={timelineHeaderActions.addMarkerAtPlayhead}
+                      >
                         <Flag className="h-3 w-3" /> Marker
                       </button>
                       <input {...assetImportInputProps} />
                     </div>
-                    <div className="flex-1" />
+                    <div className="flex flex-1 items-center px-3">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/35">
+                        Add only the tracks you need for the current step.
+                      </p>
+                    </div>
                   </div>
                 </>,
               )}

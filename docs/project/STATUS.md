@@ -205,17 +205,21 @@ Phase 2 architecture consolidation
 - the `M` shortcut now adds a marker at the playhead when no clips are selected, while preserving clip mute behavior when a clip selection exists
 - lesson view policy is now defined as an explicit DSL/runtime contract in `src/types/musicHubLessonDsl.ts` and `docs/project/MH-044_Lesson_View_Policy.md`
 - the curriculum can now target different Guided sub-views without requiring one rigid Guided shell or many bespoke lesson screens
+- the first guided-shell UI pass now presents Studio as a lesson-first workspace instead of a flat stack of panels
+- `src/components/studio/StudioHeaderBar.tsx` now makes the active lesson state explicit and reduces header chrome noise
+- `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement area as the primary task surface and fixes the stale `emptyState`/`emptyStateInstruction` mismatch
+- `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now present the guide rail as the dominant guided-work support surface
 
 ## Next Milestone
 
-Use the stronger runtime checkpoint to implement the redesigned Guided/Standard/Focused Studio shell on top of an explicit mode contract rather than continuing generic extraction work.
+Use the stronger runtime checkpoint to refine Guided and then derive `Standard` and `Focused` from the same explicit shell contract rather than continuing generic extraction work.
 
 ## Primary Risk
 
-Stopping at page cleanup and leaving the selector/command/domain surfaces as a thin orchestration wrapper instead of consolidating the underlying runtime/store model.
+Letting visual redesign drift away from the current runtime and lesson-policy contracts, which would recreate a second Studio architecture in the UI layer.
 
 ## Default Working Mode
 
-- architecture-first
-- adapter-first
-- command/state model before redesign-heavy implementation
+- shell-first on top of the stabilized runtime seam
+- preserve runtime authority while reshaping Studio presentation
+- treat Figma output as design reference, not repo structure

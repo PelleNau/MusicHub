@@ -164,18 +164,19 @@ Unless explicitly overridden by the user:
 143. lesson view policy now has an explicit DSL/runtime contract in `src/types/musicHubLessonDsl.ts`
 144. lesson shell/view policy is documented in `docs/project/MH-044_Lesson_View_Policy.md`
 145. the lesson DSL spec now supports declarative panel visibility, viewport focus, and interaction-emphasis overlays without depending on component structure
+146. the first guided-shell UI pass now presents Studio as a lesson-first workspace instead of a flat panel stack
+147. `src/components/studio/StudioHeaderBar.tsx` now exposes active guided-session context instead of acting as a generic toolbar row
+148. `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement region as the primary task surface and fixes the stale `emptyState` prop mismatch
+149. `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now treat the lesson rail as the dominant support surface for guided work
 
 ## Current Next Work
 
 1. implement the new Figma-driven Guided/Standard/Focused shell against the explicit Studio mode contract
-2. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
-3. decide whether markers should stay local assist state or graduate into canonical session persistence later
-4. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
-5. use the desktop-primary assumption to tighten any remaining host/core seams instead of preserving web-era ambiguity
-6. decide whether continuous controls remain a bounded edit stream or need broader runtime normalization
-7. decide whether lesson DSL should gain first-class continuous-edit expectations and validation nodes
-8. decide whether selector-facing session state should adopt a stronger canonical normalized adapter instead of continuing to consume raw session shapes
-9. cut a publishable branch from the current runtime checkpoint before large visual redesign work lands
+2. review the guided-shell pass against the Figma direction and refine the remaining shell density choices
+3. derive `Standard` and `Focused` from the same shell structure instead of building new surfaces
+4. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
+5. decide whether markers should stay local assist state or graduate into canonical session persistence later
+6. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
 
 ## Default Instruction For Lovable
 
