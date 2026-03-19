@@ -233,6 +233,7 @@ Phase 2 architecture consolidation
 - Studio recording now has a first-class `transport.toggleRecord` command path instead of bypassing the command log from native-only UI wiring
 - native arm and monitor toggles now route through `studio.updateTrack`, making recording setup visible to lesson validation
 - live Studio lesson coverage now includes `Recording Basics`, and `course-2-module-11` now maps to a real lesson-backed Studio entry path
+- live Studio lesson coverage now also includes `Build a Full Sketch`, so Course 2 is fully backed by real lesson-entry paths across all six modules
 
 ## Next Milestone
 
