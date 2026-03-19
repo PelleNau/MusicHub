@@ -195,8 +195,9 @@ const modules: LearningModule[] = [
     shell: "standard-assisted",
     primarySurface: "arrangement",
     visibleSurfaces: ["transport", "arrangement", "guide", "browser", "bottom-workspace"],
-    status: "planned",
-    unavailableReason: "This capstone should open from a fuller lesson sequence once the sketch-building flow is implemented.",
+    status: "implemented",
+    studioLessonId: "studio.sketch-capstone",
+    recommendedMode: "standard",
   },
   {
     id: "course-3-module-13",

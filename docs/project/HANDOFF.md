@@ -198,11 +198,12 @@ Unless explicitly overridden by the user:
 177. the Guide selector snapshot now exposes first-audio and first-midi recording state so recording lessons can validate arm and monitor state without hard-coding runtime IDs
 178. the Guide anchor registry now exposes `transport.record`, `armToggle`, and `monitorToggle` highlights for lesson-facing recording guidance
 179. live Studio lesson coverage now includes `studio.recording-basics`, and `course-2-module-11` now maps to a real lesson-backed Studio entry path
+180. live Studio lesson coverage now also includes `studio.sketch-capstone`, so Course 2 now has real Studio lesson-entry coverage across all six modules
 
 ## Current Next Work
 
 1. refine the lesson-entry flow against the incoming Figma layouts and tighten preflight/resume UX
-2. implement the next real Studio lessons after recording, starting with the next bounded runtime families instead of more catalog work
+2. implement the next real Studio lessons after the first capstone, starting with the next bounded runtime families instead of more catalog work
 3. keep refining Guided/Standard/Focused against the Figma layouts without importing standalone export architecture
 4. keep replacing mock or legacy learning surfaces with real shell-based pages
 5. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
