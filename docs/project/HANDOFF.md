@@ -201,6 +201,7 @@ Unless explicitly overridden by the user:
 180. the first design-system foundation import now exists in `src/index.css` as semantic surface and timeline tokens translated from the Figma design system instead of remaining only in the export repo
 181. `src/components/app/ProductShell.tsx`, `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, and `src/components/studio/StudioArrangementWorkspace.tsx` now consume the new token layer for real shell refinement
 182. `docs/project/MH-046_Design_System_Foundation.md` now documents the accepted design-system import boundary and explicitly rejects generated app architecture
+183. live Studio lesson coverage now also includes `studio.sketch-capstone`, so Course 2 now has real Studio lesson-entry coverage across all six modules
 
 ## Current Next Work
 

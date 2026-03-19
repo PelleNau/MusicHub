@@ -236,6 +236,7 @@ Phase 2 architecture consolidation
 - the first Figma design-system foundation import now exists in `src/index.css` as semantic transport, lesson, surface, and timeline tokens translated into the real app theme layer
 - `src/components/app/ProductShell.tsx`, `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, and `src/components/studio/StudioArrangementWorkspace.tsx` now consume those tokens instead of relying only on the older shell palette
 - `docs/project/MH-046_Design_System_Foundation.md` now records the accepted design-system boundary and explicitly rejects generated export architecture as a source of truth
+- live Studio lesson coverage now also includes `Build a Full Sketch`, so Course 2 is fully backed by real lesson-entry paths across all six modules
 
 ## Next Milestone
 

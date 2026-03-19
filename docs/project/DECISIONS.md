@@ -36,6 +36,24 @@ The original blocker was valid while recording only existed as native-side UI pl
 
 ---
 
+## 2026-03-19 — The first capstone lesson should stay bounded to real sketch setup
+
+### Decision
+
+`Build a Full Sketch` should go live as a bounded capstone that composes existing runtime capabilities, not as a fake full-production lesson.
+
+### Rationale
+
+The lesson needs to prove that the existing track, browser, clip, arrangement, and recording-prep seams compose into one coherent workflow. Stretching it into unsupported production behavior would overstate runtime coverage and create another dishonest catalog entry.
+
+### Consequence
+
+- the capstone should validate track creation, instrument loading, clip placement, audio-track preparation, and playback only
+- it should not claim recording capture, advanced arrangement logic, or unsupported finishing behavior
+- future capstones can broaden only after the underlying runtime families exist
+
+---
+
 ## 2026-03-19 — Guided, Standard, and Focused should remain one Studio shell system
 
 ### Decision
