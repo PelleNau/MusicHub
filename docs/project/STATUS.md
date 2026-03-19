@@ -223,11 +223,13 @@ Phase 2 architecture consolidation
 - lesson entry now tracks local continue/resume state per lesson and exposes unavailable reasons for curriculum-only modules
 - Course 1 now has full module coverage in the real learning catalog instead of stopping at Module 3
 - the real catalog now covers all six Course 1 modules and all six Course 2 modules with explicit shell policy and availability state
+- the real catalog now covers all six modules in Courses 3, 4, 5, and 6 instead of leaving the later courses as one-module placeholders
+- every module across the full six-course curriculum now carries shell policy, primary-surface, visible-surface, and availability metadata in `src/data/learningCatalog.ts`
 - catalog expansion still keeps live Studio entry limited to the lessons that actually exist in the current runtime
 
 ## Next Milestone
 
-Refine the lesson-entry flow against the incoming Figma layouts and continue expanding catalog coverage into Courses 3–6 without inventing fake runtime availability.
+Refine the lesson-entry flow against the incoming Figma layouts and start selecting the next real lesson implementations now that the catalog covers the full six-course curriculum.
 
 ## Primary Risk
 

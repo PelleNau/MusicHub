@@ -88,6 +88,24 @@ Course and module coverage is valuable even before every lesson is implemented, 
 - every module should carry explicit shell policy and unavailability reasoning when no live Studio lesson exists
 - only modules backed by real lesson definitions should expose direct Studio handoff
 
+---
+
+## 2026-03-19 — The real catalog should cover the full six-course curriculum now
+
+### Decision
+
+The production learning catalog should represent all six courses and all thirty-six modules now, even where late-stage modules remain scaffolded or planned.
+
+### Rationale
+
+Keeping Courses 3–6 as placeholder stubs makes the learning surfaces underrepresent the actual curriculum and weakens the design and planning baseline. Full catalog breadth is useful as long as lesson/runtime availability remains explicit.
+
+### Consequence
+
+- `src/data/learningCatalog.ts` should include every module in Courses 1–6
+- late-stage modules should still carry honest shell policy and unavailable-state metadata
+- full catalog coverage does not authorize fake Studio handoff or invented lesson runtime support
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision
