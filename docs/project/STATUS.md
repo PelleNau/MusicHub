@@ -215,14 +215,17 @@ Phase 2 architecture consolidation
 - the first non-Studio product shell foundation now exists in `src/components/app/ProductShell.tsx`
 - Home, Lab, Theory, Bridge, Deep Dive, and Flight Case now share one persistent sidebar/top-bar shell instead of each behaving like standalone mini-apps
 - shared page-header and surface-card primitives now exist for the non-Studio product surfaces so Figma work can land against one product-shell vocabulary instead of many ad hoc layouts
+- the `/learn` route no longer depends on the mock curriculum surface
+- real shell-based learning pages now exist in `src/pages/Learn.tsx`, `src/pages/CourseDetail.tsx`, and `src/pages/LessonDetail.tsx`
+- the learning catalog now lives in `src/data/learningCatalog.ts` and ties curriculum intent, lesson-shell policy, and real Studio entry points together
 
 ## Next Milestone
 
-Refine the shared product shell against the incoming Figma layouts, then start replacing mock or legacy course surfaces with real pages that use the same shell language and navigation model.
+Refine the new learning surfaces against the incoming Figma layouts and expand the catalog from the first real course/module pages toward fuller curriculum coverage.
 
 ## Primary Risk
 
-Letting broader product-surface work drift back into standalone page layouts or mockup-only structures, which would fragment the shell language just after the first shared foundation landed.
+Letting the learning catalog drift away from the real lesson/runtime inventory, which would turn the new course surfaces back into decorative curriculum pages instead of operational entry points.
 
 ## Default Working Mode
 

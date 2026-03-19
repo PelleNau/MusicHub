@@ -174,11 +174,14 @@ Unless explicitly overridden by the user:
 153. the first non-Studio product shell foundation now exists in `src/components/app/ProductShell.tsx`
 154. Home, Lab, Theory, Bridge, Deep Dive, and Flight Case now render inside one persistent sidebar/top-bar shell instead of behaving like separate mini-products
 155. shared non-Studio page-header and surface-card primitives now exist so future Figma work can land against one product-shell vocabulary instead of ad hoc page layouts
+156. the `/learn` route now renders through real shell-based pages instead of the mock curriculum surface
+157. `src/pages/Learn.tsx`, `src/pages/CourseDetail.tsx`, and `src/pages/LessonDetail.tsx` now provide real course, module, and Studio-entry surfaces
+158. `src/data/learningCatalog.ts` now ties curriculum intent, shell policy, and live Studio lesson entry points together for the first learning-surface pass
 
 ## Current Next Work
 
-1. review the shared product shell against the incoming Figma layouts and tighten navigation, header hierarchy, and page-density decisions
-2. replace mock or legacy learning surfaces with real pages that use the same shell foundation
+1. refine the new learning surfaces against the incoming Figma layouts and broaden the catalog beyond the first mapped modules
+2. keep replacing mock or legacy learning surfaces with real shell-based pages
 3. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
 4. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
 5. decide whether markers should stay local assist state or graduate into canonical session persistence later

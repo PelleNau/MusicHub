@@ -14,6 +14,9 @@ import Auth from "./pages/Auth.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const Home = lazy(() => import("./pages/Home.tsx"));
+const Learn = lazy(() => import("./pages/Learn.tsx"));
+const CourseDetail = lazy(() => import("./pages/CourseDetail.tsx"));
+const LessonDetail = lazy(() => import("./pages/LessonDetail.tsx"));
 const Inventory = lazy(() => import("./pages/Index.tsx"));
 const Playground = lazy(() => import("./pages/Playground.tsx"));
 const DeepDive = lazy(() => import("./pages/MySpace.tsx"));
@@ -35,7 +38,6 @@ const MockFlightCase = lazy(() => import("./pages/mockups/MockFlightCase.tsx"));
 const MockStudioThemed = lazy(() => import("./pages/mockups/MockStudioThemed.tsx"));
 const MockCurriculum = lazy(() => import("./pages/mockups/MockCurriculum.tsx"));
 const MockAmpBackline = lazy(() => import("./pages/mockups/MockAmpBackline.tsx"));
-const Learn = lazy(() => import("./pages/mockups/MockCurriculum.tsx"));
 
 const queryClient = new QueryClient();
 const Router = isInTauriShell() ? HashRouter : BrowserRouter;
@@ -83,6 +85,8 @@ const App = () => {
               <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
               <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
               <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
+              <Route path="/learn/course/:courseId" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
+              <Route path="/learn/course/:courseId/module/:moduleId" element={<ProtectedRoute><LessonDetail /></ProtectedRoute>} />
               <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
               <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />
               <Route path="/lab/deep-dive" element={<ProtectedRoute><DeepDive /></ProtectedRoute>} />
