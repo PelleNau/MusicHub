@@ -8,7 +8,13 @@ export type CaptureScenarioId =
   | "control-bar"
   | "components-showcase";
 
-export type CaptureOverlayId = "transform-menu" | "humanize-dialog" | "collapsed-mixer";
+export type CaptureOverlayId =
+  | "transform-menu"
+  | "pitch-menu"
+  | "duration-menu"
+  | "humanize-dialog"
+  | "collapsed-mixer"
+  | "compact-tracks";
 
 export interface CaptureScenario {
   id: CaptureScenarioId;

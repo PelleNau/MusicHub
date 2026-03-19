@@ -33,20 +33,27 @@ export default function Studio() {
   const captureScenario = getCaptureScenario();
   const captureOverlay = getCaptureOverlay();
   const showCollapsedMixerFooter = captureMode && captureScenario === "standard-mode";
+  const compactTracksCapture = captureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
   const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
     ? "figma"
     : null;
-  const arrangementCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
-    ? "figma"
-    : null;
+  const arrangementCaptureVariant = compactTracksCapture
+    ? "figma-compact"
+    : captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
+      ? "figma"
+      : null;
   const hideGuideForCapture = captureMode && captureScenario === "piano-roll";
   const pianoRollOverlayMode =
     captureMode && captureScenario === "piano-roll"
       ? captureOverlay === "humanize-dialog"
         ? "humanize-dialog"
-        : captureOverlay === "transform-menu"
-          ? "transform-menu"
-          : null
+        : captureOverlay === "pitch-menu"
+          ? "pitch-menu"
+          : captureOverlay === "duration-menu"
+            ? "duration-menu"
+          : captureOverlay === "transform-menu"
+            ? "transform-menu"
+            : null
       : null;
   const {
     routeModel,
@@ -79,6 +86,7 @@ export default function Studio() {
     : showCollapsedMixerFooter
       ? 8
       : studioModeModel.shell.bottomDefaultSize;
+  const arrangementTrackHeight = compactTracksCapture ? 40 : presentation.arrangementWorkspaceModel.trackHeight;
 
   useEffect(() => {
     if (!captureMode) return;
@@ -229,7 +237,7 @@ export default function Studio() {
                 playheadBeatGetter={presentation.arrangementWorkspaceModel.playheadBeatGetter}
                 effectiveBeat={presentation.arrangementWorkspaceModel.effectiveBeat}
                 onSeek={presentation.arrangementWorkspaceModel.onSeek}
-                trackHeight={presentation.arrangementWorkspaceModel.trackHeight}
+                trackHeight={arrangementTrackHeight}
                 onSetPixelsPerBeat={presentation.arrangementWorkspaceModel.onSetPixelsPerBeat}
                 onSetTrackHeight={presentation.arrangementWorkspaceModel.onSetTrackHeight}
                 loopRegionProps={presentation.arrangementWorkspaceModel.loopRegionProps}

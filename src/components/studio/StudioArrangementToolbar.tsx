@@ -4,7 +4,7 @@ import type { GridDivision } from "@/hooks/useTimelineGrid";
 
 interface StudioArrangementToolbarProps {
   mode: "guided" | "standard" | "focused";
-  captureVariant?: "figma" | null;
+  captureVariant?: "figma" | "figma-compact" | null;
   activeDivision: GridDivision;
   snapEnabled: boolean;
   tripletMode: boolean;
@@ -58,20 +58,28 @@ export function StudioArrangementToolbar({
           </button>
           {captureVariant === "figma" ? null : (
             <>
-              <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onCreateMidiTrack}>
-                MIDI
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onCreateReturnTrack}>
-                Return
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onOpenAudioUpload}>
-                <Upload className="mr-1.5 h-3.5 w-3.5" />
-                Import
-              </Button>
-              <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onAddMarkerAtPlayhead}>
-                <Flag className="mr-1.5 h-3.5 w-3.5" />
-                Marker
-              </Button>
+              {captureVariant === "figma-compact" ? (
+                <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white">
+                  Ungroup
+                </Button>
+              ) : (
+                <>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onCreateMidiTrack}>
+                    MIDI
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onCreateReturnTrack}>
+                    Return
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onOpenAudioUpload}>
+                    <Upload className="mr-1.5 h-3.5 w-3.5" />
+                    Import
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onAddMarkerAtPlayhead}>
+                    <Flag className="mr-1.5 h-3.5 w-3.5" />
+                    Marker
+                  </Button>
+                </>
+              )}
             </>
           )}
         </div>

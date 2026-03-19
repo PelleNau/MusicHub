@@ -21,7 +21,7 @@ interface StudioBottomWorkspaceProps {
   collapsedSummaryLabel?: string;
   collapsedSummaryMeta?: string;
   overlay?: React.ReactNode;
-  captureVariant?: "figma" | null;
+  captureVariant?: "figma" | "figma-compact" | null;
 }
 
 export function StudioBottomWorkspace({

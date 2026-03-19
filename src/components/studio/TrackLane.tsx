@@ -74,7 +74,7 @@ interface TrackLaneProps {
   nativeMeter?: MeterLevel | null;
   nativeMonitoring?: boolean;
   nativeArmed?: boolean;
-  captureVariant?: "figma" | null;
+  captureVariant?: "figma" | "figma-compact" | null;
 }
 
 export const TrackLane = memo(function TrackLane({
@@ -172,7 +172,8 @@ export const TrackLane = memo(function TrackLane({
   }, [isRenaming]);
 
   const sends = useMemo(() => track.sends || [], [track.sends]);
-  const compactCapture = captureVariant === "figma";
+  const compactCapture = captureVariant === "figma" || captureVariant === "figma-compact";
+  const ultraCompactCapture = captureVariant === "figma-compact";
   const trackSubtype =
     track.type === "midi"
       ? "Midi"
@@ -231,7 +232,7 @@ export const TrackLane = memo(function TrackLane({
             />
           )}
 
-          <div className={`flex-1 min-w-0 flex flex-col justify-center min-h-[52px] overflow-hidden ${compactCapture ? "gap-[5px] px-3 py-2" : "gap-[3px] px-2 py-1.5"}`}>
+          <div className={`flex-1 min-w-0 flex flex-col justify-center overflow-hidden ${ultraCompactCapture ? "min-h-[34px] gap-[3px] px-2 py-1" : compactCapture ? "min-h-[52px] gap-[5px] px-3 py-2" : "min-h-[52px] gap-[3px] px-2 py-1.5"}`}>
             {/* Row 1: Icon + Name + M/S toggles + delete + automation */}
             <div className="flex items-center gap-1.5 min-w-0">
               {compactCapture ? null : (
@@ -258,7 +259,7 @@ export const TrackLane = memo(function TrackLane({
                   >
                     {track.name}
                   </span>
-                  {compactCapture ? (
+                  {compactCapture && !ultraCompactCapture ? (
                     <span className="mt-1 text-[10px] text-white/38">{trackSubtype}</span>
                   ) : null}
                 </div>
@@ -361,7 +362,7 @@ export const TrackLane = memo(function TrackLane({
                 </>
               )}
               {compactCapture ? (
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/12 bg-white/[0.04] text-[10px] text-white/52">
+                <div className={`flex shrink-0 items-center justify-center border border-white/12 bg-white/[0.04] text-white/52 ${ultraCompactCapture ? "h-5 w-5 rounded-md text-[8px]" : "h-7 w-7 rounded-full text-[10px]"}`}>
                   {nativeArmed ? "●" : "I"}
                 </div>
               ) : null}

@@ -63,7 +63,7 @@ interface PianoRollProps {
   onMidiDataChange?: (clipId: string, midiData: unknown) => void;
   /** Connected mode: route note audition through native MIDI */
   onNativeNote?: (pitch: number, velocity: number) => void;
-  captureVariant?: "figma" | null;
+  captureVariant?: "figma" | "figma-compact" | null;
 }
 
 export function PianoRoll({

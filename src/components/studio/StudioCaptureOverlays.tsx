@@ -2,18 +2,18 @@ import { ChevronRight, Sparkles, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
-type PianoRollOverlayMode = "transform-menu" | "humanize-dialog";
+type PianoRollOverlayMode = "transform-menu" | "pitch-menu" | "duration-menu" | "humanize-dialog";
 
 interface PianoRollCaptureOverlayProps {
   mode: PianoRollOverlayMode;
 }
 
 export function PianoRollCaptureOverlay({ mode }: PianoRollCaptureOverlayProps) {
-  if (mode === "transform-menu") {
+  if (mode === "transform-menu" || mode === "pitch-menu" || mode === "duration-menu") {
     return (
-      <div className="pointer-events-none absolute inset-x-0 bottom-28 z-30 flex justify-center">
-        <div className="flex rounded-[18px] border border-white/8 bg-[#2d2d32]/96 shadow-[0_30px_90px_-36px_rgba(0,0,0,0.78)] backdrop-blur-xl">
-          <div className="min-w-[290px] border-r border-white/8 px-4 py-3">
+      <div className="pointer-events-none absolute inset-0 z-30">
+        <div className="absolute left-[184px] top-[122px] flex">
+          <div className="min-w-[184px] rounded-[12px] border border-white/8 bg-[#2d2d32]/96 px-2 py-2 shadow-[0_22px_70px_-36px_rgba(0,0,0,0.88)] backdrop-blur-xl">
             {[
               "Transform",
               "Pitch",
@@ -23,9 +23,9 @@ export function PianoRollCaptureOverlay({ mode }: PianoRollCaptureOverlayProps) 
               "Notes",
               "Selection",
             ].map((item) => (
-              <div key={item} className="flex items-center justify-between rounded-lg px-3 py-2.5 text-[15px] text-white/86">
+              <div key={item} className="flex items-center justify-between rounded-md px-3 py-2 text-[12px] text-white/86">
                 <span>{item}</span>
-                <ChevronRight className="h-4 w-4 text-white/28" />
+                <ChevronRight className="h-3.5 w-3.5 text-white/30" />
               </div>
             ))}
             <div className="mt-2 border-t border-white/6 pt-2">
@@ -39,31 +39,71 @@ export function PianoRollCaptureOverlay({ mode }: PianoRollCaptureOverlayProps) 
                 <div
                   key={item.label}
                   className={cn(
-                    "flex items-center justify-between rounded-lg px-3 py-2.5 text-[15px]",
+                    "flex items-center justify-between rounded-md px-3 py-2 text-[12px]",
                     item.disabled ? "text-white/28" : "text-white/88",
                   )}
                 >
                   <span>{item.label}</span>
-                  <span className="font-mono text-[13px] text-white/24">{item.shortcut}</span>
+                  <span className="font-mono text-[11px] text-white/24">{item.shortcut}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className="min-w-[258px] px-4 py-3">
-            {[
-              ["Quantize", "Q"],
-              ["Humanize", "H"],
-              ["Reverse Order", ""],
-              ["Mirror (Time)", ""],
-              ["Mirror (Pitch)", ""],
-              ["Strumming", "S"],
-            ].map(([label, shortcut]) => (
-              <div key={label} className="flex items-center justify-between rounded-lg px-3 py-2.5 text-[15px] text-white/86">
-                <span>{label}</span>
-                {shortcut ? <span className="font-mono text-[13px] text-white/32">{shortcut}</span> : null}
-              </div>
-            ))}
+          <div className="ml-2 min-w-[164px] rounded-[12px] border border-white/8 bg-[#2d2d32]/96 px-2 py-2 shadow-[0_22px_70px_-36px_rgba(0,0,0,0.88)] backdrop-blur-xl">
+            {mode === "transform-menu" &&
+              [
+                ["Quantize", "Q"],
+                ["Humanize", "H"],
+                ["Reverse Order", ""],
+                ["Mirror (Time)", ""],
+                ["Mirror (Pitch)", ""],
+                ["Strumming", "S"],
+              ].map(([label, shortcut]) => (
+                <div key={label} className="flex items-center justify-between rounded-md px-3 py-2 text-[12px] text-white/86">
+                  <span>{label}</span>
+                  {shortcut ? <span className="font-mono text-[11px] text-white/32">{shortcut}</span> : null}
+                </div>
+              ))}
+
+            {mode === "pitch-menu" &&
+              [
+                ["Transpose", "T", false],
+                ["Chord Tools", "C", false],
+                ["Detect Chords", "", false],
+                ["Invert Chord", "", true],
+              ].map(([label, shortcut, disabled]) => (
+                <div
+                  key={label}
+                  className={cn(
+                    "flex items-center justify-between rounded-md px-3 py-2 text-[12px]",
+                    disabled ? "text-white/24" : "text-white/86",
+                  )}
+                >
+                  <span>{label}</span>
+                  {shortcut ? <span className="font-mono text-[11px] text-white/32">{shortcut}</span> : null}
+                </div>
+              ))}
+
+            {mode === "duration-menu" &&
+              [
+                ["Quantize Length", false],
+                ["Legato (Extend to Next)", true],
+                ["Staccato (50%)", true],
+                ["Double Length", true],
+                ["Half Length", true],
+                ["Scale Length", true],
+              ].map(([label, disabled]) => (
+                <div
+                  key={label}
+                  className={cn(
+                    "flex items-center justify-between rounded-md px-3 py-2 text-[12px]",
+                    disabled ? "text-white/24" : "text-white/86",
+                  )}
+                >
+                  <span>{label}</span>
+                </div>
+              ))}
           </div>
         </div>
       </div>

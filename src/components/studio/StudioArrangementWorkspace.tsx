@@ -14,7 +14,7 @@ import { Flag, Plus, Undo2, Upload } from "lucide-react";
 
 interface StudioArrangementWorkspaceProps {
   mode: "guided" | "standard" | "focused";
-  captureVariant?: "figma" | null;
+  captureVariant?: "figma" | "figma-compact" | null;
   showBrowserPanel: boolean;
   browserProps: React.ComponentProps<typeof BrowserPanel>;
   gridProps: {
@@ -152,7 +152,7 @@ export function StudioArrangementWorkspace({
                   <span key={label}>{label}</span>
                 ))}
               </div>
-              {captureVariant === "figma" ? null : (
+              {captureVariant ? null : (
                 <div className="text-white/28">
                   {emptyStateInstruction ? "Lesson Focus" : "Edit View"}
                 </div>
@@ -287,7 +287,7 @@ export function StudioArrangementWorkspace({
                     )}
                   </TimelineCanvas>
 
-                  <div className="flex border-t border-white/6 bg-[#232429]">
+                  {captureVariant ? null : <div className="flex border-t border-white/6 bg-[#232429]">
                     <div className="sticky left-0 z-10 flex w-52 shrink-0 gap-1 border-r border-white/6 bg-[#24252a] px-2 py-2">
                       <button
                         className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-white/8 bg-[#2b2d33] font-mono text-[10px] text-white/65 transition-colors hover:bg-white/6 hover:text-white/82"
@@ -326,7 +326,7 @@ export function StudioArrangementWorkspace({
                         Add only the tracks you need for the current step.
                       </p>
                     </div>
-                  </div>
+                  </div>}
                 </>,
               )}
             </div>
