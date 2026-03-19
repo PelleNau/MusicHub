@@ -33,11 +33,20 @@ export default function Studio() {
   const captureScenario = getCaptureScenario();
   const captureOverlay = getCaptureOverlay();
   const showCollapsedMixerFooter = captureMode && captureScenario === "standard-mode";
+  const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
+    ? "figma"
+    : null;
+  const arrangementCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
+    ? "figma"
+    : null;
+  const hideGuideForCapture = captureMode && captureScenario === "piano-roll";
   const pianoRollOverlayMode =
     captureMode && captureScenario === "piano-roll"
       ? captureOverlay === "humanize-dialog"
         ? "humanize-dialog"
-        : "transform-menu"
+        : captureOverlay === "transform-menu"
+          ? "transform-menu"
+          : null
       : null;
   const {
     routeModel,
@@ -160,6 +169,7 @@ export default function Studio() {
           studioMode={studioModeModel.mode}
           sessionName={session?.name || "Loading…"}
           activeLessonId={routeModel.lessonId}
+          captureVariant={headerCaptureVariant}
           guideVisible={presentation.headerModel.guide.visible}
           guideCollapsed={presentation.headerModel.guide.collapsed}
           guideLabel={presentation.headerModel.guide.label}
@@ -223,6 +233,7 @@ export default function Studio() {
                 markerModel={presentation.arrangementWorkspaceModel.markerModel}
                 timelineHeaderActions={presentation.arrangementWorkspaceModel.timelineHeaderActions}
                 assetImportInputProps={presentation.arrangementWorkspaceModel.assetImportInputProps}
+                captureVariant={arrangementCaptureVariant}
               />
             </ResizablePanel>
 
@@ -241,7 +252,7 @@ export default function Studio() {
                 >
                   <StudioBottomWorkspace
                     mode={studioModeModel.mode}
-                    showTabs={studioModeModel.shell.showBottomTabs}
+                    showTabs={!hideGuideForCapture && !showCollapsedMixerFooter && studioModeModel.shell.showBottomTabs}
                     bottomTab={presentation.bottomWorkspaceModel.bottomTab}
                     setBottomTab={presentation.bottomWorkspaceModel.setBottomTab}
                     showPianoRoll={presentation.bottomWorkspaceModel.showPianoRoll}
@@ -265,7 +276,7 @@ export default function Studio() {
 
           <StudioGuideSidebar
             mode={studioModeModel.mode}
-            visible={showGuideSidebar}
+            visible={!hideGuideForCapture && showGuideSidebar}
             guideBridge={presentation.guideSidebarModel.guideBridge}
             lessonPanelModel={presentation.guideSidebarModel.lessonPanelModel}
             onDismissCompletion={presentation.guideSidebarModel.onDismissCompletion}

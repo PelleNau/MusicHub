@@ -14,6 +14,7 @@ import { Flag, Plus, Undo2, Upload } from "lucide-react";
 
 interface StudioArrangementWorkspaceProps {
   mode: "guided" | "standard" | "focused";
+  captureVariant?: "figma" | null;
   showBrowserPanel: boolean;
   browserProps: React.ComponentProps<typeof BrowserPanel>;
   gridProps: {
@@ -101,6 +102,7 @@ interface StudioArrangementWorkspaceProps {
 
 export function StudioArrangementWorkspace({
   mode,
+  captureVariant,
   showBrowserPanel,
   browserProps,
   gridProps,
@@ -157,6 +159,7 @@ export function StudioArrangementWorkspace({
           </div>
           <StudioArrangementToolbar
             mode={mode}
+            captureVariant={captureVariant}
             activeDivision={gridProps.activeDivision}
             snapEnabled={gridProps.snapEnabled}
             tripletMode={gridProps.tripletMode}
