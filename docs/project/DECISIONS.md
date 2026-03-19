@@ -882,3 +882,21 @@ Markers are useful now for navigation and organization, but there is no existing
 - marker rendering now sits in the real timeline shell through `src/components/studio/TimelineMarkerOverlay.tsx`
 - the current marker feature is intentionally UI/session-assist state, not authoritative project state
 - the later decision is whether markers should become canonical session data once the redesigned shell and project model stabilize
+
+---
+
+## 2026-03-19 — Guided mode should be overlaid by lesson view policy, not treated as one fixed shell
+
+### Decision
+
+Guided mode should remain a base shell density preset, but lesson and step definitions should be able to overlay explicit view policy for panel visibility, viewport focus, and interaction emphasis.
+
+### Rationale
+
+The curriculum spans rhythm, arrangement, MIDI editing, audio editing, preset browsing, and mixing. One static Guided shell will either expose too much UI or fail to surface the right workspace for many lessons. A lesson view-policy layer keeps one Studio architecture while allowing deterministic shell shaping per lesson or per step.
+
+### Consequence
+
+- `src/types/musicHubLessonDsl.ts` now supports declarative `viewPolicy` at lesson, entry, and step levels
+- `docs/project/MH-044_Lesson_View_Policy.md` defines the resolution model and intended usage
+- the next implementation step is not another new mode; it is resolving lesson view policy on top of the existing Studio mode contract

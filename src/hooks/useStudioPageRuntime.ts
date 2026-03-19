@@ -7,6 +7,8 @@ import { useStudioRuntime } from "@/hooks/useStudioRuntime";
 import { useStudioPageCoordination } from "@/hooks/useStudioPageCoordination";
 import { useStudioModeModel } from "@/hooks/useStudioModeModel";
 import { useStudioMarkerModel } from "@/hooks/useStudioMarkerModel";
+import { useStudioLessonViewPolicy } from "@/hooks/useStudioLessonViewPolicy";
+import { useStudioLessonViewPolicyCoordination } from "@/hooks/useStudioLessonViewPolicyCoordination";
 import type { StudioModePreference } from "@/types/musicHubStudioModes";
 
 interface UseStudioPageRuntimeOptions {
@@ -98,6 +100,11 @@ export function useStudioPageRuntime({
     onSeek: commandDispatch.seek,
   });
 
+  const lessonViewPolicy = useStudioLessonViewPolicy({
+    lesson: guideBridge.lesson,
+    currentStep: guideBridge.runtime.state.currentStep,
+  });
+
   const coordination = useStudioPageCoordination({
     beatsPerBar: sessionMetrics.beatsPerBar,
     totalBeats: sessionMetrics.totalBeats,
@@ -138,6 +145,13 @@ export function useStudioPageRuntime({
       lessonStatus: guideBridge.runtime.state.lessonStatus,
     },
     panelState,
+    lessonViewPolicy,
+  });
+
+  useStudioLessonViewPolicyCoordination({
+    viewPolicy: lessonViewPolicy,
+    panelState,
+    commandDispatch,
   });
 
   const presentation = useStudioPresentationModels({
@@ -236,6 +250,7 @@ export function useStudioPageRuntime({
     connectionSummary,
     studioModeModel,
     markerModel,
+    lessonViewPolicy,
     grid: coordination.grid,
     presentation,
     settingsRuntime: {

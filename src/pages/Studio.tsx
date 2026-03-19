@@ -41,6 +41,7 @@ export default function Studio() {
     studioModeModel,
     grid,
     presentation,
+    lessonViewPolicy,
   } = useStudioPageRuntime({
     signOut,
     navigateToLab: () => navigate("/lab"),
@@ -81,6 +82,8 @@ export default function Studio() {
       data-guide-lesson={guideBridge.lesson?.lessonId ?? ""}
       data-guide-status={guideBridge.runtime.state.lessonStatus}
       data-guide-step={guideBridge.runtime.state.currentStep?.stepId ?? ""}
+      data-lesson-focus={studioModeModel.shell.focusTarget ?? lessonViewPolicy?.viewport?.focus ?? ""}
+      data-lesson-dim={studioModeModel.shell.dimNonEssentialPanels ? "true" : "false"}
     >
       <StudioHeaderBar
         studioMode={studioModeModel.mode}

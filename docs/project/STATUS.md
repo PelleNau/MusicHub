@@ -203,6 +203,8 @@ Phase 2 architecture consolidation
 - Studio timeline markers now exist as session-scoped local assist state in `src/hooks/useStudioMarkerModel.ts` instead of being blocked on backend/session schema work
 - marker rendering and marker actions now live in the real timeline shell (`src/components/studio/TimelineCanvas.tsx` and `src/components/studio/TimelineMarkerOverlay.tsx`) instead of only in the standalone Figma export
 - the `M` shortcut now adds a marker at the playhead when no clips are selected, while preserving clip mute behavior when a clip selection exists
+- lesson view policy is now defined as an explicit DSL/runtime contract in `src/types/musicHubLessonDsl.ts` and `docs/project/MH-044_Lesson_View_Policy.md`
+- the curriculum can now target different Guided sub-views without requiring one rigid Guided shell or many bespoke lesson screens
 
 ## Next Milestone
 

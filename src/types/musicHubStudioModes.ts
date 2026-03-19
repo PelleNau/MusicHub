@@ -1,3 +1,5 @@
+import type { LessonViewFocusTarget } from "@/types/musicHubLessonDsl";
+
 export type StudioMode = "guided" | "standard" | "focused";
 
 export type StudioModePreference = "auto" | StudioMode;
@@ -12,6 +14,10 @@ export interface StudioShellPolicy {
   arrangementDefaultSize: number;
   bottomDefaultSize: number;
   density: "relaxed" | "balanced" | "dense";
+  focusTarget?: LessonViewFocusTarget;
+  dimNonEssentialPanels: boolean;
+  lockPanelSwitching: boolean;
+  lockBottomTab: boolean;
 }
 
 export interface StudioModeModel {

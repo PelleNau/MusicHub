@@ -161,17 +161,21 @@ Unless explicitly overridden by the user:
 140. the arrangement workspace now exposes an explicit marker action in its header controls instead of relying on standalone export-only UI
 141. the `M` shortcut now adds a marker at the playhead when no clips are selected, while preserving selected-clip mute behavior
 142. the active local Studio shell now includes a working marker import from the Figma export without importing the export’s standalone app architecture
+143. lesson view policy now has an explicit DSL/runtime contract in `src/types/musicHubLessonDsl.ts`
+144. lesson shell/view policy is documented in `docs/project/MH-044_Lesson_View_Policy.md`
+145. the lesson DSL spec now supports declarative panel visibility, viewport focus, and interaction-emphasis overlays without depending on component structure
 
 ## Current Next Work
 
 1. implement the new Figma-driven Guided/Standard/Focused shell against the explicit Studio mode contract
-2. decide whether markers should stay local assist state or graduate into canonical session persistence later
-3. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
-4. use the desktop-primary assumption to tighten any remaining host/core seams instead of preserving web-era ambiguity
-5. decide whether continuous controls remain a bounded edit stream or need broader runtime normalization
-6. decide whether lesson DSL should gain first-class continuous-edit expectations and validation nodes
-7. decide whether selector-facing session state should adopt a stronger canonical normalized adapter instead of continuing to consume raw session shapes
-8. cut a publishable branch from the current runtime checkpoint before large visual redesign work lands
+2. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
+3. decide whether markers should stay local assist state or graduate into canonical session persistence later
+4. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
+5. use the desktop-primary assumption to tighten any remaining host/core seams instead of preserving web-era ambiguity
+6. decide whether continuous controls remain a bounded edit stream or need broader runtime normalization
+7. decide whether lesson DSL should gain first-class continuous-edit expectations and validation nodes
+8. decide whether selector-facing session state should adopt a stronger canonical normalized adapter instead of continuing to consume raw session shapes
+9. cut a publishable branch from the current runtime checkpoint before large visual redesign work lands
 
 ## Default Instruction For Lovable
 

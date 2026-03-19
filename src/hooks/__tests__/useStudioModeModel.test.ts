@@ -91,4 +91,44 @@ describe("useStudioModeModel", () => {
     expect(result.current.shell.showBrowserPanel).toBe(true);
     expect(result.current.shell.showBottomWorkspace).toBe(true);
   });
+
+  it("overlays lesson view policy on top of the base mode shell", () => {
+    const { result } = renderHook(() =>
+      useStudioModeModel({
+        routeMode: null,
+        preferredMode: "auto",
+        lessonState: {
+          visible: true,
+          lessonStatus: "active",
+        },
+        panelState: {
+          showBottomWorkspace: false,
+          showPianoRoll: false,
+          showMixer: false,
+        },
+        lessonViewPolicy: {
+          panels: {
+            browser: "show",
+            guide: "collapse",
+            mixer: "show",
+          },
+          viewport: {
+            focus: "mixer",
+          },
+          interaction: {
+            dimNonEssentialPanels: true,
+            lockBottomTab: true,
+          },
+        },
+      }),
+    );
+
+    expect(result.current.mode).toBe("guided");
+    expect(result.current.shell.showBrowserPanel).toBe(true);
+    expect(result.current.shell.guidePreferredCollapsed).toBe(true);
+    expect(result.current.shell.showBottomWorkspace).toBe(true);
+    expect(result.current.shell.focusTarget).toBe("mixer");
+    expect(result.current.shell.dimNonEssentialPanels).toBe(true);
+    expect(result.current.shell.lockBottomTab).toBe(true);
+  });
 });
