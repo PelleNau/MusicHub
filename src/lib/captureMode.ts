@@ -8,6 +8,8 @@ export type CaptureScenarioId =
   | "control-bar"
   | "components-showcase";
 
+export type CaptureOverlayId = "transform-menu" | "humanize-dialog" | "collapsed-mixer";
+
 export interface CaptureScenario {
   id: CaptureScenarioId;
   title: string;
@@ -98,6 +100,19 @@ export function isCaptureMode() {
 
 export function getCaptureScenario() {
   return (getSearchParams()?.get("captureScenario") as CaptureScenarioId | null) ?? null;
+}
+
+export function getCaptureOverlay() {
+  return (getSearchParams()?.get("captureOverlay") as CaptureOverlayId | null) ?? null;
+}
+
+export function shouldShowCaptureBar() {
+  const searchParams = getSearchParams();
+  if (!searchParams) {
+    return true;
+  }
+
+  return searchParams.get("captureBar") !== "false";
 }
 
 export function getCaptureScenarios() {

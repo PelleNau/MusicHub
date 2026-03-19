@@ -1,4 +1,4 @@
-import { Play, Pause, Square, SkipBack, Repeat, Undo2, Redo2, Circle } from "lucide-react";
+import { Play, Pause, Square, SkipBack, Repeat, Undo2, Redo2, Circle, Search, ZoomIn, Maximize2, Wifi, SunMedium, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { ConnectionState } from "@/services/hostConnector";
 import type { MeterLevel } from "@/services/pluginHostSocket";
@@ -79,13 +79,12 @@ export function TransportBar({
   });
 
   return (
-    <div className="flex items-center gap-4 border-b border-border bg-card px-4 py-2 font-mono text-xs">
-      {/* Transport controls */}
-      <div className="flex items-center gap-1 border border-border/50 rounded-md px-1 py-0.5 bg-muted/15">
+    <div className="flex items-center gap-4 border-b border-white/6 bg-[#232429] px-4 py-2 font-mono text-xs text-white/85">
+      <div className="flex items-center gap-1 border-r border-white/8 pr-3">
         <Button
           size="icon"
           variant="ghost"
-          className="h-7 w-7"
+          className="h-8 w-8 rounded-md text-white/72 hover:bg-white/6 hover:text-white"
           onClick={onStop}
           title="Return to start"
           data-guide-anchor="transport.skipBack"
@@ -95,11 +94,11 @@ export function TransportBar({
         </Button>
 
         {playbackState === "playing" ? (
-          <Button size="icon" variant="ghost" className="h-7 w-7 text-primary" onClick={onPause} title="Pause" data-guide-anchor="transport.pause" {...hoverProps("pause")}>
+          <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md bg-white/6 text-primary hover:bg-white/8" onClick={onPause} title="Pause" data-guide-anchor="transport.pause" {...hoverProps("pause")}>
             <Pause className="h-3.5 w-3.5" />
           </Button>
         ) : (
-          <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onPlay} title="Play" data-guide-anchor="transport.play" {...hoverProps("play")}>
+          <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md bg-white/6 text-white hover:bg-white/8" onClick={onPlay} title="Play" data-guide-anchor="transport.play" {...hoverProps("play")}>
             <Play className="h-3.5 w-3.5" />
           </Button>
         )}
@@ -107,7 +106,7 @@ export function TransportBar({
         <Button
           size="icon"
           variant="ghost"
-          className="h-7 w-7"
+          className="h-8 w-8 rounded-md text-white/72 hover:bg-white/6 hover:text-white"
           onClick={onStop}
           title="Stop"
           data-guide-anchor="transport.stop"
@@ -120,7 +119,7 @@ export function TransportBar({
           <Button
             size="icon"
             variant="ghost"
-            className={`h-7 w-7 ${recording ? "text-red-500 bg-red-500/10" : ""}`}
+            className={`h-8 w-8 rounded-md ${recording ? "bg-red-500/15 text-red-400" : "text-white/72 hover:bg-white/6 hover:text-white"}`}
             onClick={onRecordToggle}
             title={recording ? "Stop recording" : "Start recording"}
             {...hoverProps("record")}
@@ -134,7 +133,7 @@ export function TransportBar({
           <Button
             size="icon"
             variant="ghost"
-            className={`h-7 w-7 ${loopEnabled ? "text-primary bg-primary/10" : ""}`}
+            className={`h-8 w-8 rounded-md ${loopEnabled ? "bg-primary/14 text-primary" : "text-white/72 hover:bg-white/6 hover:text-white"}`}
             onClick={onLoopToggle}
             title="Toggle loop (⌘L)"
             data-guide-anchor="transport.loop"
@@ -145,12 +144,11 @@ export function TransportBar({
         )}
       </div>
 
-      {/* Undo / Redo */}
-      <div className="flex items-center gap-0.5 border-l border-border pl-3 border border-border/50 rounded-md px-1.5 py-0.5 bg-muted/15 ml-1" {...hoverProps("undo")}>
+      <div className="flex items-center gap-0.5 border-r border-white/8 pr-3" {...hoverProps("undo")}>
         <Button
           size="icon"
           variant="ghost"
-          className="h-7 w-7"
+          className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
           onClick={onUndo}
           disabled={!canUndo}
           title="Undo (⌘Z)"
@@ -160,7 +158,7 @@ export function TransportBar({
         <Button
           size="icon"
           variant="ghost"
-          className="h-7 w-7"
+          className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
           onClick={onRedo}
           disabled={!canRedo}
           title="Redo (⌘⇧Z)"
@@ -170,48 +168,70 @@ export function TransportBar({
         </Button>
       </div>
 
-      {/* Position display */}
-      <div className="flex items-center gap-3 border border-border/50 rounded-md px-2 py-0.5 bg-muted/15" {...hoverProps("position")}>
-        <span className="tabular-nums text-foreground text-sm font-semibold min-w-[6ch]">
+      <div className="flex items-center gap-3 border-r border-white/8 pr-4" {...hoverProps("position")}>
+        <span className="tabular-nums text-sm font-semibold text-white min-w-[6ch]">
           {beatToBarDisplay(currentBeat, beatsPerBar)}
         </span>
+        <div className="h-1.5 w-1.5 rounded-full bg-[#2b7cff]" />
+        <span className="text-[12px] text-white/78">New Project</span>
       </div>
 
-      {/* Tempo */}
-      <div className="flex items-center gap-1.5 border border-border/50 rounded-md px-2 py-0.5 bg-muted/15" {...hoverProps("tempo")}>
-        <input
-          type="number"
-          value={tempo}
-          onChange={(e) => onTempoChange(Number(e.target.value) || 120)}
-          className="w-14 rounded border border-border bg-background px-1.5 py-0.5 text-center text-xs tabular-nums text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
-          min={20}
-          max={300}
-        />
-        <span className="text-foreground/60">BPM</span>
-      </div>
-
-      <span className="text-foreground/60 border border-border/50 rounded-md px-2 py-0.5 bg-muted/15" {...hoverProps("timeSig")}>{timeSignature}</span>
-
-      {/* Playback indicator */}
-      {playbackState === "playing" && (
-        <div className="flex items-center gap-1.5">
-          <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-          <span className="text-primary">PLAY</span>
+      <div className="mx-auto flex items-center gap-3">
+        <div className="flex items-center gap-1.5 text-white/45" {...hoverProps("tempo")}>
+          <span className="text-[11px] uppercase">BPM</span>
+          <input
+            type="number"
+            value={tempo}
+            onChange={(e) => onTempoChange(Number(e.target.value) || 120)}
+            className="h-8 w-14 rounded-md border border-white/8 bg-[#2b2d33] px-1.5 py-0.5 text-center text-xs tabular-nums text-white focus:outline-none focus:ring-1 focus:ring-primary"
+            min={20}
+            max={300}
+          />
         </div>
-      )}
+        <span className="text-white/35">•</span>
+        <span className="rounded-md border border-white/8 bg-[#2b2d33] px-3 py-1.5 text-white/76" {...hoverProps("timeSig")}>{timeSignature}</span>
+        <select className="h-8 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-white/82 outline-none">
+          <option>C</option>
+        </select>
+        <select className="h-8 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-white/82 outline-none">
+          <option>Major (Ionian)</option>
+        </select>
+      </div>
 
-      {/* Master meter */}
+      <div className="ml-auto flex items-center gap-2 text-white/62">
+        <button className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-white/6 hover:text-white">
+          <Search className="h-3.5 w-3.5" />
+        </button>
+        <div className="flex items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-2 py-1">
+          <span>80%</span>
+          <button className="hover:text-white">
+            <ZoomIn className="h-3.5 w-3.5" />
+          </button>
+          <button className="hover:text-white">
+            <Maximize2 className="h-3.5 w-3.5" />
+          </button>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#245ea8] bg-[#1b3452] text-[11px] text-[#7db7ff]">G</span>
+          <span className="text-[11px] uppercase tracking-wide">CPU 12%</span>
+        </div>
+        <Wifi className="h-3.5 w-3.5 text-emerald-400" />
+        <SunMedium className="h-3.5 w-3.5" />
+        <div className="flex items-center gap-1 border-l border-white/8 pl-2 text-white/72">
+          <span>Features</span>
+          <ChevronDown className="h-3.5 w-3.5" />
+        </div>
+      </div>
+
       {masterMeter && (
-        <div className="flex items-center gap-1 border-l border-border pl-3">
+        <div className="hidden items-center gap-1 border-l border-white/8 pl-3">
           <MasterMeter meter={masterMeter} height={18} />
-          <span className="text-[9px] text-muted-foreground tabular-nums">
+          <span className="text-[9px] text-white/42 tabular-nums">
             {masterMeter.peak > -60 ? `${masterMeter.peak.toFixed(1)}` : "−∞"}
           </span>
         </div>
       )}
-
-      {/* Connection badge */}
-      <div className="ml-auto">
+      <div className="hidden">
         <ConnectionBadge
           connectionState={connectionState}
           isMock={isMock}

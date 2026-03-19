@@ -130,34 +130,28 @@ export function StudioArrangementWorkspace({
   assetImportInputProps,
   markerModel,
 }: StudioArrangementWorkspaceProps) {
+  const timelineLabels = mode === "standard"
+    ? ["Tracks", "Arrangement"]
+    : ["Timeline", "Arrangement"];
+
   return (
     <div
-      className="flex min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,hsl(var(--primary)/0.08),transparent_20%),var(--surface-0)]"
+      className="flex min-h-0 flex-1 overflow-hidden bg-[#17181b]"
       data-studio-mode={mode}
     >
       {showBrowserPanel ? <BrowserPanel {...browserProps} /> : null}
 
       <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-          <div className="border-b border-[color:var(--transport-border-strong)] bg-[color:color-mix(in_srgb,var(--surface-1)_88%,transparent)] px-4 py-3 backdrop-blur-sm">
-            <div className="flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/45">
-                  Main Workspace
-                </div>
-                <div className="mt-1 text-sm font-medium text-foreground">
-                  {emptyStateInstruction
-                    ? "Follow the current lesson step in the timeline."
-                    : "Arrange clips, shape timing, and build the session."}
-                </div>
+          <div className="border-b border-white/6 bg-[#232429] px-4 py-2">
+            <div className="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-white/40">
+              <div className="flex items-center gap-4">
+                {timelineLabels.map((label) => (
+                  <span key={label}>{label}</span>
+                ))}
               </div>
-              <div className="hidden shrink-0 items-center gap-2 md:flex">
-                <span className="rounded-full border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
-                  Timeline
-                </span>
-                <span className="rounded-full border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
-                  Arrangement
-                </span>
+              <div className="text-white/28">
+                {emptyStateInstruction ? "Lesson Focus" : "Edit View"}
               </div>
             </div>
           </div>
@@ -182,7 +176,7 @@ export function StudioArrangementWorkspace({
             <div
               ref={timelineRef}
               data-timeline
-              className="relative min-h-0 flex-1 overflow-auto bg-[var(--timeline-bg-solid)]"
+              className="relative min-h-0 flex-1 overflow-auto bg-[#17181b]"
               {...timelineContainerProps}
             >
               {arrangementWrapper(
@@ -222,7 +216,7 @@ export function StudioArrangementWorkspace({
                   >
                     {displayTracks.length === 0 ? (
                       <div className="flex h-full min-h-[120px] items-center justify-center">
-                        <div className="max-w-sm rounded-2xl border border-[color:var(--transport-border-strong)] bg-[color:color-mix(in_srgb,var(--surface-1)_88%,transparent)] px-5 py-4 text-center shadow-[var(--shadow-md)] backdrop-blur-sm">
+                        <div className="max-w-sm rounded-2xl border border-white/8 bg-[#232429] px-5 py-4 text-center shadow-[var(--shadow-md)]">
                           {emptyStateInstruction ? (
                             <>
                               <p className="text-sm font-medium text-foreground/80">{emptyStateInstruction}</p>
@@ -287,34 +281,34 @@ export function StudioArrangementWorkspace({
                     )}
                   </TimelineCanvas>
 
-                  <div className="flex border-t border-[color:var(--transport-border-strong)] bg-[color:color-mix(in_srgb,var(--surface-1)_86%,transparent)] backdrop-blur-sm">
-                    <div className="sticky left-0 z-10 flex w-52 shrink-0 gap-1 border-r border-[color:var(--transport-border-strong)] bg-[var(--surface-1)] px-2 py-2">
+                  <div className="flex border-t border-white/6 bg-[#232429]">
+                    <div className="sticky left-0 z-10 flex w-52 shrink-0 gap-1 border-r border-white/6 bg-[#24252a] px-2 py-2">
                       <button
-                        className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-white/8 bg-[#2b2d33] font-mono text-[10px] text-white/65 transition-colors hover:bg-white/6 hover:text-white/82"
                         onClick={timelineHeaderActions.createAudioTrack}
                       >
                         <Plus className="h-3 w-3" /> Audio
                       </button>
                       <button
-                        className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-white/8 bg-[#2b2d33] font-mono text-[10px] text-white/65 transition-colors hover:bg-white/6 hover:text-white/82"
                         onClick={timelineHeaderActions.createMidiTrack}
                       >
                         <Plus className="h-3 w-3" /> MIDI
                       </button>
                       <button
-                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 px-2 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-white/8 bg-[#2b2d33] px-2 font-mono text-[10px] text-white/65 transition-colors hover:bg-white/6 hover:text-white/82"
                         onClick={timelineHeaderActions.createReturnTrack}
                       >
                         <Undo2 className="h-3 w-3" /> Return
                       </button>
                       <button
-                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 px-2 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-white/8 bg-[#2b2d33] px-2 font-mono text-[10px] text-white/65 transition-colors hover:bg-white/6 hover:text-white/82"
                         onClick={timelineHeaderActions.openAudioUpload}
                       >
                         <Upload className="h-3 w-3" /> Audio
                       </button>
                       <button
-                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 px-2 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
+                        className="flex h-7 items-center justify-center gap-1 rounded-md border border-white/8 bg-[#2b2d33] px-2 font-mono text-[10px] text-white/65 transition-colors hover:bg-white/6 hover:text-white/82"
                         onClick={timelineHeaderActions.addMarkerAtPlayhead}
                       >
                         <Flag className="h-3 w-3" /> Marker

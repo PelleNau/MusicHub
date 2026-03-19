@@ -47,38 +47,34 @@ export function LessonHeader({
     <div
       className={cn(
         "shrink-0 border-b border-border/70",
-        mode === "focused"
-          ? "bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.08),transparent_62%)]"
-          : "bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),transparent_58%)]",
+        "bg-[#232429]",
       )}
     >
-      {/* Title row */}
       <div className="flex items-center justify-between px-4 py-4">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-1.5 text-[10px] font-mono uppercase tracking-[0.22em] text-foreground/45">
+          <div className="flex items-center gap-1.5 text-[12px] text-white/74">
             <BookOpen className="h-3 w-3" />
             Lesson Guide
           </div>
-          <div className="mt-2 text-base font-mono font-semibold text-foreground truncate">
+          <div className="mt-2 text-[15px] font-semibold text-white truncate">
             {title}
           </div>
-          <p className="mt-1 max-w-[240px] text-xs leading-relaxed text-foreground/60">
-            {mode === "focused"
-              ? "Lesson support stays available while the canvas remains prioritized."
-              : "Stay inside the highlighted workspace. The guide will reveal more of Studio only when the lesson needs it."}
-          </p>
+          <div className="mt-2 flex items-center justify-between text-[12px] text-white/62">
+            <span>Step {Math.min(stepIndex + 1, Math.max(stepCount, 1))} of {Math.max(stepCount, 1)}</span>
+            <span>{progressPercent}%</span>
+          </div>
         </div>
         <div className="flex items-center gap-1 shrink-0 ml-2">
           <button
             onClick={onToggleCollapsed}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-border/70 bg-background/80 text-foreground/60 transition-colors hover:text-foreground hover:bg-background"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-[#2b2d33] text-white/60 transition-colors hover:text-white hover:bg-white/8"
             title="Collapse lesson guide"
           >
             <ChevronRight className="h-3.5 w-3.5" />
           </button>
           <button
             onClick={onAbortLesson}
-            className="flex h-8 w-8 items-center justify-center rounded-xl border border-border/70 bg-background/80 text-foreground/60 transition-colors hover:text-foreground hover:bg-background"
+            className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-[#2b2d33] text-white/60 transition-colors hover:text-white hover:bg-white/8"
             title="Close lesson"
           >
             <X className="h-3.5 w-3.5" />
@@ -89,22 +85,19 @@ export function LessonHeader({
       {/* Status + progress */}
       <div className="space-y-2 px-4 pb-4">
         <div className="flex items-center justify-between">
-          <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-mono ${badge.className}`}>
+          <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] ${badge.className}`}>
             {badge.label}
           </span>
-          <span className="text-[10px] font-mono text-foreground/50 tabular-nums">
-            {Math.min(stepIndex + 1, Math.max(stepCount, 1))} / {Math.max(stepCount, 1)}
-          </span>
         </div>
-        <Progress value={progressPercent} className="h-1 bg-muted/30" />
+        <Progress value={progressPercent} className="h-1.5 bg-white/8" />
       </div>
 
       {/* Objectives disclosure */}
       {objectives.length > 0 && (
-        <div className="border-t border-border/50 bg-background/35">
+        <div className="border-t border-white/6 bg-[#202126]">
           <button
             onClick={() => setShowObjectives(!showObjectives)}
-            className="flex w-full items-center justify-between px-4 py-3 text-[10px] font-mono uppercase tracking-[0.18em] text-foreground/45 transition-colors hover:text-foreground/60"
+            className="flex w-full items-center justify-between px-4 py-3 text-[10px] uppercase tracking-[0.18em] text-white/42 transition-colors hover:text-white/62"
           >
             <span>Objectives ({objectives.length})</span>
             {showObjectives ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
@@ -112,8 +105,8 @@ export function LessonHeader({
           {showObjectives && (
             <ul className="space-y-2 px-4 pb-4">
               {objectives.map((obj, i) => (
-                <li key={i} className="flex items-start gap-2 text-[11px] leading-relaxed text-foreground/65">
-                  <span className="mt-0.5 font-mono text-[9px] text-foreground/30">{i + 1}.</span>
+                <li key={i} className="flex items-start gap-2 text-[11px] leading-relaxed text-white/68">
+                  <span className="mt-0.5 text-[9px] text-white/30">{i + 1}.</span>
                   {obj}
                 </li>
               ))}

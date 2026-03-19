@@ -10,7 +10,7 @@ import { Suspense, lazy } from "react";
 import { isInTauriShell } from "@/services/tauriShell";
 import { FloatingDock } from "@/components/app/FloatingDock";
 import { CaptureBar } from "@/components/app/CaptureBar";
-import { isCaptureMode } from "@/lib/captureMode";
+import { isCaptureMode, shouldShowCaptureBar } from "@/lib/captureMode";
 
 import Auth from "./pages/Auth.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -58,6 +58,7 @@ function PageLoader() {
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   const captureMode = isCaptureMode();
+  const showCaptureBar = shouldShowCaptureBar();
 
   if (!captureMode && loading) return <PageLoader />;
   if (!captureMode && !session) return <Navigate to="/auth" replace />;
@@ -65,8 +66,8 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
     <Suspense fallback={<PageLoader />}>
       {captureMode ? (
         <>
-          <div className="min-h-screen pt-16">{children}</div>
-          <CaptureBar />
+          <div className={showCaptureBar ? "min-h-screen pt-16" : "min-h-screen"}>{children}</div>
+          {showCaptureBar ? <CaptureBar /> : null}
         </>
       ) : (
         <>
