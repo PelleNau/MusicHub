@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { TheoryHeader } from "@/components/theory/TheoryHeader";
 import { ChordFinderTool } from "@/components/theory/ChordFinderTool";
 import { ScaleFinderTool } from "@/components/theory/ScaleFinderTool";
 import { KeyFinderTool } from "@/components/theory/KeyFinderTool";
@@ -7,6 +6,7 @@ import { IntervalCalcTool } from "@/components/theory/IntervalCalcTool";
 import { TransposeTool } from "@/components/theory/TransposeTool";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ProductPageHeader, ProductShell } from "@/components/app/ProductShell";
 import { cn } from "@/lib/utils";
 import { Disc, Layers, Search, Key, ArrowUpDown } from "lucide-react";
 
@@ -24,10 +24,22 @@ export default function TheoryLabTools() {
   const ActiveComponent = activeTool.Component;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
-      <TheoryHeader title="Tools" />
+    <ProductShell
+      section="Theory"
+      title="Tools"
+      description="Fast theory utilities should stay lightweight, direct, and close to the production workflow."
+      contentClassName="p-0"
+    >
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="px-4 pt-4 md:px-6">
+          <ProductPageHeader
+            eyebrow="Theory / Tools"
+            title="Work with theory directly"
+            description="Use compact utilities for chord, scale, key, interval, and transposition work without leaving the product shell."
+          />
+        </div>
 
-      <div className="flex flex-1 overflow-hidden">
+        <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Sidebar — hidden on small screens */}
         <nav className="hidden md:block w-52 shrink-0 border-r border-border bg-card/50 overflow-y-auto">
           <div className="p-3 space-y-0.5">
@@ -75,6 +87,7 @@ export default function TheoryLabTools() {
           </div>
         </ScrollArea>
       </div>
-    </div>
+      </div>
+    </ProductShell>
   );
 }

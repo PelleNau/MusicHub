@@ -11,6 +11,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import ReactMarkdown from "react-markdown";
 import { AnalysisDashboard } from "@/components/analysis/AnalysisDashboard";
+import { ProductPageHeader, ProductShell } from "@/components/app/ProductShell";
 
 import {
   DropdownMenu,
@@ -123,33 +124,30 @@ const DeepDive = () => {
   }, [parsedResult, run]);
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background pb-20">
-      {/* ── Header ── */}
-      <header className="flex items-center justify-between border-b px-6 py-3 bg-chrome">
-        <div className="flex items-center gap-3">
-          <Sparkles className="h-5 w-5 text-primary" />
-          <h1 className="text-lg font-mono font-semibold tracking-tight text-foreground">
-            DEEP DIVE
-          </h1>
-          {currentFileName && (
-            <span className="font-mono text-xs text-muted-foreground border-l border-border pl-3 ml-1 truncate max-w-[200px]">
-              {currentFileName.replace(/\.als$/i, "")}
-            </span>
-          )}
-        </div>
-
-        <div className="flex items-center gap-2">
-          <HistoryDropdown
-            history={history}
-            currentFileName={currentFileName}
-            onLoad={handleLoadEntry}
-            onDelete={handleDeleteEntry}
+    <ProductShell
+      section="Deep Dive"
+      title="Project analysis"
+      description="Parse Ableton projects, inspect structure, and keep analysis work inside the same product shell."
+      contentClassName="px-0 py-0 md:px-0 md:py-0"
+    >
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="px-4 pt-4 md:px-6">
+          <ProductPageHeader
+            eyebrow="Deep Dive"
+            title={currentFileName ? currentFileName.replace(/\.als$/i, "") : "Inspect an Ableton project"}
+            description="Parse a project, stream analysis, and route the result directly into Studio when it becomes useful."
+            actions={
+              <HistoryDropdown
+                history={history}
+                currentFileName={currentFileName}
+                onLoad={handleLoadEntry}
+                onDelete={handleDeleteEntry}
+              />
+            }
           />
         </div>
-      </header>
 
-      {/* ── Main content ── */}
-      <div className="flex-1 flex overflow-hidden">
+        <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Left panel */}
         <div className="w-[420px] shrink-0 border-r flex flex-col">
           <ParserToolbar
@@ -192,7 +190,8 @@ const DeepDive = () => {
           </div>
         </div>
       </div>
-    </div>
+      </div>
+    </ProductShell>
   );
 };
 

@@ -1,272 +1,209 @@
-import { useState, useMemo, useCallback, useRef } from "react";
+import { useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import {
+  ArrowRight,
+  BookOpen,
+  Brain,
+  Music,
+  Package,
+  Sparkles,
+  Zap,
+} from "lucide-react";
+
+import { Button } from "@/components/ui/button";
 import { useInventory } from "@/hooks/useInventory";
 import {
-  Package, BookOpen, Music, Brain, Zap,
-  ChevronRight, Sparkles,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { GlassCard } from "@/components/ui/glass-card";
+  ProductMetaPill,
+  ProductPageHeader,
+  ProductSectionCard,
+  ProductShell,
+  ProductSurfaceGrid,
+} from "@/components/app/ProductShell";
 
-
-/* ── Types ── */
-type CardId = "hero" | "activity" | "studio" | "learning" | "theory" | "flightcase";
-
-/* ── Icon with glow ── */
-function GlowIcon({ icon: Icon, color }: { icon: React.ElementType; color: "primary" | "accent" | "success" | "warning" }) {
-  const glowMap = {
-    primary: "shadow-[0_0_20px_hsl(var(--primary)/0.25)]",
-    accent: "shadow-[0_0_20px_hsl(var(--accent)/0.25)]",
-    success: "shadow-[0_0_20px_hsl(var(--success)/0.25)]",
-    warning: "shadow-[0_0_20px_hsl(var(--warning)/0.25)]",
-  };
-  return (
-    <div className={`h-11 w-11 rounded-xl bg-white/[0.08] flex items-center justify-center shrink-0 ${glowMap[color]}`}>
-      <Icon className="h-5 w-5 text-foreground" />
-    </div>
-  );
-}
-
-/* ── Activity Heatmap ── */
 function ActivityHeatmap() {
   const data = useMemo(
     () =>
-      Array.from({ length: 56 }, () => {
-        const r = Math.random();
-        return r > 0.7 ? 3 : r > 0.4 ? 2 : r > 0.15 ? 1 : 0;
+      Array.from({ length: 56 }, (_, index) => {
+        const cycle = index % 7;
+        if (cycle === 0 || cycle === 4) return 3;
+        if (cycle === 2 || cycle === 5) return 2;
+        if (cycle === 1 || cycle === 6) return 1;
+        return 0;
       }),
     [],
   );
 
   return (
-    <>
+    <div>
       <div className="grid grid-cols-7 gap-1">
-        {data.map((v, i) => (
+        {data.map((value, index) => (
           <div
-            key={i}
+            key={index}
             className="aspect-square rounded-sm"
             style={{
               backgroundColor:
-                v === 0 ? "hsl(var(--muted) / 0.3)"
-                : v === 1 ? "hsl(var(--primary) / 0.25)"
-                : v === 2 ? "hsl(var(--primary) / 0.55)"
-                : "hsl(var(--primary) / 0.9)",
+                value === 0 ? "hsl(var(--muted) / 0.28)"
+                : value === 1 ? "hsl(var(--primary) / 0.22)"
+                : value === 2 ? "hsl(var(--primary) / 0.5)"
+                : "hsl(var(--primary) / 0.86)",
             }}
           />
         ))}
       </div>
-      <div className="flex items-center gap-1.5 mt-3 text-[9px] text-muted-foreground font-mono">
+      <div className="mt-3 flex items-center gap-1.5 font-mono text-[9px] text-muted-foreground">
         <span>Less</span>
-        {[0.15, 0.25, 0.55, 0.9].map((o) => (
-          <div key={o} className="h-2.5 w-2.5 rounded-sm" style={{ backgroundColor: `hsl(var(--primary) / ${o})` }} />
+        {[0.18, 0.28, 0.5, 0.86].map((opacity) => (
+          <div
+            key={opacity}
+            className="h-2.5 w-2.5 rounded-sm"
+            style={{ backgroundColor: `hsl(var(--primary) / ${opacity})` }}
+          />
         ))}
         <span>More</span>
       </div>
-    </>
+    </div>
   );
 }
 
-/* ── Floating music notes ── */
-function FloatingNotes() {
-  const notes = ["♩", "♪", "♫", "♬"];
-  return (
-    <>
-      {notes.map((n, i) => (
-        <span
-          key={i}
-          className="absolute text-primary/10 font-mono text-xl animate-float pointer-events-none select-none"
-          style={{
-            top: `${15 + i * 20}%`,
-            left: `${5 + i * 25}%`,
-            animationDelay: `${i * 0.8}s`,
-            animationDuration: `${3 + i * 0.5}s`,
-          }}
-        >
-          {n}
-        </span>
-      ))}
-    </>
-  );
-}
-
-/* ── Dashboard ── */
 export default function Home() {
   const navigate = useNavigate();
   const { items } = useInventory();
   const gearCount = items?.length ?? 0;
-  const [expandedCard, setExpandedCard] = useState<CardId | null>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-
-  const toggle = useCallback((id: CardId) => {
-    setExpandedCard((prev) => (prev === id ? null : id));
-  }, []);
-
-  const handleNavigate = useCallback(
-    (path: string, e: React.MouseEvent) => {
-      e.stopPropagation();
-      navigate(path);
-    },
-    [navigate],
-  );
 
   return (
-    <div className="dark dawn-lagoon dawn-lagoon-bg min-h-screen w-full">
-      {expandedCard && (
-        <div
-          className="fixed inset-0 z-40 bg-black/40 backdrop-blur-sm"
-          style={{ transition: "opacity 0.3s ease" }}
-          onClick={() => setExpandedCard(null)}
-        />
-      )}
+    <ProductShell
+      section="Home"
+      title="Workspace"
+      description="Continue learning, resume production, and move between theory, lab, and inventory without changing products."
+    >
+      <ProductPageHeader
+        eyebrow="Home"
+        title="Make music. Learn why it works."
+        description="MusicHub is one desktop workspace for lessons, theory, exploration, and production. Start from intent, then move directly into the right surface."
+        meta={
+          <>
+            <ProductMetaPill>Desktop-first workflow</ProductMetaPill>
+            <ProductMetaPill>{gearCount} items in Flight Case</ProductMetaPill>
+            <ProductMetaPill>Guide-aware Studio modes</ProductMetaPill>
+          </>
+        }
+        actions={
+          <>
+            <Button size="sm" className="font-mono text-xs" onClick={() => navigate("/learn")}>
+              Continue Learning
+            </Button>
+            <Button size="sm" variant="outline" className="font-mono text-xs" onClick={() => navigate("/lab/studio")}>
+              Open Studio
+            </Button>
+          </>
+        }
+      />
 
-      <main className="flex-1 overflow-auto pb-24 relative">
-        
-        <div className="max-w-6xl mx-auto px-5 py-6">
-          <div ref={gridRef} className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-
-            <GlassCard
-              className="lg:col-span-2 p-7 flex flex-col justify-center gap-3"
-              staggerIndex={0}
-              expanded={expandedCard === "hero"}
-              containerRef={gridRef}
-              onClick={() => toggle("hero")}
-              texture="grunge"
-              textureOpacity={15}
+      <ProductSurfaceGrid>
+        <ProductSectionCard
+          icon={Sparkles}
+          title="Start where the current task is"
+          description="Use Home as the intent router. Move into Guided Studio for active lessons, Standard Studio for ongoing production, or a support surface when you need context first."
+          className="xl:col-span-7"
+        >
+          <div className="grid gap-3 md:grid-cols-3">
+            <button
+              type="button"
+              onClick={() => navigate("/learn")}
+              className="rounded-2xl border border-border/60 bg-background/55 p-4 text-left transition-colors hover:border-primary/30 hover:bg-background/75"
             >
-              <h1 className="font-mono text-lg font-bold tracking-tight text-foreground">
-                Make music. Learn why it works.
-              </h1>
-              <p className="font-mono text-xs text-muted-foreground leading-relaxed max-w-md">
-                Your creative workspace for production, theory, and ear training — all in one place.
-              </p>
-              <div className="pt-2">
-                <Button
-                  onClick={(e) => handleNavigate("/learn", e)}
-                  size="sm"
-                  className="font-mono text-xs"
-                >
-                  Start Learning
-                </Button>
+              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Learn</div>
+              <div className="mt-2 font-mono text-sm font-semibold text-foreground">Continue lesson</div>
+              <div className="mt-1 font-mono text-xs leading-relaxed text-muted-foreground">
+                Resume the next curriculum step and enter Guided Studio with lesson support in place.
               </div>
-            </GlassCard>
-
-            <GlassCard
-              className="p-6"
-              staggerIndex={1}
-              expanded={expandedCard === "activity"}
-              containerRef={gridRef}
-              onClick={() => toggle("activity")}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/lab/studio")}
+              className="rounded-2xl border border-border/60 bg-background/55 p-4 text-left transition-colors hover:border-primary/30 hover:bg-background/75"
             >
-              <div className="flex items-center gap-2 mb-4">
-                <Zap className="h-4 w-4 text-primary" />
-                <span className="font-mono text-xs font-medium text-foreground">Activity</span>
+              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Create</div>
+              <div className="mt-2 font-mono text-sm font-semibold text-foreground">Resume session</div>
+              <div className="mt-1 font-mono text-xs leading-relaxed text-muted-foreground">
+                Open the current production workspace and keep mode, markers, and guide policy intact.
               </div>
-              <ActivityHeatmap />
-            </GlassCard>
-
-            <GlassCard
-              className="lg:row-span-2 p-6 flex flex-col"
-              staggerIndex={2}
-              expanded={expandedCard === "studio"}
-              containerRef={gridRef}
-              onClick={() => toggle("studio")}
-              texture="grunge"
-              textureOpacity={15}
+            </button>
+            <button
+              type="button"
+              onClick={() => navigate("/lab")}
+              className="rounded-2xl border border-border/60 bg-background/55 p-4 text-left transition-colors hover:border-primary/30 hover:bg-background/75"
             >
-              <GlowIcon icon={Music} color="primary" />
-              <div className="mt-auto pt-6 space-y-2">
-                <h2 className="font-mono text-sm font-semibold text-foreground">Studio</h2>
-                <p className="font-mono text-xs text-muted-foreground leading-relaxed">
-                  Production workspace with timeline, mixer, and MIDI editing.
-                </p>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="font-mono text-xs gap-1 text-muted-foreground px-0 hover:text-foreground"
-                  onClick={(e) => handleNavigate("/lab/studio", e)}
-                >
-                  Open Studio <ChevronRight className="h-3 w-3" />
-                </Button>
+              <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-muted-foreground">Explore</div>
+              <div className="mt-2 font-mono text-sm font-semibold text-foreground">Enter Lab</div>
+              <div className="mt-1 font-mono text-xs leading-relaxed text-muted-foreground">
+                Experiment with theory, analysis, and routing surfaces before committing work back into Studio.
               </div>
-            </GlassCard>
-
-            <GlassCard
-              className="lg:col-span-2 p-6 flex items-center gap-4"
-              staggerIndex={3}
-              expanded={expandedCard === "learning"}
-              containerRef={gridRef}
-              onClick={() => toggle("learning")}
-            >
-              <GlowIcon icon={BookOpen} color="accent" />
-              <div className="flex-1 min-w-0">
-                <h2 className="font-mono text-sm font-semibold text-foreground">Learning</h2>
-                <p className="font-mono text-xs text-muted-foreground mt-1 leading-relaxed">
-                  Structured curriculum from foundations to mastery.
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="shrink-0"
-                onClick={(e) => handleNavigate("/learn", e)}
-              >
-                <ChevronRight className="h-4 w-4 text-muted-foreground opacity-40" />
-              </Button>
-            </GlassCard>
-
-            <GlassCard
-              className="p-6 flex flex-col gap-4"
-              staggerIndex={4}
-              expanded={expandedCard === "theory"}
-              containerRef={gridRef}
-              onClick={() => toggle("theory")}
-              texture="geo-blocks"
-              textureOpacity={15}
-            >
-              <GlowIcon icon={Brain} color="success" />
-              <div className="space-y-1">
-                <h2 className="font-mono text-sm font-semibold text-foreground">Music Theory</h2>
-                <p className="font-mono text-xs text-muted-foreground leading-relaxed">
-                  Scales, chords &amp; harmony.
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="font-mono text-xs gap-1 text-muted-foreground px-0 hover:text-foreground mt-auto"
-                onClick={(e) => handleNavigate("/lab/theory", e)}
-              >
-                Explore <ChevronRight className="h-3 w-3" />
-              </Button>
-            </GlassCard>
-
-            <GlassCard
-              className="p-6 flex flex-col gap-4"
-              staggerIndex={5}
-              expanded={expandedCard === "flightcase"}
-              containerRef={gridRef}
-              onClick={() => toggle("flightcase")}
-            >
-              <GlowIcon icon={Package} color="warning" />
-              <div className="space-y-1">
-                <h2 className="font-mono text-sm font-semibold text-foreground">Flight Case</h2>
-                <p className="font-mono text-xs text-muted-foreground leading-relaxed">
-                  {gearCount} items in your gear collection.
-                </p>
-              </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="font-mono text-xs gap-1 text-muted-foreground px-0 hover:text-foreground mt-auto"
-                onClick={(e) => handleNavigate("/inventory", e)}
-              >
-                Open <ChevronRight className="h-3 w-3" />
-              </Button>
-            </GlassCard>
-
+            </button>
           </div>
-        </div>
-      </main>
-    </div>
+        </ProductSectionCard>
+
+        <ProductSectionCard
+          icon={Zap}
+          title="Activity"
+          description="A compact view of recent momentum across the workspace."
+          className="xl:col-span-5"
+        >
+          <ActivityHeatmap />
+        </ProductSectionCard>
+
+        <ProductSectionCard
+          icon={Music}
+          eyebrow="Studio"
+          title="Production workspace"
+          description="Guided, Standard, and Focused all run on the same Studio runtime. Choose the shell density that matches the session."
+          className="xl:col-span-4"
+          action={
+            <Button variant="ghost" size="sm" className="font-mono text-xs" onClick={() => navigate("/lab/studio")}>
+              Open <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+          }
+        />
+
+        <ProductSectionCard
+          icon={BookOpen}
+          eyebrow="Courses"
+          title="Structured learning"
+          description="Curriculum, lessons, and entry states should lead directly into the right Studio mode instead of living as a separate LMS."
+          className="xl:col-span-4"
+          action={
+            <Button variant="ghost" size="sm" className="font-mono text-xs" onClick={() => navigate("/learn")}>
+              Open <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+          }
+        />
+
+        <ProductSectionCard
+          icon={Brain}
+          eyebrow="Theory"
+          title="Reference and applied tools"
+          description="Theory stays close to production. Move from concept work into exploration and then back into Studio without changing systems."
+          className="xl:col-span-4"
+          action={
+            <Button variant="ghost" size="sm" className="font-mono text-xs" onClick={() => navigate("/lab/theory")}>
+              Explore <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+          }
+        />
+
+        <ProductSectionCard
+          icon={Package}
+          eyebrow="Flight Case"
+          title="Gear and library state"
+          description={`Your inventory currently tracks ${gearCount} items. This surface should stay operational, not decorative.`}
+          className="xl:col-span-12"
+          action={
+            <Button variant="ghost" size="sm" className="font-mono text-xs" onClick={() => navigate("/inventory")}>
+              Open Flight Case <ArrowRight className="ml-1 h-3.5 w-3.5" />
+            </Button>
+          }
+        />
+      </ProductSurfaceGrid>
+    </ProductShell>
   );
 }

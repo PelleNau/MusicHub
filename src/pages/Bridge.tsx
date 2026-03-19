@@ -15,6 +15,11 @@ import { ChainLoadView } from "@/components/bridge/ChainLoadView";
 import { PreviewRenderView } from "@/components/bridge/PreviewRenderView";
 import { DiagnosticsView } from "@/components/bridge/DiagnosticsView";
 import { WorkflowView } from "@/components/bridge/WorkflowView";
+import {
+  ProductMetaPill,
+  ProductPageHeader,
+  ProductShell,
+} from "@/components/app/ProductShell";
 
 import type { ConnectionStatus } from "@/hooks/usePluginHost";
 
@@ -44,28 +49,30 @@ export default function Bridge() {
   const connected = state.connection === "connected";
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background pb-20">
-      {/* Header */}
-      <header className="flex items-center justify-between border-b px-4 py-2 bg-chrome">
-        <div className="flex items-center gap-3">
-          <Radio className="h-5 w-5 text-primary" />
-          <h1 className="font-mono text-sm font-semibold tracking-tight text-foreground">BRIDGE</h1>
-          <span className="font-mono text-[10px] text-muted-foreground hidden sm:inline">— plugin host control</span>
+    <ProductShell
+      section="Bridge"
+      title="Native host control"
+      description="Bridge is the desktop host control surface for plugins, rendering, diagnostics, and connected runtime state."
+      contentClassName="px-0 py-0 md:px-0 md:py-0"
+    >
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="px-4 pt-4 md:px-6">
+          <ProductPageHeader
+            eyebrow="Bridge"
+            title="Control the native host path"
+            description="Use Bridge to inspect host status, scan plugins, import chain manifests, and verify the connected runtime without breaking the product shell."
+            meta={
+              <>
+                {state.health ? <ProductMetaPill>{state.health.sampleRate / 1000}kHz</ProductMetaPill> : null}
+                {state.health ? <ProductMetaPill>buf:{state.health.bufferSize}</ProductMetaPill> : null}
+                {state.health ? <ProductMetaPill>{state.health.pluginCount} plugins</ProductMetaPill> : null}
+              </>
+            }
+            actions={<ConnectionBadge status={state.connection} />}
+          />
         </div>
-        <div className="flex items-center gap-2">
-          {state.health && (
-            <div className="hidden sm:flex items-center gap-3 mr-2 font-mono text-[10px] text-muted-foreground">
-              <span className="flex items-center gap-1"><Cpu className="h-3 w-3" /> {state.health.sampleRate / 1000}kHz</span>
-              <span className="flex items-center gap-1"><Settings className="h-3 w-3" /> buf:{state.health.bufferSize}</span>
-              <span className="flex items-center gap-1"><HardDrive className="h-3 w-3" /> {state.health.pluginCount} plugins</span>
-            </div>
-          )}
-          <ConnectionBadge status={state.connection} />
-        </div>
-      </header>
 
-      {/* Tab content */}
-      <Tabs defaultValue="workflow" className="flex h-full flex-col min-h-0">
+        <Tabs defaultValue="workflow" className="flex min-h-0 flex-1 flex-col">
         <div className="border-b px-4 bg-chrome">
           <TabsList className="h-9 bg-transparent gap-1 p-0">
             <TabsTrigger value="workflow" className="font-mono text-xs gap-1.5 data-[state=active]:bg-secondary rounded-b-none border-b-2 data-[state=active]:border-primary border-transparent px-3">
@@ -173,6 +180,7 @@ export default function Bridge() {
           />
         </TabsContent>
       </Tabs>
-    </div>
+      </div>
+    </ProductShell>
   );
 }

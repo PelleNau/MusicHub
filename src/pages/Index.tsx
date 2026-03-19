@@ -8,6 +8,7 @@ import { useItemMeta } from "@/hooks/useItemMeta";
 import { InventoryFormDialog } from "@/components/InventoryFormDialog";
 import { DeleteConfirmDialog } from "@/components/DeleteConfirmDialog";
 import { BulkImportDialog } from "@/components/BulkImportDialog";
+import { ProductShell } from "@/components/app/ProductShell";
 import { useQueryClient } from "@tanstack/react-query";
 import { Star } from "lucide-react";
 import { ItemMeta } from "@/lib/itemMeta";
@@ -410,7 +411,9 @@ const Index = () => {
           await new Promise<void>((resolve, reject) => {
             addItem.mutate(item, { onSuccess: () => { success++; resolve(); }, onError: reject });
           });
-        } catch {}
+        } catch {
+          // Keep importing remaining items even if one entry fails.
+        }
       }
       queryClient.invalidateQueries({ queryKey: ["inventory"] });
     },
@@ -505,7 +508,13 @@ const Index = () => {
   }
 
   return (
-    <div className="flex flex-col h-screen overflow-hidden bg-background pb-20">
+    <ProductShell
+      section="Flight Case"
+      title="Gear inventory"
+      description="Keep the inventory operational and close to Studio, Bridge, and the rest of the workspace."
+      contentClassName="px-0 py-0 md:px-0 md:py-0"
+    >
+    <div className="flex h-full flex-col overflow-hidden">
       {/* ── Header ── */}
       <Glass className="mx-4 mt-4 mb-3 !rounded-xl px-4 py-3 flex flex-wrap items-center justify-between gap-3" staggerIndex={0}>
         <div className="flex items-center gap-3">
@@ -668,6 +677,7 @@ const Index = () => {
         existingProducts={inventoryItems.map((i) => i.product)}
       />
     </div>
+    </ProductShell>
   );
 };
 
