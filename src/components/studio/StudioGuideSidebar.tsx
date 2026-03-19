@@ -41,6 +41,7 @@ export function StudioGuideSidebar({
   return (
     <div className="ml-3 flex h-full" data-studio-mode={mode}>
       <StudioLessonPanel
+        mode={mode}
         state={lessonPanelModel.lessonState}
         onToggleCollapsed={lessonPanelModel.toggleCollapsed}
         onSkipStep={lessonPanelModel.skipCurrentStep}

@@ -5,8 +5,10 @@ import { LessonHeader } from "@/components/studio/lesson/LessonHeader";
 import { LessonStepCard } from "@/components/studio/lesson/LessonStepCard";
 import { LessonProgressRail } from "@/components/studio/lesson/LessonProgressRail";
 import type { StudioLessonPanelState } from "@/domain/studio/studioViewContracts";
+import { cn } from "@/lib/utils";
 
 interface StudioLessonPanelProps {
+  mode: "guided" | "standard" | "focused";
   state: StudioLessonPanelState;
   onToggleCollapsed: () => void;
   onSkipStep: () => void;
@@ -15,6 +17,7 @@ interface StudioLessonPanelProps {
 }
 
 export function StudioLessonPanel({
+  mode,
   state,
   onToggleCollapsed,
   onSkipStep,
@@ -25,7 +28,12 @@ export function StudioLessonPanel({
 
   if (state.collapsed) {
     return (
-      <div className="flex w-12 shrink-0 flex-col items-center gap-3 rounded-[20px] border border-border/70 bg-card/85 py-3 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.7)] backdrop-blur-xl">
+      <div className={cn(
+        "flex w-12 shrink-0 flex-col items-center gap-3 rounded-[20px] border py-3 backdrop-blur-xl",
+        mode === "guided"
+          ? "border-border/70 bg-card/85 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.7)]"
+          : "border-border/60 bg-card/72 shadow-[0_18px_50px_-34px_rgba(15,23,42,0.55)]",
+      )}>
         <button
           onClick={onToggleCollapsed}
           className="flex h-8 w-8 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors hover:bg-primary/15"
@@ -41,9 +49,15 @@ export function StudioLessonPanel({
   }
 
   return (
-    <aside className="flex w-[360px] shrink-0 flex-col overflow-hidden rounded-[24px] border border-border/70 bg-card/88 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.82)] backdrop-blur-xl">
+    <aside className={cn(
+      "flex shrink-0 flex-col overflow-hidden rounded-[24px] border backdrop-blur-xl",
+      mode === "guided"
+        ? "w-[360px] border-border/70 bg-card/88 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.82)]"
+        : "w-[320px] border-border/60 bg-card/78 shadow-[0_24px_80px_-42px_rgba(15,23,42,0.62)]",
+    )}>
       {/* Header */}
       <LessonHeader
+        mode={mode}
         title={state.title}
         lessonStatus={state.lessonStatus}
         stepIndex={state.stepIndex}
@@ -66,6 +80,7 @@ export function StudioLessonPanel({
 
           {/* Active step card */}
           <LessonStepCard
+            mode={mode}
             currentStepTitle={state.currentStepTitle}
             instruction={state.instruction}
             stepStatus={state.stepStatus}

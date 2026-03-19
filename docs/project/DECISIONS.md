@@ -919,3 +919,21 @@ The runtime seam is now stable enough that the next material improvement is pres
 - `src/components/studio/StudioHeaderBar.tsx` carries lesson context instead of acting like a generic toolbar strip
 - `src/components/studio/StudioArrangementWorkspace.tsx` now presents the arrangement area as the main task region
 - `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now treat the guide rail as the dominant guided-work support surface
+
+---
+
+## 2026-03-19 — Standard mode should broaden the same Studio shell, not replace it
+
+### Decision
+
+Standard mode should be implemented by widening the existing guided shell contract into a balanced production workspace, not by creating a second layout system or new runtime surface.
+
+### Rationale
+
+Guided and Standard need to feel related. The difference should be density, default visibility, and the weight of the lesson rail, not a divergent component tree. Keeping Standard as a derivation of the same shell contract preserves one Studio architecture and makes later Focused work cheaper.
+
+### Consequence
+
+- `src/components/studio/StudioHeaderBar.tsx` now adjusts its framing copy by mode instead of treating every non-guided state as the same
+- `src/components/studio/StudioArrangementWorkspace.tsx` and `src/components/studio/StudioBottomWorkspace.tsx` now render broader production-oriented framing in Standard while preserving the same behaviors
+- `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now make the lesson rail visually lighter in Standard without changing lesson runtime semantics

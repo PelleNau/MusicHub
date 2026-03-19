@@ -1,7 +1,9 @@
 import { Check, Loader2, AlertCircle } from "lucide-react";
 import type { GuideStepStatus } from "@/types/musicHubGuideRuntime";
+import { cn } from "@/lib/utils";
 
 interface LessonStepCardProps {
+  mode: "guided" | "standard" | "focused";
   currentStepTitle?: string;
   instruction?: string;
   stepStatus: GuideStepStatus;
@@ -44,13 +46,21 @@ function StepStatusIndicator({ status }: { status: GuideStepStatus }) {
 }
 
 export function LessonStepCard({
+  mode,
   currentStepTitle,
   instruction,
   stepStatus,
   activeHints,
 }: LessonStepCardProps) {
   return (
-    <div className="space-y-4 rounded-[20px] border border-border/70 bg-background/55 p-4 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.7)]">
+    <div
+      className={cn(
+        "space-y-4 rounded-[20px] border p-4",
+        mode === "guided"
+          ? "border-border/70 bg-background/55 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.7)]"
+          : "border-border/60 bg-background/42 shadow-[0_18px_50px_-36px_rgba(15,23,42,0.52)]",
+      )}
+    >
       {/* Step title + status */}
       {currentStepTitle && (
         <div className="flex items-start gap-2.5">
