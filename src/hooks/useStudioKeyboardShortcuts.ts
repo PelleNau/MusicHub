@@ -52,6 +52,9 @@ interface UseStudioKeyboardShortcutsOptions {
   history: UndoRedoState;
   commands: StudioCommandSurfaceForShortcuts;
   loopState: LoopState;
+  markerCommands?: {
+    addMarkerAtCurrentBeat: () => void;
+  };
 }
 
 export function useStudioKeyboardShortcuts({
@@ -67,6 +70,7 @@ export function useStudioKeyboardShortcuts({
   history,
   commands,
   loopState,
+  markerCommands,
 }: UseStudioKeyboardShortcutsOptions) {
   const playbackStateRef = useRef(playbackState);
   playbackStateRef.current = playbackState;
@@ -97,6 +101,9 @@ export function useStudioKeyboardShortcuts({
 
   const loopStateRef = useRef(loopState);
   loopStateRef.current = loopState;
+
+  const markerCommandsRef = useRef(markerCommands);
+  markerCommandsRef.current = markerCommands;
 
   useEffect(() => {
     const handler = (event: KeyboardEvent) => {
@@ -175,11 +182,13 @@ export function useStudioKeyboardShortcuts({
 
       if (event.key === "m" && !isTyping && !(event.metaKey || event.ctrlKey)) {
         const ids = selectedClipIdsRef.current;
+        event.preventDefault();
         if (ids.size > 0) {
-          event.preventDefault();
           for (const id of ids) commandsRef.current.updateClip(id, { muted: true });
-          return;
+        } else {
+          markerCommandsRef.current?.addMarkerAtCurrentBeat();
         }
+        return;
       }
 
       const loop = loopStateRef.current;

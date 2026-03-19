@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LessonLauncher } from "@/components/studio/LessonLauncher";
 
 interface StudioHeaderBarProps {
+  studioMode: "guided" | "standard" | "focused";
   sessionName: string;
   activeLessonId: string | null;
   guideVisible: boolean;
@@ -16,6 +17,7 @@ interface StudioHeaderBarProps {
 }
 
 export function StudioHeaderBar({
+  studioMode,
   sessionName,
   activeLessonId,
   guideVisible,
@@ -33,6 +35,9 @@ export function StudioHeaderBar({
         <Package className="h-4 w-4 text-primary" />
         <span className="font-mono text-sm font-semibold text-foreground truncate max-w-[200px]">
           {sessionName}
+        </span>
+        <span className="rounded border border-border/50 bg-muted/20 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-foreground/60">
+          {studioMode}
         </span>
       </div>
       <div className="flex items-center gap-1">

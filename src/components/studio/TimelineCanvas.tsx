@@ -21,7 +21,9 @@ interface TimelineCanvasProps {
   beatGetter?: () => number;
   staticBeat?: number;
   zoomHandle?: React.ReactNode;
+  rulerOverlayContent?: React.ReactNode;
   loopOverlay?: React.ReactNode;
+  gridOverlayContent?: React.ReactNode;
   children: React.ReactNode;
 }
 
@@ -54,7 +56,9 @@ export function TimelineCanvas({
   beatGetter,
   staticBeat = 0,
   zoomHandle,
+  rulerOverlayContent,
   loopOverlay,
+  gridOverlayContent,
   children,
 }: TimelineCanvasProps) {
   const rulerBgRef = useRef<HTMLCanvasElement>(null);
@@ -223,6 +227,7 @@ export function TimelineCanvas({
           <canvas ref={rulerBgRef} className="absolute inset-0 pointer-events-none" />
           <canvas ref={rulerContentRef} className="absolute inset-0 pointer-events-none" />
           <canvas ref={rulerOverlayRef} className="absolute inset-0 pointer-events-none" />
+          {rulerOverlayContent}
           <div className="absolute inset-0 cursor-default" onClick={handleRulerClick} />
         </div>
       </div>
@@ -236,6 +241,7 @@ export function TimelineCanvas({
             <canvas ref={gridBgRef} className="absolute inset-0" />
             <canvas ref={gridContentRef} className="absolute inset-0" />
             <canvas ref={gridOverlayRef} className="absolute inset-0" />
+            {gridOverlayContent}
             {loopOverlay}
           </div>
         </div>

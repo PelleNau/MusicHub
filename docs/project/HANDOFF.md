@@ -148,17 +148,34 @@ Unless explicitly overridden by the user:
 127. Studio session list/query composition now lives in `src/hooks/useStudioSessionQueries.ts`
 128. Studio runtime core and interaction runtime now compose behind a single `src/hooks/useStudioRuntime.ts` adapter before page-level presentation wiring
 129. timeline/grid coordination now lives in `src/hooks/useStudioPageCoordination.ts` instead of being wired directly inside `src/hooks/useStudioPageRuntime.ts`
+130. Studio mode contracts now live in `src/types/musicHubStudioModes.ts`
+131. Studio shell mode resolution now lives in `src/hooks/useStudioModeModel.ts`
+132. Studio route state now supports an explicit `mode` override in `src/hooks/useStudioRouteModel.ts`
+133. Studio settings now persist `studioModePreference` for shell-level mode defaults
+134. lesson panel collapse defaults now come from the Studio mode contract instead of only local component state
+135. browser panel collapse defaults now come from the Studio mode contract instead of only local component state
+136. arrangement workspace, bottom workspace, and guide sidebar now consume explicit Studio mode props before shell rendering
+137. `Studio.tsx` now renders the page shell through mode-aware visibility policy instead of one fixed shell layout
+138. Studio markers now live in `src/hooks/useStudioMarkerModel.ts` as session-scoped local UI state persisted in localStorage instead of waiting on canonical backend schema work
+139. Studio timeline markers now render through `src/components/studio/TimelineMarkerOverlay.tsx` and `src/components/studio/TimelineCanvas.tsx`
+140. the arrangement workspace now exposes an explicit marker action in its header controls instead of relying on standalone export-only UI
+141. the `M` shortcut now adds a marker at the playhead when no clips are selected, while preserving selected-clip mute behavior
+142. the active local Studio shell now includes a working marker import from the Figma export without importing the export’s standalone app architecture
+143. lesson view policy now has an explicit DSL/runtime contract in `src/types/musicHubLessonDsl.ts`
+144. lesson shell/view policy is documented in `docs/project/MH-044_Lesson_View_Policy.md`
+145. the lesson DSL spec now supports declarative panel visibility, viewport focus, and interaction-emphasis overlays without depending on component structure
 
 ## Current Next Work
 
-1. decide whether the new `useStudioRuntime.ts` adapter is sufficient as the publishable runtime checkpoint or whether one more normalization pass is still warranted
-2. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
-3. decide whether continuous controls remain a bounded edit stream or need broader runtime normalization
-4. decide whether lesson DSL should gain first-class continuous-edit expectations and validation nodes
-5. decide whether selector-facing session state should adopt a stronger canonical normalized adapter instead of continuing to consume raw session shapes
-6. use the desktop-primary assumption to tighten any remaining host/core seams instead of preserving web-era ambiguity
-7. decide whether the next iteration should formalize a stronger normalized selector/runtime layer or stop at the current stronger checkpoint
-8. if continuing before publish, target the remaining raw session/runtime shapes above `useStudioRuntime.ts` or cut a publishable branch from the now-stable runtime seam
+1. implement the new Figma-driven Guided/Standard/Focused shell against the explicit Studio mode contract
+2. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
+3. decide whether markers should stay local assist state or graduate into canonical session persistence later
+4. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
+5. use the desktop-primary assumption to tighten any remaining host/core seams instead of preserving web-era ambiguity
+6. decide whether continuous controls remain a bounded edit stream or need broader runtime normalization
+7. decide whether lesson DSL should gain first-class continuous-edit expectations and validation nodes
+8. decide whether selector-facing session state should adopt a stronger canonical normalized adapter instead of continuing to consume raw session shapes
+9. cut a publishable branch from the current runtime checkpoint before large visual redesign work lands
 
 ## Default Instruction For Lovable
 

@@ -1,15 +1,19 @@
-import { Plus, Undo2, Upload } from "lucide-react";
+import { Flag, Plus, Undo2, Upload } from "lucide-react";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
-import type { SessionTrack } from "@/types/studio";
+import type { AutomationPoint, SessionTrack } from "@/types/studio";
 import type { MeterLevel } from "@/services/pluginHostSocket";
+import type { StudioMarkerModelResult } from "@/hooks/useStudioMarkerModel";
 import { BrowserPanel } from "@/components/studio/BrowserPanel";
 import { GridContextMenu } from "@/components/studio/GridOverlay";
 import { LoopRegion } from "@/components/studio/LoopRegion";
+import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/TimelineMarkerOverlay";
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
 import { ZoomDragHandle } from "@/components/studio/ZoomDragHandle";
 import { TrackLane } from "@/components/studio/TrackLane";
 
 interface StudioArrangementWorkspaceProps {
+  mode: "guided" | "standard" | "focused";
+  showBrowserPanel: boolean;
   browserProps: React.ComponentProps<typeof BrowserPanel>;
   gridProps: {
     gridMode: "adaptive" | "fixed";
@@ -66,7 +70,7 @@ interface StudioArrangementWorkspaceProps {
     onClipSelect: (clipId: string, trackId: string) => void;
     onClipClick: (clipId: string, trackId: string, e: React.MouseEvent) => void;
     onCreateMidiClip: (trackId: string, startBeats: number) => void;
-    onAutomationChange: (trackId: string, laneId: string, points: any[]) => void;
+    onAutomationChange: (trackId: string, laneId: string, points: AutomationPoint[]) => void;
     onAutomationAdd: (trackId: string, target: string, label: string) => void;
     onAutomationRemove: (trackId: string, laneId: string) => void;
     onDeleteClip: (clipId: string) => void;
@@ -85,11 +89,15 @@ interface StudioArrangementWorkspaceProps {
     createMidiTrack: () => void;
     createReturnTrack: () => void;
     openAudioUpload: () => void;
+    addMarkerAtPlayhead: () => void;
   };
   assetImportInputProps: React.InputHTMLAttributes<HTMLInputElement>;
+  markerModel: StudioMarkerModelResult;
 }
 
 export function StudioArrangementWorkspace({
+  mode,
+  showBrowserPanel,
   browserProps,
   gridProps,
   timelineContainerProps,
@@ -116,10 +124,11 @@ export function StudioArrangementWorkspace({
   arrangementWrapper,
   timelineHeaderActions,
   assetImportInputProps,
+  markerModel,
 }: StudioArrangementWorkspaceProps) {
   return (
-    <div className="flex-1 flex min-h-0 overflow-hidden">
-      <BrowserPanel {...browserProps} />
+    <div className="flex-1 flex min-h-0 overflow-hidden" data-studio-mode={mode}>
+      {showBrowserPanel ? <BrowserPanel {...browserProps} /> : null}
 
       <div className="flex-1 min-w-0 min-h-0 overflow-hidden">
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
@@ -145,7 +154,22 @@ export function StudioArrangementWorkspace({
                         onZoomV={onSetTrackHeight}
                       />
                     }
+                    rulerOverlayContent={
+                      <TimelineMarkerFlags
+                        markers={markerModel.sortedMarkers}
+                        pixelsPerBeat={pixelsPerBeat}
+                        onJump={markerModel.jumpToMarker}
+                        onRename={markerModel.renameMarker}
+                        onDelete={markerModel.deleteMarker}
+                      />
+                    }
                     loopOverlay={<LoopRegion pixelsPerBeat={pixelsPerBeat} {...loopRegionProps} />}
+                    gridOverlayContent={
+                      <TimelineMarkerLines
+                        markers={markerModel.sortedMarkers}
+                        pixelsPerBeat={pixelsPerBeat}
+                      />
+                    }
                   >
                     {displayTracks.length === 0 ? (
                       <div className="flex h-full min-h-[120px] items-center justify-center">
@@ -223,6 +247,9 @@ export function StudioArrangementWorkspace({
                       </button>
                       <button className="flex items-center justify-center gap-1 rounded-[3px] h-6 px-2 font-mono text-[10px] text-foreground/65 border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-border hover:text-foreground/80 transition-colors" onClick={timelineHeaderActions.openAudioUpload}>
                         <Upload className="h-3 w-3" /> Audio
+                      </button>
+                      <button className="flex items-center justify-center gap-1 rounded-[3px] h-6 px-2 font-mono text-[10px] text-foreground/65 border border-border/50 bg-muted/20 hover:bg-muted/40 hover:border-border hover:text-foreground/80 transition-colors" onClick={timelineHeaderActions.addMarkerAtPlayhead}>
+                        <Flag className="h-3 w-3" /> Marker
                       </button>
                       <input {...assetImportInputProps} />
                     </div>

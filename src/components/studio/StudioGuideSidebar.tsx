@@ -4,19 +4,27 @@ import type { StudioLessonPanelModelResult } from "@/hooks/useStudioLessonPanelM
 import type { StudioGuideBridgeResult } from "@/hooks/useStudioGuideBridge";
 
 interface StudioGuideSidebarProps {
+  mode: "guided" | "standard" | "focused";
+  visible: boolean;
   guideBridge: StudioGuideBridgeResult;
   lessonPanelModel: StudioLessonPanelModelResult;
   onDismissCompletion: () => void;
 }
 
 export function StudioGuideSidebar({
+  mode,
+  visible,
   guideBridge,
   lessonPanelModel,
   onDismissCompletion,
 }: StudioGuideSidebarProps) {
+  if (!visible) {
+    return null;
+  }
+
   if (guideBridge.runtime.state.lessonStatus === "completed" && guideBridge.lesson) {
     return (
-      <div className="w-72 border-l border-border bg-card overflow-auto">
+      <div className="w-72 border-l border-border bg-card overflow-auto" data-studio-mode={mode}>
         <ModuleCompletionCelebration
           title={guideBridge.lesson.title}
           objectives={guideBridge.lesson.objectives ?? []}
@@ -28,12 +36,14 @@ export function StudioGuideSidebar({
   }
 
   return (
-    <StudioLessonPanel
-      state={lessonPanelModel.lessonState}
-      onToggleCollapsed={lessonPanelModel.toggleCollapsed}
-      onSkipStep={lessonPanelModel.skipCurrentStep}
-      onResetStep={lessonPanelModel.resetCurrentStep}
-      onAbortLesson={() => lessonPanelModel.abortLesson("user_closed")}
-    />
+    <div data-studio-mode={mode}>
+      <StudioLessonPanel
+        state={lessonPanelModel.lessonState}
+        onToggleCollapsed={lessonPanelModel.toggleCollapsed}
+        onSkipStep={lessonPanelModel.skipCurrentStep}
+        onResetStep={lessonPanelModel.resetCurrentStep}
+        onAbortLesson={() => lessonPanelModel.abortLesson("user_closed")}
+      />
+    </div>
   );
 }

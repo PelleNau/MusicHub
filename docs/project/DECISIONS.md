@@ -844,3 +844,59 @@ Even after runtime unification, page-runtime assembly should not own low-level e
 - `src/hooks/useStudioPageCoordination.ts` now owns timeline/grid coordination and keyboard binding
 - `useStudioPageRuntime.ts` is narrower and more declarative
 - the remaining work is no longer page wiring; it is either publish or move into redesign work
+
+---
+
+## 2026-03-18 — Studio redesign should land through an explicit mode contract
+
+### Decision
+
+The Studio redesign should be implemented through an explicit mode contract (`guided`, `standard`, `focused`) and a mode-driven shell policy instead of continuing to hardcode one default page layout.
+
+### Rationale
+
+The runtime checkpoint is now strong enough that the next source of risk is shell drift: Figma work can only land cleanly if the page shell has a stable way to express layout density, panel visibility, and guide/browser defaults without reopening runtime extraction work. A mode contract gives the redesign a durable integration surface while keeping transport, session, host, and command authority unchanged.
+
+### Consequence
+
+- `src/types/musicHubStudioModes.ts` now defines the canonical Studio mode and shell-policy contract
+- `src/hooks/useStudioModeModel.ts` now resolves route override, persisted preference, and lesson-driven defaults into one active Studio mode
+- route/query state and settings now participate in Studio mode selection without changing runtime authority
+- browser collapse, lesson-panel collapse, bottom-workspace visibility, and guide-sidebar visibility now have an explicit shell policy surface for the redesign phase
+
+---
+
+## 2026-03-18 — Studio markers should start as local session-assist state, not canonical session data
+
+### Decision
+
+The first marker implementation should live as session-scoped local UI state persisted in localStorage instead of extending the canonical session/backend model immediately.
+
+### Rationale
+
+Markers are useful now for navigation and organization, but there is no existing backend/session contract for them in the real `MusicHub` runtime. The Figma export proved the interaction value, not the storage model. Shipping markers first as local assist state gives the Studio shell the navigation affordance without forcing premature schema, command, persistence, and native-host changes.
+
+### Consequence
+
+- `src/hooks/useStudioMarkerModel.ts` owns marker persistence and actions per active session
+- marker rendering now sits in the real timeline shell through `src/components/studio/TimelineMarkerOverlay.tsx`
+- the current marker feature is intentionally UI/session-assist state, not authoritative project state
+- the later decision is whether markers should become canonical session data once the redesigned shell and project model stabilize
+
+---
+
+## 2026-03-19 — Guided mode should be overlaid by lesson view policy, not treated as one fixed shell
+
+### Decision
+
+Guided mode should remain a base shell density preset, but lesson and step definitions should be able to overlay explicit view policy for panel visibility, viewport focus, and interaction emphasis.
+
+### Rationale
+
+The curriculum spans rhythm, arrangement, MIDI editing, audio editing, preset browsing, and mixing. One static Guided shell will either expose too much UI or fail to surface the right workspace for many lessons. A lesson view-policy layer keeps one Studio architecture while allowing deterministic shell shaping per lesson or per step.
+
+### Consequence
+
+- `src/types/musicHubLessonDsl.ts` now supports declarative `viewPolicy` at lesson, entry, and step levels
+- `docs/project/MH-044_Lesson_View_Policy.md` defines the resolution model and intended usage
+- the next implementation step is not another new mode; it is resolving lesson view policy on top of the existing Studio mode contract

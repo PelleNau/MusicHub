@@ -5,15 +5,22 @@ import { useStudioRouteModel } from "@/hooks/useStudioRouteModel";
 import { useStudioPresentationModels } from "@/hooks/useStudioPresentationModels";
 import { useStudioRuntime } from "@/hooks/useStudioRuntime";
 import { useStudioPageCoordination } from "@/hooks/useStudioPageCoordination";
+import { useStudioModeModel } from "@/hooks/useStudioModeModel";
+import { useStudioMarkerModel } from "@/hooks/useStudioMarkerModel";
+import { useStudioLessonViewPolicy } from "@/hooks/useStudioLessonViewPolicy";
+import { useStudioLessonViewPolicyCoordination } from "@/hooks/useStudioLessonViewPolicyCoordination";
+import type { StudioModePreference } from "@/types/musicHubStudioModes";
 
 interface UseStudioPageRuntimeOptions {
   signOut: () => Promise<void>;
   navigateToLab: () => void;
+  preferredMode: StudioModePreference;
 }
 
 export function useStudioPageRuntime({
   signOut,
   navigateToLab,
+  preferredMode,
 }: UseStudioPageRuntimeOptions) {
   const history = useUndoRedo();
   const routeModel = useStudioRouteModel();
@@ -86,6 +93,18 @@ export function useStudioPageRuntime({
     detailPanelModel,
   } = runtime;
 
+  const markerModel = useStudioMarkerModel({
+    sessionId: routeModel.activeSessionId,
+    beatsPerBar: sessionMetrics.beatsPerBar,
+    getCurrentBeat: playheadBeatGetter ?? (() => effectiveBeat),
+    onSeek: commandDispatch.seek,
+  });
+
+  const lessonViewPolicy = useStudioLessonViewPolicy({
+    lesson: guideBridge.lesson,
+    currentStep: guideBridge.runtime.state.currentStep,
+  });
+
   const coordination = useStudioPageCoordination({
     beatsPerBar: sessionMetrics.beatsPerBar,
     totalBeats: sessionMetrics.totalBeats,
@@ -104,6 +123,9 @@ export function useStudioPageRuntime({
       openPanel: commandDispatch.openPanel,
       setLoop: commandDispatch.setLoop,
     },
+    markerCommands: {
+      addMarkerAtCurrentBeat: markerModel.addMarkerAtCurrentBeat,
+    },
     loopState: {
       loopEnabled: transport.loopEnabled,
       loopStart: transport.loopStart,
@@ -113,6 +135,23 @@ export function useStudioPageRuntime({
       isMock: connectionSummary.isMock,
       buildGraph,
     },
+  });
+
+  const studioModeModel = useStudioModeModel({
+    routeMode: routeModel.routeMode,
+    preferredMode,
+    lessonState: {
+      visible: guideBridge.lesson !== undefined,
+      lessonStatus: guideBridge.runtime.state.lessonStatus,
+    },
+    panelState,
+    lessonViewPolicy,
+  });
+
+  useStudioLessonViewPolicyCoordination({
+    viewPolicy: lessonViewPolicy,
+    panelState,
+    commandDispatch,
   });
 
   const presentation = useStudioPresentationModels({
@@ -150,6 +189,7 @@ export function useStudioPageRuntime({
       loopStart: transport.loopStart,
       loopEnd: transport.loopEnd,
       totalBeats: sessionMetrics.totalBeats,
+      studioModeModel,
     },
     shell: {
       routeModel,
@@ -194,7 +234,9 @@ export function useStudioPageRuntime({
       mixerPanelState,
       pianoRollViewModel,
       detailPanelModel,
+      markerModel,
     },
+    studioModeModel,
   });
 
   return {
@@ -206,6 +248,9 @@ export function useStudioPageRuntime({
     sessionMetrics,
     guideBridge,
     connectionSummary,
+    studioModeModel,
+    markerModel,
+    lessonViewPolicy,
     grid: coordination.grid,
     presentation,
     settingsRuntime: {

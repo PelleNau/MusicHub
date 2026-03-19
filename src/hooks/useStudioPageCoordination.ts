@@ -28,6 +28,9 @@ interface UseStudioPageCoordinationOptions {
     openPanel: (panel: "detail" | "mixer" | "pianoRoll") => void;
     setLoop: (enabled: boolean, start: number, end: number) => void;
   };
+  markerCommands?: {
+    addMarkerAtCurrentBeat: () => void;
+  };
   runtimeCoordination: {
     isMock: boolean;
     buildGraph: () => void;
@@ -46,6 +49,7 @@ export function useStudioPageCoordination({
   history,
   loopState,
   commands,
+  markerCommands,
   runtimeCoordination,
 }: UseStudioPageCoordinationOptions) {
   const grid = useTimelineGrid(beatsPerBar);
@@ -72,6 +76,7 @@ export function useStudioPageCoordination({
     history,
     commands,
     loopState,
+    markerCommands,
   });
 
   return {

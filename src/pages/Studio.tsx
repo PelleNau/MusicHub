@@ -38,11 +38,14 @@ export default function Studio() {
     sessionMetrics,
     connectionSummary,
     guideBridge,
+    studioModeModel,
     grid,
     presentation,
+    lessonViewPolicy,
   } = useStudioPageRuntime({
     signOut,
     navigateToLab: () => navigate("/lab"),
+    preferredMode: settings.studioModePreference,
   });
 
   // --- Session picker view ---
@@ -75,11 +78,15 @@ export default function Studio() {
     <StudioInfoProvider>
     <div
       className={`flex h-screen flex-col bg-background ${settings.theme === "ocean" ? "dawn-lagoon-bg" : ""}`}
+      data-studio-mode={studioModeModel.mode}
       data-guide-lesson={guideBridge.lesson?.lessonId ?? ""}
       data-guide-status={guideBridge.runtime.state.lessonStatus}
       data-guide-step={guideBridge.runtime.state.currentStep?.stepId ?? ""}
+      data-lesson-focus={studioModeModel.shell.focusTarget ?? lessonViewPolicy?.viewport?.focus ?? ""}
+      data-lesson-dim={studioModeModel.shell.dimNonEssentialPanels ? "true" : "false"}
     >
       <StudioHeaderBar
+        studioMode={studioModeModel.mode}
         sessionName={session?.name || "Loading…"}
         activeLessonId={routeModel.lessonId}
         guideVisible={presentation.headerModel.guide.visible}
@@ -104,8 +111,10 @@ export default function Studio() {
           direction="vertical"
           className="h-full min-h-0 flex-1 min-w-0"
         >
-          <ResizablePanel defaultSize={72} minSize={0} className="min-h-0 overflow-hidden">
+          <ResizablePanel defaultSize={studioModeModel.shell.arrangementDefaultSize} minSize={0} className="min-h-0 overflow-hidden">
             <StudioArrangementWorkspace
+              mode={studioModeModel.mode}
+              showBrowserPanel={studioModeModel.shell.showBrowserPanel}
               browserProps={presentation.arrangementWorkspaceModel.browserProps}
               gridProps={presentation.arrangementWorkspaceModel.gridProps}
               timelineContainerProps={presentation.arrangementWorkspaceModel.timelineContainerProps}
@@ -130,35 +139,44 @@ export default function Studio() {
               trackLaneProps={presentation.arrangementWorkspaceModel.trackLaneProps}
               snapBeats={presentation.arrangementWorkspaceModel.snapBeats}
               arrangementWrapper={(children) => <ArrangementHover>{children}</ArrangementHover>}
+              markerModel={presentation.arrangementWorkspaceModel.markerModel}
               timelineHeaderActions={presentation.arrangementWorkspaceModel.timelineHeaderActions}
               assetImportInputProps={presentation.arrangementWorkspaceModel.assetImportInputProps}
             />
           </ResizablePanel>
 
-          <ResizableHandle
-            withHandle
-            hitAreaMargins={{ coarse: 14, fine: 8 }}
-            className="h-4 border-y border-border bg-card/80"
-          />
+          {studioModeModel.shell.showBottomWorkspace ? (
+            <>
+              <ResizableHandle
+                withHandle
+                hitAreaMargins={{ coarse: 14, fine: 8 }}
+                className="h-4 border-y border-border bg-card/80"
+              />
 
-          <ResizablePanel defaultSize={28} minSize={0} className="min-h-0 overflow-hidden">
-            <StudioBottomWorkspace
-              bottomTab={presentation.bottomWorkspaceModel.bottomTab}
-              setBottomTab={presentation.bottomWorkspaceModel.setBottomTab}
-              showPianoRoll={presentation.bottomWorkspaceModel.showPianoRoll}
-              showMixer={presentation.bottomWorkspaceModel.showMixer}
-              showDetail={presentation.bottomWorkspaceModel.showDetail}
-              selectedTrackId={presentation.bottomWorkspaceModel.selectedTrackId}
-              mixerEmptyInstruction={presentation.bottomWorkspaceModel.mixerEmptyInstruction}
-              emptyInstruction={presentation.bottomWorkspaceModel.emptyInstruction}
-              mixerPanelProps={presentation.bottomWorkspaceModel.mixerPanelProps}
-              pianoRollProps={presentation.bottomWorkspaceModel.pianoRollProps}
-              detailPanelProps={presentation.bottomWorkspaceModel.detailPanelProps}
-            />
-          </ResizablePanel>
+              <ResizablePanel defaultSize={studioModeModel.shell.bottomDefaultSize} minSize={0} className="min-h-0 overflow-hidden">
+                <StudioBottomWorkspace
+                  mode={studioModeModel.mode}
+                  showTabs={studioModeModel.shell.showBottomTabs}
+                  bottomTab={presentation.bottomWorkspaceModel.bottomTab}
+                  setBottomTab={presentation.bottomWorkspaceModel.setBottomTab}
+                  showPianoRoll={presentation.bottomWorkspaceModel.showPianoRoll}
+                  showMixer={presentation.bottomWorkspaceModel.showMixer}
+                  showDetail={presentation.bottomWorkspaceModel.showDetail}
+                  selectedTrackId={presentation.bottomWorkspaceModel.selectedTrackId}
+                  mixerEmptyInstruction={presentation.bottomWorkspaceModel.mixerEmptyInstruction}
+                  emptyInstruction={presentation.bottomWorkspaceModel.emptyInstruction}
+                  mixerPanelProps={presentation.bottomWorkspaceModel.mixerPanelProps}
+                  pianoRollProps={presentation.bottomWorkspaceModel.pianoRollProps}
+                  detailPanelProps={presentation.bottomWorkspaceModel.detailPanelProps}
+                />
+              </ResizablePanel>
+            </>
+          ) : null}
         </ResizablePanelGroup>
 
       <StudioGuideSidebar
+        mode={studioModeModel.mode}
+        visible={studioModeModel.shell.showGuideSidebar}
         guideBridge={presentation.guideSidebarModel.guideBridge}
         lessonPanelModel={presentation.guideSidebarModel.lessonPanelModel}
         onDismissCompletion={presentation.guideSidebarModel.onDismissCompletion}
