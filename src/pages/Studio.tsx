@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
@@ -16,6 +17,7 @@ import { StudioInfoProvider, useInfoHover, STUDIO_INFO } from "@/components/stud
 import { Skeleton } from "@/components/ui/skeleton";
 import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getCaptureScenario, isCaptureMode } from "@/lib/captureMode";
 
 function ArrangementHover({ children }: { children: React.ReactNode }) {
   const hp = useInfoHover(STUDIO_INFO.arrangement);
@@ -26,6 +28,8 @@ export default function Studio() {
   const navigate = useNavigate();
   const { settings } = useSettings();
   const { signOut } = useAuth();
+  const captureMode = isCaptureMode();
+  const captureScenario = getCaptureScenario();
   const {
     routeModel,
     sessions,
@@ -39,13 +43,59 @@ export default function Studio() {
     grid,
     presentation,
     lessonViewPolicy,
+    commandDispatch,
   } = useStudioPageRuntime({
     signOut,
     navigateToLab: () => navigate("/lab"),
     preferredMode: settings.studioModePreference,
   });
 
+  useEffect(() => {
+    if (!captureMode) return;
+    if (routeModel.activeSessionId || sessions.length === 0) return;
+    routeModel.selectSession(sessions[0].id);
+  }, [captureMode, routeModel, sessions]);
+
+  useEffect(() => {
+    if (!captureMode || !routeModel.activeSessionId || isLoading) return;
+
+    if (captureScenario === "mixer") {
+      if (presentation.bottomWorkspaceModel.showMixer) return;
+      presentation.bottomWorkspaceModel.setBottomTab("mixer");
+      return;
+    }
+
+    if (captureScenario === "piano-roll") {
+      if (presentation.bottomWorkspaceModel.showPianoRoll) return;
+      const midiTrack = tracks.find((track) => track.type === "midi" && (track.clips ?? []).some((clip) => clip.is_midi));
+      const midiClip = midiTrack?.clips?.find((clip) => clip.is_midi);
+      if (!midiTrack || !midiClip) return;
+
+      presentation.arrangementWorkspaceModel.trackLaneProps.onClipSelect(midiClip.id, midiTrack.id);
+      commandDispatch.openPanel("pianoRoll");
+    }
+  }, [
+    captureMode,
+    captureScenario,
+    commandDispatch,
+    isLoading,
+    presentation.arrangementWorkspaceModel.trackLaneProps,
+    presentation.bottomWorkspaceModel,
+    routeModel.activeSessionId,
+    tracks,
+  ]);
+
   if (!routeModel.activeSessionId) {
+    if (captureMode && sessions.length > 0) {
+      return (
+        <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+          <Package className="h-6 w-6 animate-pulse text-primary" />
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-3 w-32" />
+        </div>
+      );
+    }
+
     return (
       <SessionPicker
         sessions={sessions}

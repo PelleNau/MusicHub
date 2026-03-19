@@ -9,6 +9,8 @@ import { Suspense, lazy } from "react";
 
 import { isInTauriShell } from "@/services/tauriShell";
 import { FloatingDock } from "@/components/app/FloatingDock";
+import { CaptureBar } from "@/components/app/CaptureBar";
+import { isCaptureMode } from "@/lib/captureMode";
 
 import Auth from "./pages/Auth.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -27,6 +29,7 @@ const TheoryLabExplore = lazy(() => import("./pages/TheoryLabExplore.tsx"));
 const TheoryLabTools = lazy(() => import("./pages/TheoryLabTools.tsx"));
 const Studio = lazy(() => import("./pages/Studio.tsx"));
 const Bridge = lazy(() => import("./pages/Bridge.tsx"));
+const CaptureDesignSystemShowcase = lazy(() => import("./pages/CaptureDesignSystemShowcase.tsx"));
 
 const MockAppLayout = lazy(() => import("./pages/mockups/MockAppLayout.tsx"));
 
@@ -54,13 +57,23 @@ function PageLoader() {
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
+  const captureMode = isCaptureMode();
 
-  if (loading) return <PageLoader />;
-  if (!session) return <Navigate to="/auth" replace />;
+  if (!captureMode && loading) return <PageLoader />;
+  if (!captureMode && !session) return <Navigate to="/auth" replace />;
   return (
     <Suspense fallback={<PageLoader />}>
-      {children}
-      <FloatingDock />
+      {captureMode ? (
+        <>
+          <div className="min-h-screen pt-16">{children}</div>
+          <CaptureBar />
+        </>
+      ) : (
+        <>
+          {children}
+          <FloatingDock />
+        </>
+      )}
     </Suspense>
   );
 }
@@ -98,6 +111,7 @@ const App = () => {
               <Route path="/lab/theory" element={<ProtectedRoute><TheoryLab /></ProtectedRoute>} />
               <Route path="/lab/theory/explore" element={<ProtectedRoute><TheoryLabExplore /></ProtectedRoute>} />
               <Route path="/lab/theory/tools" element={<ProtectedRoute><TheoryLabTools /></ProtectedRoute>} />
+              <Route path="/capture/design-system" element={<ProtectedRoute><CaptureDesignSystemShowcase /></ProtectedRoute>} />
               {/* Mockup routes — unified shell layout */}
               <Route path="/mockup" element={<Suspense fallback={<PageLoader />}><MockAppLayout /></Suspense>}>
                 <Route index element={<Navigate to="/" replace />} />

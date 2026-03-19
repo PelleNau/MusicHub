@@ -85,12 +85,6 @@ export function useStudioPageRuntime({
     guideBridge,
     continuousEditModel,
     commandDispatch,
-    browserActionsModel,
-    assetImportInputProps,
-    bottomPaneModel,
-    mixerViewModel,
-    pianoRollViewModel,
-    detailPanelModel,
   } = runtime;
 
   const markerModel = useStudioMarkerModel({
@@ -112,7 +106,7 @@ export function useStudioPageRuntime({
     selectedClipIds,
     clearSelectedClipIds,
     bottomTab,
-    showPianoRoll: bottomPaneModel.showPianoRoll,
+    showPianoRoll: panelState.showPianoRoll,
     playbackState: effectivePlaybackState,
     history,
     commands: {
@@ -213,7 +207,6 @@ export function useStudioPageRuntime({
       onSelectSession: routeModel.selectSession,
       onDeleteSessionMutate: deleteSession.mutate,
       onRenameSessionMutate: renameSession.mutate,
-      browserActionsModel,
       grid: coordination.grid,
       timelineRef: coordination.timelineRef,
       pixelsPerBeat: coordination.grid.pixelsPerBeat,
@@ -226,14 +219,9 @@ export function useStudioPageRuntime({
       selectedClipIds,
       onNativeMonitorToggle: handleNativeMonitorToggle,
       onNativeArmToggle: handleNativeArmToggle,
-      assetImportInputProps,
       guideBridge,
-      bottomPaneModel,
       panelState,
-      mixerViewModel,
       mixerPanelState,
-      pianoRollViewModel,
-      detailPanelModel,
       markerModel,
     },
     studioModeModel,
@@ -253,6 +241,7 @@ export function useStudioPageRuntime({
     lessonViewPolicy,
     grid: coordination.grid,
     presentation,
+    commandDispatch,
     settingsRuntime: {
       bottomTab,
     },

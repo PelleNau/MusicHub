@@ -1,5 +1,23 @@
 # Project Decisions
 
+## 2026-03-19 — Figma export should consume a real in-app capture mode
+
+### Decision
+
+The Figma export package should get its screenshots from a dev-only capture workflow inside the real `MusicHub` app, not from a separate generated bridge app or manual approximation.
+
+### Rationale
+
+The export package already assumes `?capture=true`, scenario switching, and an in-app setup surface. Building that into the real app keeps Figma anchored to the actual shell, lesson, and design-token implementation instead of a second generated UI stack.
+
+### Consequence
+
+- `MusicHub` should expose a dev-only capture bar and fixed scenarios
+- capture scenarios should use real Studio routes and real lesson/view-policy wiring where possible
+- a dedicated in-app component showcase can exist for Figma capture, but generated `src/app/...` export structure remains non-authoritative
+
+---
+
 ## 2026-03-19 — Figma design system should enter as token and shell refinements first
 
 ### Decision

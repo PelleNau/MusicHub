@@ -10,6 +10,7 @@ import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/Ti
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
 import { VerticalZoomSlider } from "@/components/studio/VerticalZoomSlider";
 import { TrackLane } from "@/components/studio/TrackLane";
+import { Flag, Plus, Undo2, Upload } from "lucide-react";
 
 interface StudioArrangementWorkspaceProps {
   mode: "guided" | "standard" | "focused";
