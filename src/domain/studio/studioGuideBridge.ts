@@ -34,6 +34,7 @@ export function createGuideSelectorSnapshot(input: StudioGuideBridgeInput): Guid
     pianoRollState,
     detailPanelState,
     trackViewStateById,
+    displayTracks,
   } = input;
 
   return {
@@ -61,7 +62,37 @@ export function createGuideSelectorSnapshot(input: StudioGuideBridgeInput): Guid
         muted: state.muted,
         solo: state.solo,
         selected: state.selected,
+        nativeArmed: state.nativeArmed,
+        nativeMonitoring: state.nativeMonitoring,
       })),
+      firstMidiTrack: (() => {
+        const track = displayTracks.find((candidate) => candidate.type === "midi");
+        if (!track) return undefined;
+        const state = trackViewStateById[track.id];
+        return {
+          id: track.id,
+          type: track.type,
+          muted: state?.muted ?? false,
+          solo: state?.solo ?? false,
+          selected: state?.selected ?? false,
+          nativeArmed: state?.nativeArmed ?? false,
+          nativeMonitoring: state?.nativeMonitoring ?? false,
+        };
+      })(),
+      firstAudioTrack: (() => {
+        const track = displayTracks.find((candidate) => candidate.type === "audio");
+        if (!track) return undefined;
+        const state = trackViewStateById[track.id];
+        return {
+          id: track.id,
+          type: track.type,
+          muted: state?.muted ?? false,
+          solo: state?.solo ?? false,
+          selected: state?.selected ?? false,
+          nativeArmed: state?.nativeArmed ?? false,
+          nativeMonitoring: state?.nativeMonitoring ?? false,
+        };
+      })(),
     },
     pianoRoll: pianoRollState,
     detailPanel: detailPanelState,
@@ -73,6 +104,7 @@ export function createStudioGuideAnchorRegistry(
   input: StudioGuideBridgeInput,
 ): GuideAnchorRegistryEntry[] {
   const {
+    connectionSummary,
     panelState,
     selectionSummary,
     pianoRollState,
@@ -151,6 +183,14 @@ export function createStudioGuideAnchorRegistry(
       panel: "timeline",
       highlights: ["tempoControl"],
     },
+    {
+      id: "transport:record",
+      targetType: "panel",
+      targetId: "transport.record",
+      available: connectionSummary.canUseNativeControls,
+      panel: "timeline",
+      highlights: ["transportRecord"],
+    },
   ];
 
   for (const track of displayTracks) {
@@ -161,7 +201,7 @@ export function createStudioGuideAnchorRegistry(
         targetId: track.id,
         available: true,
         panel: "timeline",
-        highlights: ["trackHeader", "muteToggle", "soloToggle"],
+        highlights: ["trackHeader", "muteToggle", "soloToggle", "monitorToggle", "armToggle"],
         metadata: { trackType: track.type },
       },
       {
@@ -197,11 +237,20 @@ export function createStudioGuideAnchorRegistry(
         targetId: "first-midi-track",
         available: true,
         panel: "timeline",
+        highlights: ["trackHeader", "muteToggle", "soloToggle", "monitorToggle", "armToggle"],
         metadata: { trackId: firstMidiTrack.id },
       },
       {
         id: "track-lane:first-midi-track",
         targetType: "track-lane",
+        targetId: "first-midi-track",
+        available: true,
+        panel: "timeline",
+        metadata: { trackId: firstMidiTrack.id },
+      },
+      {
+        id: "track-header:first-midi-track",
+        targetType: "track-header",
         targetId: "first-midi-track",
         available: true,
         panel: "timeline",
@@ -219,11 +268,20 @@ export function createStudioGuideAnchorRegistry(
         targetId: "first-audio-track",
         available: true,
         panel: "timeline",
+        highlights: ["trackHeader", "muteToggle", "soloToggle", "monitorToggle", "armToggle"],
         metadata: { trackId: firstAudioTrack.id },
       },
       {
         id: "track-lane:first-audio-track",
         targetType: "track-lane",
+        targetId: "first-audio-track",
+        available: true,
+        panel: "timeline",
+        metadata: { trackId: firstAudioTrack.id },
+      },
+      {
+        id: "track-header:first-audio-track",
+        targetType: "track-header",
         targetId: "first-audio-track",
         available: true,
         panel: "timeline",

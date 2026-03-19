@@ -262,6 +262,11 @@ export type TransportSetTempoCommand = MusicHubCommandEnvelope<
   { bpm: number }
 >;
 
+export type TransportToggleRecordCommand = MusicHubCommandEnvelope<
+  "transport.toggleRecord",
+  Record<string, never>
+>;
+
 export type TransportAuditionNotesCommand = MusicHubCommandEnvelope<
   "transport.auditionNotes",
   {
@@ -412,6 +417,7 @@ export type MusicHubCommand =
   | TransportSeekCommand
   | TransportSetLoopCommand
   | TransportSetTempoCommand
+  | TransportToggleRecordCommand
   | TransportAuditionNotesCommand
   | BrowserSearchCommand
   | BrowserFilterCommand

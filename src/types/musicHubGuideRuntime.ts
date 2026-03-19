@@ -55,7 +55,27 @@ export interface GuideSelectorSnapshot {
       muted: boolean;
       solo: boolean;
       selected: boolean;
+      nativeArmed: boolean;
+      nativeMonitoring: boolean;
     }>;
+    firstMidiTrack?: {
+      id: string;
+      type: string;
+      muted: boolean;
+      solo: boolean;
+      selected: boolean;
+      nativeArmed: boolean;
+      nativeMonitoring: boolean;
+    };
+    firstAudioTrack?: {
+      id: string;
+      type: string;
+      muted: boolean;
+      solo: boolean;
+      selected: boolean;
+      nativeArmed: boolean;
+      nativeMonitoring: boolean;
+    };
   };
   pianoRoll: StudioPianoRollState;
   detailPanel: StudioDetailPanelState;

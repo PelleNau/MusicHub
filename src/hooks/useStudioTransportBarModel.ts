@@ -59,6 +59,6 @@ export function useStudioTransportBarModel({
     onDisconnect: connectionActionsModel.onDisconnect,
     onRestartShellHost: connectionActionsModel.onRestartShellHost,
     recording: connectionSummary.recording,
-    onRecordToggle: connectionActionsModel.onToggleRecord,
+    onRecordToggle: connectionSummary.canUseNativeControls ? commandDispatch.toggleRecord : undefined,
   };
 }

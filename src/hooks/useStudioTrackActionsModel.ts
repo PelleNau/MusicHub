@@ -120,11 +120,25 @@ export function useStudioTrackActionsModel({
     [commandDispatch],
   );
 
+  const toggleTrackMonitoring = useCallback(
+    (trackId: string, monitoring: boolean) =>
+      commandDispatch.updateTrack(trackId, { monitoring: monitoring ? "in" : "off" }),
+    [commandDispatch],
+  );
+
+  const toggleTrackArmed = useCallback(
+    (trackId: string, armed: boolean) =>
+      commandDispatch.updateTrack(trackId, { armed }),
+    [commandDispatch],
+  );
+
   return {
     track: {
       onSelect: onSelectTrack,
       onMuteToggle: toggleTrackMute,
       onSoloToggle: toggleTrackSolo,
+      onNativeMonitorToggle: toggleTrackMonitoring,
+      onNativeArmToggle: toggleTrackArmed,
       onVolumeChange,
       onPanChange,
       onSendChange,
@@ -152,6 +166,8 @@ export function useStudioTrackActionsModel({
     mixer: {
       onMuteToggle: toggleTrackMute,
       onSoloToggle: toggleTrackSolo,
+      onNativeMonitorToggle: toggleTrackMonitoring,
+      onNativeArmToggle: toggleTrackArmed,
       onVolumeChange,
       onPanChange,
       onSendChange,
