@@ -152,9 +152,11 @@ export function StudioArrangementWorkspace({
                   <span key={label}>{label}</span>
                 ))}
               </div>
-              <div className="text-white/28">
-                {emptyStateInstruction ? "Lesson Focus" : "Edit View"}
-              </div>
+              {captureVariant === "figma" ? null : (
+                <div className="text-white/28">
+                  {emptyStateInstruction ? "Lesson Focus" : "Edit View"}
+                </div>
+              )}
             </div>
           </div>
           <StudioArrangementToolbar
@@ -279,6 +281,7 @@ export function StudioArrangementWorkspace({
                           nativeMeter={trackViewStateById[track.id]?.meter ?? null}
                           nativeMonitoring={trackViewStateById[track.id]?.nativeMonitoring ?? false}
                           nativeArmed={trackViewStateById[track.id]?.nativeArmed ?? false}
+                          captureVariant={captureVariant}
                         />
                       ))
                     )}

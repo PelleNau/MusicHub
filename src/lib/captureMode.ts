@@ -52,7 +52,7 @@ const CAPTURE_SCENARIOS: CaptureScenario[] = [
     title: "Piano Roll",
     description: "MIDI editor with the first fixture clip selected.",
     filename: "05-piano-roll.png",
-    href: "/lab/studio?capture=true&captureScenario=piano-roll&mode=standard&lesson=studio.midi-clip-basics",
+    href: "/lab/studio?capture=true&captureScenario=piano-roll&mode=standard",
   },
   {
     id: "mixer",

@@ -68,6 +68,17 @@ export default function Studio() {
     preferredMode: settings.studioModePreference,
   });
   const showGuideSidebar = studioModeModel.shell.showGuideSidebar;
+  const showBrowserPanel = captureMode && captureScenario === "piano-roll"
+    ? false
+    : studioModeModel.shell.showBrowserPanel;
+  const arrangementDefaultSize = captureMode && captureScenario === "piano-roll"
+    ? 79
+    : studioModeModel.shell.arrangementDefaultSize;
+  const bottomDefaultSize = captureMode && captureScenario === "piano-roll"
+    ? 21
+    : showCollapsedMixerFooter
+      ? 8
+      : studioModeModel.shell.bottomDefaultSize;
 
   useEffect(() => {
     if (!captureMode) return;
@@ -199,13 +210,13 @@ export default function Studio() {
             )}
           >
             <ResizablePanel
-              defaultSize={studioModeModel.shell.arrangementDefaultSize}
+              defaultSize={arrangementDefaultSize}
               minSize={0}
               className="min-h-0 overflow-hidden"
             >
               <StudioArrangementWorkspace
                 mode={studioModeModel.mode}
-                showBrowserPanel={studioModeModel.shell.showBrowserPanel}
+                showBrowserPanel={showBrowserPanel}
                 browserProps={presentation.arrangementWorkspaceModel.browserProps}
                 gridProps={presentation.arrangementWorkspaceModel.gridProps}
                 timelineContainerProps={presentation.arrangementWorkspaceModel.timelineContainerProps}
@@ -246,7 +257,7 @@ export default function Studio() {
                 />
 
                 <ResizablePanel
-                  defaultSize={showCollapsedMixerFooter ? 8 : studioModeModel.shell.bottomDefaultSize}
+                  defaultSize={bottomDefaultSize}
                   minSize={0}
                   className="min-h-0 overflow-hidden"
                 >
@@ -268,6 +279,7 @@ export default function Studio() {
                     overlay={
                       pianoRollOverlayMode ? <PianoRollCaptureOverlay mode={pianoRollOverlayMode} /> : undefined
                     }
+                    captureVariant={captureMode && captureScenario === "piano-roll" ? "figma" : null}
                   />
                 </ResizablePanel>
               </>

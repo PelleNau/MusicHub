@@ -63,6 +63,7 @@ interface PianoRollProps {
   onMidiDataChange?: (clipId: string, midiData: unknown) => void;
   /** Connected mode: route note audition through native MIDI */
   onNativeNote?: (pitch: number, velocity: number) => void;
+  captureVariant?: "figma" | null;
 }
 
 export function PianoRoll({
@@ -79,6 +80,7 @@ export function PianoRoll({
   onSelectClip,
   onMidiDataChange,
   onNativeNote,
+  captureVariant = null,
 }: PianoRollProps) {
   const toolbar = usePianoRollToolbar(externalSnap);
 
@@ -110,6 +112,7 @@ export function PianoRoll({
 
   const { notes, visiblePitches, scaleIntervals, clipDuration, displayClipDuration, pitchToRow } = ix;
   const { pxPerBeat, keyHeight, tool, splitMode, noteColorMode } = toolbar;
+  const compactCapture = captureVariant === "figma";
 
   const gridHeight = visiblePitches.length * keyHeight;
   const displayTotalWidth = displayClipDuration * pxPerBeat;
@@ -172,6 +175,22 @@ export function PianoRoll({
 
       {/* ── Toolbar ── */}
       <div className="flex items-center gap-1 px-3 py-1 border-b shrink-0 flex-wrap" style={{ borderColor: "hsl(var(--border))" }}>
+        {compactCapture ? (
+          <>
+            <span className="text-[12px] font-semibold text-white/92">Piano Roll</span>
+            <span className="text-[12px] text-white/42">•</span>
+            <span className="text-[12px] text-white/52">{clip.name}</span>
+            <div className="ml-auto flex items-center gap-3 text-white/58">
+              <ZoomOut className="h-4 w-4" />
+              <ZoomIn className="h-4 w-4" />
+              <span className="text-[12px] font-medium text-[#4f8df5]">Snap</span>
+              <span className="text-[12px] text-white/72">1/4</span>
+              <ArrowUpDown className="h-4 w-4" />
+              {onClose && <X className="h-4 w-4 cursor-pointer" onClick={onClose} />}
+            </div>
+          </>
+        ) : (
+          <>
         <span className="text-[10px] font-mono font-semibold text-foreground/80 mr-1 truncate max-w-[120px]">{clip.name}</span>
         <span className="text-[8px] font-mono text-foreground/45 mr-2">{Math.ceil(clipDuration / beatsPerBar)} bars</span>
 
@@ -306,10 +325,14 @@ export function PianoRoll({
 
         {ix.selectedIds.size > 0 && <div className="ml-auto flex items-center gap-2"><span className="text-[8px] font-mono text-foreground/50">{ix.selectedIds.size} selected</span></div>}
         {onClose && <button onClick={onClose} className="ml-auto text-foreground/40 hover:text-foreground/70 transition-colors"><X className="h-3.5 w-3.5" /></button>}
+          </>
+        )}
       </div>
 
       {/* Minimap */}
-      <PianoRollMinimap notes={notes} clipDuration={clipDuration} minPitch={MIN_PITCH} maxPitch={MAX_PITCH} width={displayTotalWidth + PIANO_WIDTH} scrollLeft={ix.scrollRef.current?.scrollLeft ?? 0} viewportWidth={ix.scrollRef.current?.clientWidth ?? 400} totalContentWidth={displayTotalWidth + PIANO_WIDTH} onScrollTo={ix.handleMinimapScroll} />
+      {compactCapture ? null : (
+        <PianoRollMinimap notes={notes} clipDuration={clipDuration} minPitch={MIN_PITCH} maxPitch={MAX_PITCH} width={displayTotalWidth + PIANO_WIDTH} scrollLeft={ix.scrollRef.current?.scrollLeft ?? 0} viewportWidth={ix.scrollRef.current?.clientWidth ?? 400} totalContentWidth={displayTotalWidth + PIANO_WIDTH} onScrollTo={ix.handleMinimapScroll} />
+      )}
 
       {/* ── Main grid area ── */}
       <div ref={ix.scrollRef} className="flex-1 overflow-auto min-h-0 relative">
@@ -446,6 +469,15 @@ export function PianoRoll({
 
       {/* Status bar */}
       <div className="flex items-center gap-3 px-3 py-0.5 border-t shrink-0 text-[7px] font-mono text-foreground/45" style={{ borderColor: "hsl(var(--border))" }}>
+        {compactCapture ? (
+          <>
+            <span className="text-white/58">Hide Velocity Lane</span>
+            <span className="text-white/36">|</span>
+            <span className="text-white/36">Right-click for operations</span>
+            <span className="ml-auto text-white/34">{notes.length} total</span>
+          </>
+        ) : (
+          <>
         <span>{notes.length} notes</span>
         <span>Snap: {SNAP_OPTIONS.find(o => Math.abs(o.value - toolbar.snapBeats) < 0.001)?.label ?? toolbar.snapBeats.toFixed(3)}</span>
         <span>Scale: {ROOT_NOTES[toolbar.rootNote]} {toolbar.scaleName}</span>
@@ -455,6 +487,8 @@ export function PianoRoll({
         {toolbar.activeChord && <span className="text-primary/70">♫ {toolbar.activeChord.name}</span>}
         <span>Zoom: {Math.round(pxPerBeat)}px/beat</span>
         <span className="ml-auto text-foreground/30">1 select · 2 draw · 3 paint · 4 erase · ←→↑↓ move · ⌫ delete · ⌘C/V copy/paste · ⌘D dup · ⌘U quantize · ⌘E chop · ⌘scroll zoom</span>
+          </>
+        )}
       </div>
 
       {/* Transpose dialog */}

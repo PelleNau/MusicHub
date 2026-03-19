@@ -21,6 +21,7 @@ interface StudioBottomWorkspaceProps {
   collapsedSummaryLabel?: string;
   collapsedSummaryMeta?: string;
   overlay?: React.ReactNode;
+  captureVariant?: "figma" | null;
 }
 
 export function StudioBottomWorkspace({
@@ -40,6 +41,7 @@ export function StudioBottomWorkspace({
   collapsedSummaryLabel,
   collapsedSummaryMeta,
   overlay,
+  captureVariant = null,
 }: StudioBottomWorkspaceProps) {
   const emptyLabel =
     mode === "focused"
@@ -97,7 +99,7 @@ export function StudioBottomWorkspace({
             <MixerPanel {...mixerPanelProps} />
           )
         ) : showPianoRoll && pianoRollProps ? (
-          <PianoRoll {...pianoRollProps} />
+          <PianoRoll {...pianoRollProps} captureVariant={captureVariant} />
         ) : showDetail && selectedTrackId ? (
           <DetailPanel {...detailPanelProps} />
         ) : (
