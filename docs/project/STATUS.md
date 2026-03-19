@@ -233,10 +233,13 @@ Phase 2 architecture consolidation
 - Studio recording now has a first-class `transport.toggleRecord` command path instead of bypassing the command log from native-only UI wiring
 - native arm and monitor toggles now route through `studio.updateTrack`, making recording setup visible to lesson validation
 - live Studio lesson coverage now includes `Recording Basics`, and `course-2-module-11` now maps to a real lesson-backed Studio entry path
+- the first Figma design-system foundation import now exists in `src/index.css` as semantic transport, lesson, surface, and timeline tokens translated into the real app theme layer
+- `src/components/app/ProductShell.tsx`, `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, and `src/components/studio/StudioArrangementWorkspace.tsx` now consume those tokens instead of relying only on the older shell palette
+- `docs/project/MH-046_Design_System_Foundation.md` now records the accepted design-system boundary and explicitly rejects generated export architecture as a source of truth
 
 ## Next Milestone
 
-Refine the Studio shell against the incoming Figma layouts while keeping imports narrow, and continue increasing real lesson/runtime coverage where the command/runtime seam can observe user actions honestly.
+Refine entry surfaces and Studio shell against the design system while keeping imports narrow, and continue increasing real lesson/runtime coverage where the command/runtime seam can observe user actions honestly.
 
 ## Primary Risk
 

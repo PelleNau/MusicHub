@@ -91,14 +91,18 @@ function ProductSidebar() {
   const collapsed = state === "collapsed";
 
   return (
-    <Sidebar collapsible="icon" variant="inset" className="border-r border-border/60">
+    <Sidebar
+      collapsible="icon"
+      variant="inset"
+      className="border-r border-[color:var(--sidebar-border)] bg-[var(--surface-1)]/95"
+    >
       <SidebarHeader className="px-3 py-4">
         <button
           type="button"
           onClick={() => navigate("/")}
           className="flex items-center gap-2 text-left"
         >
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-[var(--shadow-sm)]">
             <Headphones className="h-4 w-4" />
           </div>
           {!collapsed ? (
@@ -174,11 +178,11 @@ export function ProductShell({
   return (
     <>
       <SidebarProvider defaultOpen>
-        <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.08),transparent_32%),radial-gradient(circle_at_bottom_right,hsl(var(--accent)/0.06),transparent_28%),hsl(var(--background))]">
+        <div className="min-h-screen w-full bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.1),transparent_32%),radial-gradient(circle_at_bottom_right,hsl(var(--primary)/0.06),transparent_28%),var(--surface-0)]">
           <ProductSidebar />
           <SidebarInset className="min-h-screen border-l-0 bg-transparent">
-            <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-border/60 bg-background/72 px-4 backdrop-blur-xl">
-              <SidebarTrigger className="h-8 w-8 rounded-xl border border-border/60 bg-card/70" />
+            <header className="sticky top-0 z-20 flex h-14 items-center gap-3 border-b border-[color:var(--sidebar-border)] bg-[color:color-mix(in_srgb,var(--surface-1)_84%,transparent)] px-4 backdrop-blur-xl">
+              <SidebarTrigger className="h-8 w-8 rounded-xl border border-[color:var(--sidebar-border)] bg-[var(--surface-2)]" />
               <div className="min-w-0">
                 <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
                   {section}
@@ -199,18 +203,18 @@ export function ProductShell({
                 <button
                   type="button"
                   onClick={() => setSettingsOpen(true)}
-                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/60 bg-card/72 text-muted-foreground transition-colors hover:text-foreground"
+                  className="flex h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] text-muted-foreground transition-colors hover:text-foreground"
                 >
                   <Settings className="h-4 w-4" />
                 </button>
                 <button
                   type="button"
                   onClick={signOut}
-                  className="hidden h-9 w-9 items-center justify-center rounded-xl border border-border/60 bg-card/72 text-muted-foreground transition-colors hover:text-destructive md:flex"
+                  className="hidden h-9 w-9 items-center justify-center rounded-xl border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] text-muted-foreground transition-colors hover:text-destructive md:flex"
                 >
                   <LogOut className="h-4 w-4" />
                 </button>
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 font-mono text-xs font-semibold text-primary">
+                <div className="flex h-9 w-9 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 font-mono text-xs font-semibold text-primary shadow-[var(--shadow-sm)]">
                   {initials}
                 </div>
               </div>
@@ -242,7 +246,7 @@ export function ProductPageHeader({
   actions,
 }: ProductPageHeaderProps) {
   return (
-    <section className="mb-6 rounded-[28px] border border-border/60 bg-card/70 px-5 py-5 shadow-[0_20px_70px_rgba(0,0,0,0.16)] backdrop-blur-xl md:px-7 md:py-6">
+    <section className="mb-6 rounded-[28px] border border-[color:var(--sidebar-border)] bg-[color:color-mix(in_srgb,var(--surface-1)_88%,transparent)] px-5 py-5 shadow-[var(--shadow-xl)] backdrop-blur-xl md:px-7 md:py-6">
       <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
         <div className="max-w-3xl space-y-2">
           <div className="font-mono text-[10px] uppercase tracking-[0.24em] text-muted-foreground">
