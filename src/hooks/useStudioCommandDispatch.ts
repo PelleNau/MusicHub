@@ -19,6 +19,7 @@ import type {
   StudioUpdateTrackCommand,
   StudioUpdateClipCommand,
   StudioReplaceMidiNotesCommand,
+  TransportToggleRecordCommand,
   TransportPauseCommand,
   TransportPlayCommand,
   TransportSeekCommand,
@@ -50,6 +51,8 @@ interface UseStudioCommandDispatchOptions {
   onSetLoop: (enabled: boolean, start: number, end: number) => void;
   onToggleLoop: () => void;
   onSetTempo: (bpm: number) => void;
+  recording: boolean;
+  onToggleRecord?: () => void;
   onCreateTrack?: (
     type: "audio" | "midi" | "group" | "return",
     role?: "standard" | "instrument" | "vocal" | "drum" | "bus",
@@ -129,6 +132,8 @@ export function useStudioCommandDispatch({
   onSetLoop,
   onToggleLoop,
   onSetTempo,
+  recording,
+  onToggleRecord,
   onCreateTrack,
   onUpdateTrack,
   onDeleteTrack,
@@ -180,6 +185,19 @@ export function useStudioCommandDispatch({
           break;
         case "transport.setTempo":
           onSetTempo(command.payload.bpm);
+          ack = createAck(command);
+          break;
+        case "transport.toggleRecord":
+          if (!onToggleRecord) {
+            ack = {
+              commandId: command.id,
+              accepted: false,
+              status: "rejected",
+              reason: "Record toggle handler unavailable",
+            };
+            break;
+          }
+          onToggleRecord();
           ack = createAck(command);
           break;
         case "studio.createTrack":
@@ -457,6 +475,7 @@ export function useStudioCommandDispatch({
       onSeek,
       onSetLoop,
       onToggleLoop,
+      onToggleRecord,
       onSetTempo,
       onStop,
       onUpdateTrack,
@@ -546,6 +565,17 @@ export function useStudioCommandDispatch({
     },
     [dispatch],
   );
+
+  const toggleRecord = useCallback(() => {
+    const command: TransportToggleRecordCommand = {
+      id: crypto.randomUUID(),
+      type: "transport.toggleRecord",
+      source: "user",
+      createdAt: new Date().toISOString(),
+      payload: {},
+    };
+    return dispatch(command);
+  }, [dispatch]);
 
   const updateTrack = useCallback(
     (trackId: string, patch: StudioUpdateTrackCommand["payload"]["patch"]) => {
@@ -810,6 +840,7 @@ export function useStudioCommandDispatch({
     seek,
     setLoop,
     setTempo,
+    toggleRecord,
     createTrack,
     updateTrack,
     deleteTrack,
@@ -829,6 +860,7 @@ export function useStudioCommandDispatch({
     closePanel,
     currentBeat,
     loopEnabled,
+    recording,
   };
 }
 

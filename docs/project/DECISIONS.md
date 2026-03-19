@@ -1,5 +1,23 @@
 # Project Decisions
 
+## 2026-03-19 — Recording lessons can go live once recording is command-backed
+
+### Decision
+
+`Recording Basics` can be exposed as a live Studio lesson once record toggle, arm, and monitor state all flow through the real Studio command/runtime seam.
+
+### Rationale
+
+The original blocker was valid while recording only existed as native-side UI plumbing. Once record toggle is logged as a Studio command and track arm/monitor changes are visible through command-backed state, the Guide runtime can validate the lesson honestly instead of treating recording as a decorative catalog surface.
+
+### Consequence
+
+- `course-2-module-11` can be marked implemented and routed through the real lesson-entry preflight
+- future recording lessons should continue to use the command/runtime seam instead of reintroducing native-only lesson logic
+- the next lesson gap now moves to later runtime families rather than recording
+
+---
+
 ## 2026-03-19 — Guided, Standard, and Focused should remain one Studio shell system
 
 ### Decision

@@ -228,9 +228,11 @@ Phase 2 architecture consolidation
 - catalog expansion still keeps live Studio entry limited to the lessons that actually exist in the current runtime
 - live Studio lesson coverage now includes `Audio Editing Fundamentals` and `Instruments, Presets, and Chains`
 - the Guide selector snapshot and anchor registry now expose compatibility aliases used by the existing lesson DSL, instead of depending on exact raw runtime IDs only
-- `Recording Basics` still remains curriculum-only because the Studio command/runtime seam does not yet expose first-class record-start behavior
 - the first Figma-manual-guided Studio toolbar refinement now exists in the real shell rather than only in the standalone export
 - the arrangement workspace now exposes a compact editing toolbar and a dedicated vertical track-height slider wired to real timeline state
+- Studio recording now has a first-class `transport.toggleRecord` command path instead of bypassing the command log from native-only UI wiring
+- native arm and monitor toggles now route through `studio.updateTrack`, making recording setup visible to lesson validation
+- live Studio lesson coverage now includes `Recording Basics`, and `course-2-module-11` now maps to a real lesson-backed Studio entry path
 
 ## Next Milestone
 

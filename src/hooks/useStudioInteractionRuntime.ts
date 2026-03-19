@@ -100,6 +100,8 @@ export function useStudioInteractionRuntime({
     onSetLoop: (enabled, start, end) => runtime.transport.handleLoopChange(start, end),
     onToggleLoop: runtime.transport.handleLoopToggle,
     onSetTempo: runtime.transport.handleTempoChange,
+    recording: runtime.hostState.recording,
+    onToggleRecord: nativeHostSync.handleRecordToggle,
     onCreateTrack: (type, _role, _name) => {
       if (type === "return") {
         runtime.actions.handleAddReturn();
@@ -114,6 +116,10 @@ export function useStudioInteractionRuntime({
       if (typeof patch.color === "number") runtime.actions.handleColorChange(trackId, patch.color);
       if (typeof patch.muted === "boolean") runtime.actions.handleMuteToggle(trackId);
       if (typeof patch.solo === "boolean") runtime.actions.handleSoloToggle(trackId);
+      if (typeof patch.armed === "boolean") nativeHostSync.handleNativeArmToggle(trackId, patch.armed);
+      if (typeof patch.monitoring === "string") {
+        nativeHostSync.handleNativeMonitorToggle(trackId, patch.monitoring !== "off");
+      }
     },
     onDeleteTrack: runtime.actions.handleDeleteTrack,
     onCreateMidiClip: runtime.actions.handleCreateMidiClip,

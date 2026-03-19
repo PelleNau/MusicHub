@@ -4,6 +4,7 @@ import { midiClipBasicsLesson } from "@/content/lessons/studio/midiClipBasicsLes
 import { mixerBasicsLesson } from "@/content/lessons/studio/mixerBasicsLesson";
 import { audioEditingBasicsLesson } from "@/content/lessons/studio/audioEditingBasicsLesson";
 import { instrumentChainBasicsLesson } from "@/content/lessons/studio/instrumentChainBasicsLesson";
+import { recordingBasicsLesson } from "@/content/lessons/studio/recordingBasicsLesson";
 
 const studioLessons: Record<string, LessonDefinition> = {
   [transportBasicsLesson.lessonId]: transportBasicsLesson,
@@ -11,6 +12,7 @@ const studioLessons: Record<string, LessonDefinition> = {
   [mixerBasicsLesson.lessonId]: mixerBasicsLesson,
   [audioEditingBasicsLesson.lessonId]: audioEditingBasicsLesson,
   [instrumentChainBasicsLesson.lessonId]: instrumentChainBasicsLesson,
+  [recordingBasicsLesson.lessonId]: recordingBasicsLesson,
 };
 
 export function getStudioLessonById(lessonId?: string | null): LessonDefinition | undefined {
