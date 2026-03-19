@@ -106,6 +106,24 @@ Keeping Courses 3–6 as placeholder stubs makes the learning surfaces underrepr
 - late-stage modules should still carry honest shell policy and unavailable-state metadata
 - full catalog coverage does not authorize fake Studio handoff or invented lesson runtime support
 
+---
+
+## 2026-03-19 — Recording lessons should wait for a first-class record command path
+
+### Decision
+
+`Recording Basics` should remain a curriculum/catalog surface until the Studio command/runtime seam exposes observable record-start and record-stop behavior.
+
+### Rationale
+
+Audio Editing and Browser/Instrument lessons can already validate against command traffic the runtime emits today. Recording currently relies on native host actions outside the lesson command path, so marking it as implemented now would make the learning surfaces claim coverage the runtime cannot validate honestly.
+
+### Consequence
+
+- `course-2-module-11` should remain unavailable for live Studio handoff for now
+- future recording lessons should wait for a first-class command/ack path or equivalent lesson-visible event contract
+- lesson coverage should expand only where the Guide runtime can observe real user actions defensibly
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision

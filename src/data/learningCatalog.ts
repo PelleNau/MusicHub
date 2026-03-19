@@ -153,8 +153,9 @@ const modules: LearningModule[] = [
     shell: "guided-expanded",
     primarySurface: "arrangement",
     visibleSurfaces: ["transport", "arrangement", "guide", "detail"],
-    status: "scaffolded",
-    unavailableReason: "Audio editing needs a dedicated Studio lesson and waveform-edit validation path before direct entry should be exposed.",
+    status: "implemented",
+    studioLessonId: "studio.audio-edit-basics",
+    recommendedMode: "guided",
   },
   {
     id: "course-2-module-10",
@@ -166,8 +167,9 @@ const modules: LearningModule[] = [
     shell: "standard-assisted",
     primarySurface: "browser",
     visibleSurfaces: ["transport", "arrangement", "guide", "browser", "detail"],
-    status: "planned",
-    unavailableReason: "Browser and preset-selection lessons have not been mapped into the live lesson runtime yet.",
+    status: "implemented",
+    studioLessonId: "studio.instrument-chain-basics",
+    recommendedMode: "standard",
   },
   {
     id: "course-2-module-11",

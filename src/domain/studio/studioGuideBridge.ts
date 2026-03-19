@@ -40,7 +40,29 @@ export function createGuideSelectorSnapshot(input: StudioGuideBridgeInput): Guid
     transport: transportSummary,
     connection: connectionSummary,
     panel: panelState,
-    selection: selectionSummary,
+    panels: {
+      pianoRoll: panelState.showPianoRoll,
+      mixer: panelState.showMixer,
+      bottomWorkspace: panelState.showBottomWorkspace,
+      selectedTrackId: panelState.selectedTrackId,
+      activeClipId: panelState.activeClipId,
+    },
+    selection: {
+      ...selectionSummary,
+      selectedClipIds: Array.from(panelState.selectedClipIds),
+      selectedTrackId: panelState.selectedTrackId,
+    },
+    tracks: {
+      count: Object.keys(trackViewStateById).length,
+      items: Object.entries(trackViewStateById).map(([trackId, state]) => ({
+        id: trackId,
+        type:
+          displayTracks.find((track) => track.id === trackId)?.type ?? "audio",
+        muted: state.muted,
+        solo: state.solo,
+        selected: state.selected,
+      })),
+    },
     pianoRoll: pianoRollState,
     detailPanel: detailPanelState,
     trackViewStateById,
@@ -73,7 +95,7 @@ export function createStudioGuideAnchorRegistry(
       targetId: "timeline",
       available: true,
       panel: "timeline",
-      highlights: ["loopRegion"],
+      highlights: ["loopRegion", "addMidiTrack", "addAudioTrack"],
     },
     {
       id: "panel:detail",
@@ -166,6 +188,50 @@ export function createStudioGuideAnchorRegistry(
     );
   }
 
+  const firstMidiTrack = displayTracks.find((track) => track.type === "midi");
+  if (firstMidiTrack) {
+    entries.push(
+      {
+        id: "track:first-midi-track",
+        targetType: "track",
+        targetId: "first-midi-track",
+        available: true,
+        panel: "timeline",
+        metadata: { trackId: firstMidiTrack.id },
+      },
+      {
+        id: "track-lane:first-midi-track",
+        targetType: "track-lane",
+        targetId: "first-midi-track",
+        available: true,
+        panel: "timeline",
+        metadata: { trackId: firstMidiTrack.id },
+      },
+    );
+  }
+
+  const firstAudioTrack = displayTracks.find((track) => track.type === "audio");
+  if (firstAudioTrack) {
+    entries.push(
+      {
+        id: "track:first-audio-track",
+        targetType: "track",
+        targetId: "first-audio-track",
+        available: true,
+        panel: "timeline",
+        metadata: { trackId: firstAudioTrack.id },
+      },
+      {
+        id: "track-lane:first-audio-track",
+        targetType: "track-lane",
+        targetId: "first-audio-track",
+        available: true,
+        panel: "timeline",
+        metadata: { trackId: firstAudioTrack.id },
+      },
+    );
+  }
+
   for (const clip of displayTracks.flatMap((track) => track.clips || [])) {
     entries.push({
       id: `clip:${clip.id}`,
@@ -178,6 +244,31 @@ export function createStudioGuideAnchorRegistry(
     });
   }
 
+  const firstMidiClip = displayTracks.flatMap((track) => track.clips || []).find((clip) => clip.is_midi);
+  if (firstMidiClip) {
+    entries.push({
+      id: "clip:first-midi-clip",
+      targetType: "clip",
+      targetId: "first-midi-clip",
+      available: true,
+      panel: "pianoRoll",
+      highlights: ["clipHeader"],
+      metadata: { clipId: firstMidiClip.id, trackId: firstMidiClip.track_id },
+    });
+  }
+
+  const firstAudioClip = displayTracks.flatMap((track) => track.clips || []).find((clip) => !clip.is_midi);
+  if (firstAudioClip) {
+    entries.push({
+      id: "clip:first-audio-clip",
+      targetType: "clip",
+      targetId: "first-audio-clip",
+      available: true,
+      panel: "timeline",
+      metadata: { clipId: firstAudioClip.id, trackId: firstAudioClip.track_id },
+    });
+  }
+
   if (selectionSummary.selectedTrack) {
     entries.push({
       id: `selected-track:${selectionSummary.selectedTrack.id}`,
@@ -185,6 +276,17 @@ export function createStudioGuideAnchorRegistry(
       targetId: selectionSummary.selectedTrack.id,
       available: true,
       panel: panelState.showMixer ? "mixer" : "timeline",
+    });
+  }
+
+  if (displayTracks[0]) {
+    entries.push({
+      id: "mixer-strip:any",
+      targetType: "mixer-strip",
+      targetId: "any",
+      available: panelState.showMixer,
+      panel: "mixer",
+      metadata: { trackId: displayTracks[0].id },
     });
   }
 

@@ -12,8 +12,34 @@ import type {
 
 function getPathValue(target: unknown, path: string): unknown {
   return path.split(".").reduce<unknown>((current, segment) => {
-    if (current == null || typeof current !== "object") return undefined;
-    return (current as Record<string, unknown>)[segment];
+    if (current == null) return undefined;
+
+    const wantsArray = segment.endsWith("[]");
+    const key = wantsArray ? segment.slice(0, -2) : segment;
+
+    let next: unknown;
+
+    if (Array.isArray(current)) {
+      next = current.map((item) =>
+        item && typeof item === "object"
+          ? (item as Record<string, unknown>)[key]
+          : undefined,
+      );
+    } else if (typeof current === "object") {
+      next = (current as Record<string, unknown>)[key];
+    } else {
+      return undefined;
+    }
+
+    if (wantsArray) {
+      if (Array.isArray(next)) return next;
+      if (next && typeof next === "object" && Array.isArray((next as { items?: unknown[] }).items)) {
+        return (next as { items: unknown[] }).items;
+      }
+      return [];
+    }
+
+    return next;
   }, target);
 }
 
@@ -42,8 +68,20 @@ function evaluateValidation(node: LessonValidationNode, context: GuideValidation
     case "selector": {
       const value = getPathValue(context.selectors, node.path);
       if (typeof node.exists === "boolean" && (value !== undefined) !== node.exists) return false;
-      if (node.equals !== undefined && value !== node.equals) return false;
-      if (node.notEquals !== undefined && value === node.notEquals) return false;
+      if (node.equals !== undefined) {
+        if (Array.isArray(value)) {
+          if (!value.includes(node.equals as never)) return false;
+        } else if (value !== node.equals) {
+          return false;
+        }
+      }
+      if (node.notEquals !== undefined) {
+        if (Array.isArray(value)) {
+          if (value.some((entry) => entry === node.notEquals)) return false;
+        } else if (value === node.notEquals) {
+          return false;
+        }
+      }
       if (node.in && !node.in.includes(value as never)) return false;
       if (typeof node.gt === "number" && !(typeof value === "number" && value > node.gt)) return false;
       if (typeof node.gte === "number" && !(typeof value === "number" && value >= node.gte)) return false;

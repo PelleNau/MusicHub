@@ -36,7 +36,27 @@ export interface GuideSelectorSnapshot {
   transport: StudioTransportSummary;
   connection: StudioConnectionSummary;
   panel: StudioPanelState;
-  selection: StudioSelectionSummary;
+  panels: {
+    pianoRoll: boolean;
+    mixer: boolean;
+    bottomWorkspace: boolean;
+    selectedTrackId: string | null;
+    activeClipId: string | null;
+  };
+  selection: StudioSelectionSummary & {
+    selectedClipIds: string[];
+    selectedTrackId: string | null;
+  };
+  tracks: {
+    count: number;
+    items: Array<{
+      id: string;
+      type: string;
+      muted: boolean;
+      solo: boolean;
+      selected: boolean;
+    }>;
+  };
   pianoRoll: StudioPianoRollState;
   detailPanel: StudioDetailPanelState;
   trackViewStateById: Record<string, StudioTrackViewState>;
