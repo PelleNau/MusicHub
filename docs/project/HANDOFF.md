@@ -183,11 +183,13 @@ Unless explicitly overridden by the user:
 162. Course 1 now has all six modules represented in the real learning catalog instead of stopping at Module 3
 163. the real learning catalog now covers all six Course 1 modules and all six Course 2 modules with explicit shell policy and honest availability state
 164. catalog expansion still limits live Studio handoff to the lessons that actually exist in the current runtime
+165. the real learning catalog now covers all six modules in Courses 3, 4, 5, and 6 instead of leaving later-stage courses as one-module placeholders
+166. every module across the full six-course curriculum now carries shell policy, primary-surface, visible-surface, status, and honest availability metadata in `src/data/learningCatalog.ts`
 
 ## Current Next Work
 
 1. refine the lesson-entry flow against the incoming Figma layouts and tighten preflight/resume UX
-2. continue expanding catalog coverage into Courses 3–6 while keeping implementation status honest
+2. start selecting the next real lesson implementations so runtime coverage begins catching up to the now-complete catalog
 3. keep replacing mock or legacy learning surfaces with real shell-based pages
 4. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
 5. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
