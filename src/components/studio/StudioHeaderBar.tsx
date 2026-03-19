@@ -43,7 +43,7 @@ export function StudioHeaderBar({
   return (
     <header
       className={cn(
-        "border-b border-border/70 bg-background/70 backdrop-blur-xl",
+        "border-b border-[color:var(--transport-border-strong)] bg-[color:color-mix(in_srgb,var(--transport-bg-solid)_88%,transparent)] backdrop-blur-xl",
         studioMode === "focused" ? "px-3 py-2.5" : "px-4 py-3",
       )}
     >
@@ -55,8 +55,8 @@ export function StudioHeaderBar({
               lessonActive
                 ? "border-primary/30 bg-primary/10 text-primary"
                 : studioMode === "focused"
-                  ? "border-border/60 bg-card/80 text-foreground/60"
-                : "border-border/70 bg-card text-foreground/70",
+                  ? "border-[color:var(--sidebar-border)] bg-[var(--surface-2)] text-foreground/60"
+                : "border-[color:var(--transport-border-strong)] bg-[var(--surface-1)] text-foreground/70",
             )}
           >
             <Package className="h-4 w-4" />
@@ -72,13 +72,13 @@ export function StudioHeaderBar({
                   lessonActive
                     ? "border-primary/30 bg-primary/10 text-primary"
                     : studioMode === "focused"
-                      ? "border-border/60 bg-card/70 text-foreground/50"
-                    : "border-border/70 bg-card text-foreground/45",
+                      ? "border-[color:var(--sidebar-border)] bg-[var(--surface-2)] text-foreground/50"
+                    : "border-[color:var(--transport-border-strong)] bg-[var(--surface-1)] text-foreground/45",
                 )}
               >
                 {lessonActive ? "Guided Session" : "Studio"}
               </span>
-              <span className="rounded border border-border/50 bg-muted/20 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-foreground/60">
+              <span className="rounded border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-foreground/60">
                 {modeLabel}
               </span>
             </div>
@@ -98,7 +98,7 @@ export function StudioHeaderBar({
                 "gap-1.5 border font-mono text-xs",
                 guideCollapsed
                   ? "border-primary/30 bg-primary/10 text-primary hover:bg-primary/15"
-                  : "border-border/60 bg-card/70 text-foreground/70 hover:border-border hover:text-foreground",
+                  : "border-[color:var(--sidebar-border)] bg-[var(--surface-2)] text-foreground/70 hover:border-[color:var(--border-strong)] hover:text-foreground",
               )}
             >
               <BookOpen className="h-3.5 w-3.5" />
@@ -109,7 +109,7 @@ export function StudioHeaderBar({
             onClick={onOpenSessions}
             size="sm"
             variant="ghost"
-            className="gap-1.5 border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground"
+            className="gap-1.5 border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] font-mono text-xs text-foreground/70 hover:border-[color:var(--border-strong)] hover:text-foreground"
           >
             <FolderOpen className="h-3.5 w-3.5" /> Sessions
           </Button>
@@ -117,7 +117,7 @@ export function StudioHeaderBar({
             onClick={onOpenLab}
             size="sm"
             variant="ghost"
-            className="gap-1.5 border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground"
+            className="gap-1.5 border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] font-mono text-xs text-foreground/70 hover:border-[color:var(--border-strong)] hover:text-foreground"
           >
             <ArrowLeft className="h-3.5 w-3.5" /> Lab
           </Button>
@@ -125,7 +125,7 @@ export function StudioHeaderBar({
             onClick={onSignOut}
             size="sm"
             variant="ghost"
-            className="border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground"
+            className="border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] font-mono text-xs text-foreground/70 hover:border-[color:var(--border-strong)] hover:text-foreground"
           >
             <LogOut className="h-3.5 w-3.5" />
           </Button>

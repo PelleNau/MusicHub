@@ -1,5 +1,23 @@
 # Project Decisions
 
+## 2026-03-19 — Figma design system should enter as token and shell refinements first
+
+### Decision
+
+The new Figma design system should be imported into `MusicHub` first as semantic tokens and bounded shell refinements, not as generated application structure.
+
+### Rationale
+
+The export contains useful visual language and surface hierarchy, but the generated repo shape and state model still conflict with the real `MusicHub` runtime. Token-first adoption lets the real product absorb the design system without reintroducing a second architecture.
+
+### Consequence
+
+- import theme and surface tokens into the real app theme layer
+- apply them to existing product and Studio shell components
+- continue rejecting generated `src/app/...` structure as product architecture
+
+---
+
 ## 2026-03-19 — Recording lessons can go live once recording is command-backed
 
 ### Decision

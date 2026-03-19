@@ -131,14 +131,14 @@ export function StudioArrangementWorkspace({
 }: StudioArrangementWorkspaceProps) {
   return (
     <div
-      className="flex min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(15,23,42,0.14),transparent_22%)]"
+      className="flex min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,hsl(var(--primary)/0.08),transparent_20%),var(--surface-0)]"
       data-studio-mode={mode}
     >
       {showBrowserPanel ? <BrowserPanel {...browserProps} /> : null}
 
       <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-          <div className="border-b border-border/60 bg-card/65 px-4 py-3 backdrop-blur-sm">
+          <div className="border-b border-[color:var(--transport-border-strong)] bg-[color:color-mix(in_srgb,var(--surface-1)_88%,transparent)] px-4 py-3 backdrop-blur-sm">
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/45">
@@ -151,10 +151,10 @@ export function StudioArrangementWorkspace({
                 </div>
               </div>
               <div className="hidden shrink-0 items-center gap-2 md:flex">
-                <span className="rounded-full border border-border/60 bg-background/70 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
+                <span className="rounded-full border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
                   Timeline
                 </span>
-                <span className="rounded-full border border-border/60 bg-background/70 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
+                <span className="rounded-full border border-[color:var(--sidebar-border)] bg-[var(--surface-2)] px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45">
                   Arrangement
                 </span>
               </div>
@@ -181,7 +181,7 @@ export function StudioArrangementWorkspace({
             <div
               ref={timelineRef}
               data-timeline
-              className="relative min-h-0 flex-1 overflow-auto bg-background/35"
+              className="relative min-h-0 flex-1 overflow-auto bg-[var(--timeline-bg-solid)]"
               {...timelineContainerProps}
             >
               {arrangementWrapper(
@@ -221,7 +221,7 @@ export function StudioArrangementWorkspace({
                   >
                     {displayTracks.length === 0 ? (
                       <div className="flex h-full min-h-[120px] items-center justify-center">
-                        <div className="max-w-sm rounded-2xl border border-border/70 bg-card/80 px-5 py-4 text-center shadow-sm backdrop-blur-sm">
+                        <div className="max-w-sm rounded-2xl border border-[color:var(--transport-border-strong)] bg-[color:color-mix(in_srgb,var(--surface-1)_88%,transparent)] px-5 py-4 text-center shadow-[var(--shadow-md)] backdrop-blur-sm">
                           {emptyStateInstruction ? (
                             <>
                               <p className="text-sm font-medium text-foreground/80">{emptyStateInstruction}</p>
@@ -286,8 +286,8 @@ export function StudioArrangementWorkspace({
                     )}
                   </TimelineCanvas>
 
-                  <div className="flex border-t border-border/60 bg-card/70 backdrop-blur-sm">
-                    <div className="sticky left-0 z-10 flex w-52 shrink-0 gap-1 border-r border-border/60 bg-card/90 px-2 py-2">
+                  <div className="flex border-t border-[color:var(--transport-border-strong)] bg-[color:color-mix(in_srgb,var(--surface-1)_86%,transparent)] backdrop-blur-sm">
+                    <div className="sticky left-0 z-10 flex w-52 shrink-0 gap-1 border-r border-[color:var(--transport-border-strong)] bg-[var(--surface-1)] px-2 py-2">
                       <button
                         className="flex h-7 flex-1 items-center justify-center gap-1 rounded-md border border-border/50 bg-muted/20 font-mono text-[10px] text-foreground/65 transition-colors hover:border-border hover:bg-muted/40 hover:text-foreground/80"
                         onClick={timelineHeaderActions.createAudioTrack}
