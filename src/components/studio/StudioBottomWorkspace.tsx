@@ -2,6 +2,7 @@ import { MixerPanel } from "@/components/studio/MixerPanel";
 import { PianoRoll } from "@/components/studio/PianoRoll";
 import { DetailPanel } from "@/components/studio/DetailPanel";
 import { StudioBottomTabButtons } from "@/components/studio/StudioBottomTabButtons";
+import { cn } from "@/lib/utils";
 
 interface StudioBottomWorkspaceProps {
   mode: "guided" | "standard" | "focused";
@@ -34,10 +35,26 @@ export function StudioBottomWorkspace({
   pianoRollProps,
   detailPanelProps,
 }: StudioBottomWorkspaceProps) {
+  const emptyLabel =
+    mode === "focused"
+      ? "Open mixer, detail, or piano roll to keep editing."
+      : emptyInstruction ?? "Select a track, MIDI clip, or open the mixer.";
+
   return (
-    <div className="flex h-full min-h-0 flex-col overflow-hidden border-t border-border bg-card/40" data-studio-mode={mode}>
+    <div
+      className={cn(
+        "flex h-full min-h-0 flex-col overflow-hidden border-t border-border",
+        mode === "focused" ? "bg-card/60" : "bg-card/40",
+      )}
+      data-studio-mode={mode}
+    >
       {showTabs ? (
-        <div className="shrink-0 flex items-center border-b border-border bg-card/80">
+        <div
+          className={cn(
+            "shrink-0 flex items-center border-b border-border",
+            mode === "focused" ? "bg-card/65 backdrop-blur-sm" : "bg-card/80",
+          )}
+        >
           <StudioBottomTabButtons
             bottomTab={bottomTab}
             setBottomTab={setBottomTab}
@@ -70,7 +87,7 @@ export function StudioBottomWorkspace({
           <DetailPanel {...detailPanelProps} />
         ) : (
           <div className="flex h-full items-center justify-center font-mono text-[11px] text-foreground/45">
-            {emptyInstruction ?? "Select a track, MIDI clip, or open the mixer."}
+            {emptyLabel}
           </div>
         )}
       </div>

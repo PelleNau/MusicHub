@@ -1,5 +1,21 @@
 # Project Decisions
 
+## 2026-03-19 — Guided, Standard, and Focused should remain one Studio shell system
+
+### Decision
+
+Guided, Standard, and Focused should be implemented as density and emphasis variants of one Studio shell system rather than as separate layouts with separate runtime assumptions.
+
+### Rationale
+
+The lesson view-policy and mode contracts already provide the correct seam for panel visibility, support-surface emphasis, and viewport focus. Splitting the product into separate Studio layouts would reintroduce architectural drift between UI presentation and the shared runtime.
+
+### Consequence
+
+- mode-specific UI work should derive from the existing shell contract instead of creating independent page structures
+- Figma-driven refinements should change density, defaults, and emphasis rather than inventing new runtime behavior per mode
+- future lesson-specific view changes should land through lesson view policy overlays on top of this shared shell system
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision

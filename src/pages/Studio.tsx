@@ -77,7 +77,9 @@ export default function Studio() {
           settings.theme === "ocean" && "dawn-lagoon-bg",
           studioModeModel.mode === "guided"
             ? "bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_28%),radial-gradient(circle_at_top_left,rgba(34,197,94,0.08),transparent_24%)]"
-            : "bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.08),transparent_32%)]",
+            : studioModeModel.mode === "focused"
+              ? "bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.06),transparent_18%),radial-gradient(circle_at_bottom_right,rgba(15,23,42,0.24),transparent_30%)]"
+              : "bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.08),transparent_32%)]",
         )}
         data-studio-mode={studioModeModel.mode}
         data-studio-shell={studioModeModel.mode}
@@ -111,10 +113,20 @@ export default function Studio() {
         <TransportBar {...presentation.transportBarModel} />
         <ConnectionAlert {...presentation.connectionAlertModel} />
 
-        <div className="flex min-h-0 flex-1 overflow-hidden px-3 pb-3">
+        <div
+          className={cn(
+            "flex min-h-0 flex-1 overflow-hidden pb-3",
+            studioModeModel.mode === "focused" ? "px-2" : "px-3",
+          )}
+        >
           <ResizablePanelGroup
             direction="vertical"
-            className="h-full min-h-0 min-w-0 flex-1 rounded-[24px] border border-border/70 bg-background/80 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.75)] backdrop-blur-xl"
+            className={cn(
+              "h-full min-h-0 min-w-0 flex-1 rounded-[24px] border backdrop-blur-xl",
+              studioModeModel.mode === "focused"
+                ? "border-border/60 bg-background/74 shadow-[0_20px_70px_-42px_rgba(15,23,42,0.58)]"
+                : "border-border/70 bg-background/80 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.75)]",
+            )}
           >
             <ResizablePanel
               defaultSize={studioModeModel.shell.arrangementDefaultSize}

@@ -31,9 +31,22 @@ export function StudioHeaderBar({
   onSignOut,
 }: StudioHeaderBarProps) {
   const lessonActive = Boolean(activeLessonId);
+  const modeLabel = studioMode === "guided" ? "Guided" : studioMode === "standard" ? "Standard" : "Focused";
+  const modeDescription = lessonActive
+    ? "Follow the active step and keep your attention on the highlighted workspace."
+    : studioMode === "focused"
+      ? "Dense production shell with minimal teaching chrome and faster access to the canvas."
+      : studioMode === "standard"
+        ? "Balanced production workspace with browser and edit surfaces available by default."
+        : "Low-density lesson-first workspace with progressive disclosure.";
 
   return (
-    <header className="border-b border-border/70 bg-background/70 px-4 py-3 backdrop-blur-xl">
+    <header
+      className={cn(
+        "border-b border-border/70 bg-background/70 backdrop-blur-xl",
+        studioMode === "focused" ? "px-3 py-2.5" : "px-4 py-3",
+      )}
+    >
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
           <div
@@ -41,6 +54,8 @@ export function StudioHeaderBar({
               "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-sm",
               lessonActive
                 ? "border-primary/30 bg-primary/10 text-primary"
+                : studioMode === "focused"
+                  ? "border-border/60 bg-card/80 text-foreground/60"
                 : "border-border/70 bg-card text-foreground/70",
             )}
           >
@@ -56,19 +71,19 @@ export function StudioHeaderBar({
                   "inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em]",
                   lessonActive
                     ? "border-primary/30 bg-primary/10 text-primary"
+                    : studioMode === "focused"
+                      ? "border-border/60 bg-card/70 text-foreground/50"
                     : "border-border/70 bg-card text-foreground/45",
                 )}
               >
                 {lessonActive ? "Guided Session" : "Studio"}
               </span>
               <span className="rounded border border-border/50 bg-muted/20 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-foreground/60">
-                {studioMode}
+                {modeLabel}
               </span>
             </div>
             <p className="mt-1 truncate text-xs text-foreground/55">
-              {lessonActive
-                ? "Follow the active step and keep your attention on the highlighted workspace."
-                : "Balanced production workspace with lesson support available on demand."}
+              {modeDescription}
             </p>
           </div>
         </div>

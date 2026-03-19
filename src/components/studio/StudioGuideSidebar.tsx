@@ -25,7 +25,9 @@ export function StudioGuideSidebar({
   if (guideBridge.runtime.state.lessonStatus === "completed" && guideBridge.lesson) {
     return (
       <div
-        className="ml-3 w-80 overflow-auto rounded-[24px] border border-emerald-500/20 bg-card/90 shadow-[0_24px_80px_-36px_rgba(16,185,129,0.45)] backdrop-blur-xl"
+        className={mode === "focused"
+          ? "ml-2 w-72 overflow-auto rounded-[22px] border border-emerald-500/20 bg-card/78 shadow-[0_18px_60px_-38px_rgba(16,185,129,0.35)] backdrop-blur-xl"
+          : "ml-3 w-80 overflow-auto rounded-[24px] border border-emerald-500/20 bg-card/90 shadow-[0_24px_80px_-36px_rgba(16,185,129,0.45)] backdrop-blur-xl"}
         data-studio-mode={mode}
       >
         <ModuleCompletionCelebration
@@ -39,8 +41,9 @@ export function StudioGuideSidebar({
   }
 
   return (
-    <div className="ml-3 flex h-full" data-studio-mode={mode}>
+    <div className={mode === "focused" ? "ml-2 flex h-full" : "ml-3 flex h-full"} data-studio-mode={mode}>
       <StudioLessonPanel
+        mode={mode}
         state={lessonPanelModel.lessonState}
         onToggleCollapsed={lessonPanelModel.toggleCollapsed}
         onSkipStep={lessonPanelModel.skipCurrentStep}
