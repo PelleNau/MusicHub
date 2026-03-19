@@ -34,6 +34,7 @@ export default function Studio() {
   const captureOverlay = getCaptureOverlay();
   const showCollapsedMixerFooter = captureMode && captureScenario === "standard-mode";
   const compactTracksCapture = captureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
+  const arrangementOnlyCapture = captureMode && captureScenario === "arrangement";
   const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
     ? "figma"
     : null;
@@ -78,10 +79,14 @@ export default function Studio() {
   const showBrowserPanel = captureMode && captureScenario === "piano-roll"
     ? false
     : studioModeModel.shell.showBrowserPanel;
-  const arrangementDefaultSize = captureMode && captureScenario === "piano-roll"
+  const arrangementDefaultSize = arrangementOnlyCapture
+    ? 100
+    : captureMode && captureScenario === "piano-roll"
     ? 79
     : studioModeModel.shell.arrangementDefaultSize;
-  const bottomDefaultSize = captureMode && captureScenario === "piano-roll"
+  const bottomDefaultSize = arrangementOnlyCapture
+    ? 0
+    : captureMode && captureScenario === "piano-roll"
     ? 21
     : showCollapsedMixerFooter
       ? 8
@@ -256,7 +261,7 @@ export default function Studio() {
               />
             </ResizablePanel>
 
-            {studioModeModel.shell.showBottomWorkspace ? (
+            {studioModeModel.shell.showBottomWorkspace && !arrangementOnlyCapture ? (
               <>
                 <ResizableHandle
                   withHandle

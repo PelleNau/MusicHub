@@ -103,6 +103,19 @@ function createInitialDevStore(): DevSessionStore {
 
   const vocalVerse = makeAudioClip("dev-clip-vocal-verse", vocalLeadId, "Verse 1", 4, 18, 1, 0, 0.75);
   const vocalChorus = makeAudioClip("dev-clip-vocal-chorus", vocalLeadId, "Chorus", 32, 40, 1, 8, 0.6);
+  const vocalVolumeAutomation = {
+    id: "dev-auto-vocal-volume",
+    target: "volume",
+    label: "Volume",
+    visible: true,
+    points: [
+      { id: "dev-auto-vocal-volume-1", time: 0, value: 0.48, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-2", time: 10, value: 0.72, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-3", time: 20, value: 0.56, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-4", time: 30, value: 0.67, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-5", time: 40, value: 0.44, curve: "linear" as const },
+    ],
+  };
   const pianoMelody = makeMidiClip(
     "dev-clip-piano-melody",
     pianoId,
@@ -191,7 +204,7 @@ function createInitialDevStore(): DevSessionStore {
           input_from: null,
           created_at: createdAt,
           clips: [vocalVerse, vocalChorus],
-          automation_lanes: [],
+          automation_lanes: [vocalVolumeAutomation],
         },
         {
           id: pianoId,
