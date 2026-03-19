@@ -33,71 +33,146 @@ function nextDevId(prefix: string) {
 function createInitialDevStore(): DevSessionStore {
   const createdAt = nowIso();
   const sessionId = "dev-session-1";
-  const track1Id = "dev-track-midi-1";
-  const track2Id = "dev-track-midi-2";
-  const track3Id = "dev-track-audio-1";
+  const makeWaveform = (length: number, phase = 0, gain = 0.7) =>
+    Array.from({ length }, (_, index) => {
+      const carrier = Math.abs(Math.sin((index + phase) / 4.8));
+      const texture = Math.abs(Math.cos((index + phase) / 10.5)) * 0.35;
+      return 0.12 + carrier * gain + texture;
+    });
 
-  const midiClipA: SessionClip = {
-    id: "dev-clip-midi-a",
-    track_id: track1Id,
-    name: "MIDI Clip A",
-    start_beats: 4,
-    end_beats: 12,
-    color: 6,
-    is_midi: true,
-    is_muted: false,
-    audio_url: null,
-    waveform_peaks: null,
-    midi_data: {
-      notes: [
-        { id: "n1", pitch: 60, start: 0, duration: 1, velocity: 0.9 },
-        { id: "n2", pitch: 64, start: 1, duration: 1, velocity: 0.85 },
-        { id: "n3", pitch: 67, start: 2, duration: 2, velocity: 0.8 },
-      ],
-    },
-    alias_of: null,
-    created_at: createdAt,
-  };
-
-  const midiClipB: SessionClip = {
-    id: "dev-clip-midi-b",
-    track_id: track2Id,
-    name: "MIDI Clip B",
-    start_beats: 8,
-    end_beats: 18,
-    color: 9,
-    is_midi: true,
-    is_muted: false,
-    audio_url: null,
-    waveform_peaks: null,
-    midi_data: {
-      notes: [
-        { id: "n4", pitch: 72, start: 0, duration: 0.5, velocity: 0.8 },
-        { id: "n5", pitch: 71, start: 0.5, duration: 0.5, velocity: 0.78 },
-        { id: "n6", pitch: 69, start: 1, duration: 1, velocity: 0.76 },
-      ],
-    },
-    alias_of: null,
-    created_at: createdAt,
-  };
-
-  const audioClip: SessionClip = {
-    id: "dev-clip-audio-1",
-    track_id: track3Id,
-    name: "Audio Clip",
-    start_beats: 0,
-    end_beats: 16,
-    color: 12,
+  const makeAudioClip = (
+    id: string,
+    trackId: string,
+    name: string,
+    start: number,
+    end: number,
+    color: number,
+    phase = 0,
+    gain = 0.7,
+  ): SessionClip => ({
+    id,
+    track_id: trackId,
+    name,
+    start_beats: start,
+    end_beats: end,
+    color,
     is_midi: false,
     is_muted: false,
     audio_url: null,
-    waveform_peaks: Array.from({ length: 48 }, (_, index) =>
-      0.2 + Math.abs(Math.sin(index / 5)) * 0.6,
-    ),
+    waveform_peaks: makeWaveform(64, phase, gain),
     midi_data: null,
     alias_of: null,
     created_at: createdAt,
+  });
+
+  const makeMidiClip = (
+    id: string,
+    trackId: string,
+    name: string,
+    start: number,
+    end: number,
+    color: number,
+    notes: Array<{ id: string; pitch: number; start: number; duration: number; velocity: number }>,
+  ): SessionClip => ({
+    id,
+    track_id: trackId,
+    name,
+    start_beats: start,
+    end_beats: end,
+    color,
+    is_midi: true,
+    is_muted: false,
+    audio_url: null,
+    waveform_peaks: null,
+    midi_data: { notes },
+    alias_of: null,
+    created_at: createdAt,
+  });
+
+  const vocalLeadId = "dev-track-audio-vocal";
+  const pianoId = "dev-track-midi-piano";
+  const drumsId = "dev-track-audio-drums";
+  const bassId = "dev-track-audio-bass";
+  const percussionGroupId = "dev-track-group-percussion";
+  const kickId = "dev-track-audio-kick";
+  const snareId = "dev-track-audio-snare";
+  const hiHatId = "dev-track-audio-hihat";
+  const synthsGroupId = "dev-track-group-synths";
+  const leadSynthId = "dev-track-midi-lead";
+  const padId = "dev-track-midi-pad";
+
+  const vocalVerse = makeAudioClip("dev-clip-vocal-verse", vocalLeadId, "Verse 1", 4, 18, 1, 0, 0.75);
+  const vocalChorus = makeAudioClip("dev-clip-vocal-chorus", vocalLeadId, "Chorus", 32, 40, 1, 8, 0.6);
+  const vocalVolumeAutomation = {
+    id: "dev-auto-vocal-volume",
+    target: "volume",
+    label: "Volume",
+    visible: true,
+    points: [
+      { id: "dev-auto-vocal-volume-1", time: 0, value: 0.48, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-2", time: 10, value: 0.72, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-3", time: 20, value: 0.56, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-4", time: 30, value: 0.67, curve: "linear" as const },
+      { id: "dev-auto-vocal-volume-5", time: 40, value: 0.44, curve: "linear" as const },
+    ],
   };
+  const pianoMelody = makeMidiClip(
+    "dev-clip-piano-melody",
+    pianoId,
+    "Piano Melody",
+    8,
+    40,
+    9,
+    [
+      { id: "pn-1", pitch: 60, start: 0, duration: 1, velocity: 0.84 },
+      { id: "pn-2", pitch: 64, start: 0, duration: 1, velocity: 0.8 },
+      { id: "pn-3", pitch: 67, start: 0, duration: 1, velocity: 0.78 },
+      { id: "pn-4", pitch: 60, start: 4, duration: 1, velocity: 0.82 },
+      { id: "pn-5", pitch: 65, start: 4, duration: 1, velocity: 0.8 },
+      { id: "pn-6", pitch: 69, start: 4, duration: 1, velocity: 0.76 },
+      { id: "pn-7", pitch: 62, start: 8, duration: 1, velocity: 0.83 },
+      { id: "pn-8", pitch: 67, start: 8, duration: 1, velocity: 0.78 },
+      { id: "pn-9", pitch: 71, start: 8, duration: 1, velocity: 0.74 },
+      { id: "pn-10", pitch: 60, start: 12, duration: 1, velocity: 0.82 },
+      { id: "pn-11", pitch: 65, start: 12, duration: 1, velocity: 0.78 },
+      { id: "pn-12", pitch: 69, start: 12, duration: 1, velocity: 0.76 },
+      { id: "pn-13", pitch: 64, start: 16, duration: 0.5, velocity: 0.8 },
+      { id: "pn-14", pitch: 62, start: 17, duration: 0.5, velocity: 0.75 },
+      { id: "pn-15", pitch: 60, start: 18, duration: 1, velocity: 0.78 },
+      { id: "pn-16", pitch: 59, start: 19, duration: 1, velocity: 0.72 },
+      { id: "pn-17", pitch: 60, start: 20, duration: 1, velocity: 0.82 },
+    ],
+  );
+  const drumLoop = makeAudioClip("dev-clip-drum-loop", drumsId, "Drum Loop", 0, 38, 2, 3, 0.42);
+  const kickPattern = makeAudioClip("dev-clip-kick", kickId, "Kick Pattern", 18, 40, 3, 6, 0.48);
+  const snarePattern = makeAudioClip("dev-clip-snare", snareId, "Snare Pattern", 18, 40, 9, 4, 0.44);
+  const hihatPattern = makeAudioClip("dev-clip-hihat", hiHatId, "Hi-Hat Pattern", 18, 40, 1, 9, 0.4);
+  const leadSynthClip = makeMidiClip(
+    "dev-clip-lead",
+    leadSynthId,
+    "Lead Hook",
+    24,
+    40,
+    6,
+    [
+      { id: "ls-1", pitch: 72, start: 0, duration: 0.5, velocity: 0.82 },
+      { id: "ls-2", pitch: 76, start: 1, duration: 0.5, velocity: 0.77 },
+      { id: "ls-3", pitch: 74, start: 2, duration: 1, velocity: 0.75 },
+    ],
+  );
+  const padClip = makeMidiClip(
+    "dev-clip-pad",
+    padId,
+    "Pad Layer",
+    12,
+    36,
+    7,
+    [
+      { id: "pd-1", pitch: 48, start: 0, duration: 4, velocity: 0.7 },
+      { id: "pd-2", pitch: 55, start: 0, duration: 4, velocity: 0.66 },
+      { id: "pd-3", pitch: 60, start: 0, duration: 4, velocity: 0.64 },
+    ],
+  );
 
   return {
     sessions: [
@@ -114,11 +189,11 @@ function createInitialDevStore(): DevSessionStore {
     tracksBySession: {
       [sessionId]: [
         {
-          id: track1Id,
+          id: vocalLeadId,
           session_id: sessionId,
-          name: "MIDI 1",
-          type: "midi",
-          color: 4,
+          name: "Vocal Lead",
+          type: "audio",
+          color: 1,
           volume: 0.85,
           pan: 0,
           is_muted: false,
@@ -128,15 +203,15 @@ function createInitialDevStore(): DevSessionStore {
           sends: [],
           input_from: null,
           created_at: createdAt,
-          clips: [midiClipA],
-          automation_lanes: [],
+          clips: [vocalVerse, vocalChorus],
+          automation_lanes: [vocalVolumeAutomation],
         },
         {
-          id: track2Id,
+          id: pianoId,
           session_id: sessionId,
-          name: "MIDI 2",
+          name: "Piano",
           type: "midi",
-          color: 7,
+          color: 9,
           volume: 0.8,
           pan: -0.1,
           is_muted: false,
@@ -146,15 +221,15 @@ function createInitialDevStore(): DevSessionStore {
           sends: [],
           input_from: null,
           created_at: createdAt,
-          clips: [midiClipB],
+          clips: [pianoMelody],
           automation_lanes: [],
         },
         {
-          id: track3Id,
+          id: drumsId,
           session_id: sessionId,
-          name: "Audio 1",
+          name: "Drums",
           type: "audio",
-          color: 14,
+          color: 2,
           volume: 0.8,
           pan: 0.05,
           is_muted: false,
@@ -164,7 +239,151 @@ function createInitialDevStore(): DevSessionStore {
           sends: [],
           input_from: null,
           created_at: createdAt,
-          clips: [audioClip],
+          clips: [drumLoop],
+          automation_lanes: [],
+        },
+        {
+          id: bassId,
+          session_id: sessionId,
+          name: "Bass",
+          type: "audio",
+          color: 5,
+          volume: 0.78,
+          pan: 0.02,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 3,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [],
+          automation_lanes: [],
+        },
+        {
+          id: percussionGroupId,
+          session_id: sessionId,
+          name: "Percussion Group",
+          type: "group",
+          color: 11,
+          volume: 0.85,
+          pan: 0,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 4,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [],
+          automation_lanes: [],
+        },
+        {
+          id: kickId,
+          session_id: sessionId,
+          name: "Kick",
+          type: "audio",
+          color: 3,
+          volume: 0.88,
+          pan: 0,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 5,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [kickPattern],
+          automation_lanes: [],
+        },
+        {
+          id: snareId,
+          session_id: sessionId,
+          name: "Snare",
+          type: "audio",
+          color: 9,
+          volume: 0.82,
+          pan: 0.02,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 6,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [snarePattern],
+          automation_lanes: [],
+        },
+        {
+          id: hiHatId,
+          session_id: sessionId,
+          name: "Hi-Hat",
+          type: "audio",
+          color: 1,
+          volume: 0.8,
+          pan: 0.04,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 7,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [hihatPattern],
+          automation_lanes: [],
+        },
+        {
+          id: synthsGroupId,
+          session_id: sessionId,
+          name: "Synths",
+          type: "group",
+          color: 13,
+          volume: 0.8,
+          pan: 0,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 8,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [],
+          automation_lanes: [],
+        },
+        {
+          id: leadSynthId,
+          session_id: sessionId,
+          name: "Lead Synth",
+          type: "midi",
+          color: 6,
+          volume: 0.78,
+          pan: 0.06,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 9,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [leadSynthClip],
+          automation_lanes: [],
+        },
+        {
+          id: padId,
+          session_id: sessionId,
+          name: "Pad",
+          type: "midi",
+          color: 7,
+          volume: 0.76,
+          pan: -0.04,
+          is_muted: false,
+          is_soloed: false,
+          sort_order: 10,
+          device_chain: [],
+          sends: [],
+          input_from: null,
+          created_at: createdAt,
+          clips: [padClip],
           automation_lanes: [],
         },
       ],

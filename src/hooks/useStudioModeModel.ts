@@ -114,8 +114,8 @@ function resolveShellPolicy(
       return {
         showGuideSidebar: lessonState.visible,
         guidePreferredCollapsed: lessonState.visible,
-        showBrowserPanel: true,
-        browserPreferredCollapsed: false,
+        showBrowserPanel: !lessonState.visible,
+        browserPreferredCollapsed: lessonState.visible,
         showBottomWorkspace: panelState.showBottomWorkspace,
         showBottomTabs: true,
         arrangementDefaultSize: panelState.showBottomWorkspace ? 72 : 100,

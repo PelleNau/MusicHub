@@ -237,6 +237,9 @@ Phase 2 architecture consolidation
 - `src/components/app/ProductShell.tsx`, `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, and `src/components/studio/StudioArrangementWorkspace.tsx` now consume those tokens instead of relying only on the older shell palette
 - `docs/project/MH-046_Design_System_Foundation.md` now records the accepted design-system boundary and explicitly rejects generated export architecture as a source of truth
 - live Studio lesson coverage now also includes `Build a Full Sketch`, so Course 2 is fully backed by real lesson-entry paths across all six modules
+- the real app now exposes a dev-only Figma capture bridge through `?capture=true` instead of relying on an assumed screenshot workflow
+- capture mode now has fixed scenarios for Guided, Standard, Focused, arrangement, mixer, piano roll, control bar, and a design-system showcase surface
+- the new `src/pages/CaptureDesignSystemShowcase.tsx` route provides an in-app component capture surface for Figma without importing the standalone export app structure
 
 ## Next Milestone
 

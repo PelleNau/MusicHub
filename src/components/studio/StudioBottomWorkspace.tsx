@@ -18,6 +18,10 @@ interface StudioBottomWorkspaceProps {
   mixerPanelProps: React.ComponentProps<typeof MixerPanel>;
   pianoRollProps?: React.ComponentProps<typeof PianoRoll> | null;
   detailPanelProps: React.ComponentProps<typeof DetailPanel>;
+  collapsedSummaryLabel?: string;
+  collapsedSummaryMeta?: string;
+  overlay?: React.ReactNode;
+  captureVariant?: "figma" | "figma-compact" | "figma-mixer" | null;
 }
 
 export function StudioBottomWorkspace({
@@ -34,6 +38,10 @@ export function StudioBottomWorkspace({
   mixerPanelProps,
   pianoRollProps,
   detailPanelProps,
+  collapsedSummaryLabel,
+  collapsedSummaryMeta,
+  overlay,
+  captureVariant = null,
 }: StudioBottomWorkspaceProps) {
   const emptyLabel =
     mode === "focused"
@@ -43,7 +51,7 @@ export function StudioBottomWorkspace({
   return (
     <div
       className={cn(
-        "flex h-full min-h-0 flex-col overflow-hidden border-t border-border",
+        "relative flex h-full min-h-0 flex-col overflow-hidden border-t border-border",
         mode === "focused" ? "bg-card/60" : "bg-card/40",
       )}
       data-studio-mode={mode}
@@ -64,7 +72,16 @@ export function StudioBottomWorkspace({
       ) : null}
 
       <div className="flex-1 min-h-0 overflow-hidden">
-        {showMixer ? (
+        {collapsedSummaryLabel ? (
+          <div className="flex h-full items-center justify-between border-t border-white/6 bg-[#2c2d33] px-4 text-white/78">
+            <div className="flex items-center gap-3">
+              <div className="h-3 w-3 rounded-full border border-white/18 bg-white/5" />
+              <span className="text-[22px] leading-none">⌄</span>
+              <span className="text-[15px] font-medium">{collapsedSummaryLabel}</span>
+            </div>
+            {collapsedSummaryMeta ? <span className="text-[13px] text-white/42">{collapsedSummaryMeta}</span> : null}
+          </div>
+        ) : showMixer ? (
           mixerPanelProps.tracks.length === 0 ? (
             <div className="flex h-full items-center justify-center">
               <div className="text-center space-y-1">
@@ -79,10 +96,10 @@ export function StudioBottomWorkspace({
               </div>
             </div>
           ) : (
-            <MixerPanel {...mixerPanelProps} />
+            <MixerPanel {...mixerPanelProps} captureVariant={captureVariant === "figma-mixer" ? "figma" : null} />
           )
         ) : showPianoRoll && pianoRollProps ? (
-          <PianoRoll {...pianoRollProps} />
+          <PianoRoll {...pianoRollProps} captureVariant={captureVariant} />
         ) : showDetail && selectedTrackId ? (
           <DetailPanel {...detailPanelProps} />
         ) : (
@@ -91,6 +108,7 @@ export function StudioBottomWorkspace({
           </div>
         )}
       </div>
+      {overlay ? <div className="pointer-events-none absolute inset-0">{overlay}</div> : null}
     </div>
   );
 }

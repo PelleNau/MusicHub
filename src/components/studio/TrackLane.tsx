@@ -1,5 +1,5 @@
 import { Volume2, Music2, Undo2, Crown, Layers, Trash2, ChevronUp, ChevronDown, Activity } from "lucide-react";
-import React, { useRef, useEffect, useState, useCallback, memo } from "react";
+import React, { useRef, useEffect, useState, useCallback, useMemo, memo } from "react";
 import { useStudioInfo, STUDIO_INFO } from "./StudioInfoContext";
 import type { SessionTrack, TrackSend, AutomationLaneData, AutomationPoint } from "@/types/studio";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
@@ -74,6 +74,7 @@ interface TrackLaneProps {
   nativeMeter?: MeterLevel | null;
   nativeMonitoring?: boolean;
   nativeArmed?: boolean;
+  captureVariant?: "figma" | "figma-compact" | null;
 }
 
 export const TrackLane = memo(function TrackLane({
@@ -120,6 +121,7 @@ export const TrackLane = memo(function TrackLane({
   nativeMeter,
   nativeMonitoring = false,
   nativeArmed = false,
+  captureVariant = null,
 }: TrackLaneProps) {
   const color = getTrackColor(track.color);
   const laneWidth = totalBeats * pixelsPerBeat;
@@ -169,7 +171,19 @@ export const TrackLane = memo(function TrackLane({
     }
   }, [isRenaming]);
 
-  const sends = track.sends || [];
+  const sends = useMemo(() => track.sends || [], [track.sends]);
+  const compactCapture = captureVariant === "figma" || captureVariant === "figma-compact";
+  const ultraCompactCapture = captureVariant === "figma-compact";
+  const trackSubtype =
+    track.type === "midi"
+      ? "Midi"
+      : track.type === "audio"
+        ? "Audio"
+        : track.type === "group"
+          ? "Group"
+          : track.type === "return"
+            ? "Return"
+            : "Track";
 
   const handleSendLevel = useCallback((returnTrackId: string, level: number) => {
     const updated = [...sends];
@@ -203,7 +217,7 @@ export const TrackLane = memo(function TrackLane({
         onClick={handleLaneSelect}
       >
         {/* ── Track header ── */}
-        <div className="w-52 shrink-0 flex bg-card border-r border-border/60 select-none relative sticky left-0 z-10">
+        <div className={`w-52 shrink-0 flex bg-card border-r border-border/60 select-none relative sticky left-0 z-10 ${compactCapture ? "bg-[#202127]" : ""}`}>
           <button
             className="w-[4px] shrink-0 hover:w-[8px] transition-all"
             style={{ backgroundColor: color }}
@@ -218,12 +232,14 @@ export const TrackLane = memo(function TrackLane({
             />
           )}
 
-          <div className="flex-1 min-w-0 flex flex-col justify-center gap-[3px] px-2 py-1.5 min-h-[52px] overflow-hidden">
+          <div className={`flex-1 min-w-0 flex flex-col justify-center overflow-hidden ${ultraCompactCapture ? "min-h-[34px] gap-[3px] px-2 py-1" : compactCapture ? "min-h-[52px] gap-[5px] px-3 py-2" : "min-h-[52px] gap-[3px] px-2 py-1.5"}`}>
             {/* Row 1: Icon + Name + M/S toggles + delete + automation */}
             <div className="flex items-center gap-1.5 min-w-0">
-              <span className="text-muted-foreground shrink-0">
-                {TRACK_ICON[track.type] || TRACK_ICON.audio}
-              </span>
+              {compactCapture ? null : (
+                <span className="text-muted-foreground shrink-0">
+                  {TRACK_ICON[track.type] || TRACK_ICON.audio}
+                </span>
+              )}
               {isRenaming ? (
                 <input
                   ref={renameInputRef}
@@ -234,14 +250,19 @@ export const TrackLane = memo(function TrackLane({
                   className="text-[11px] font-mono font-medium text-foreground/90 bg-foreground/10 border border-foreground/20 rounded px-1 py-0 flex-1 min-w-0 outline-none focus:border-primary"
                 />
               ) : (
-                <span
-                  className="text-[11px] font-mono font-medium text-foreground truncate flex-1 leading-none cursor-text hover:text-foreground"
-                  onDoubleClick={() => { setRenameValue(track.name); setIsRenaming(true); }}
-                  title="Double-click to rename"
-                  {...hp("trackName")}
-                >
-                  {track.name}
-                </span>
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <span
+                    className={`${compactCapture ? "text-[13px] font-medium text-white/92" : "text-[11px] font-mono font-medium text-foreground"} truncate leading-none cursor-text hover:text-foreground`}
+                    onDoubleClick={() => { setRenameValue(track.name); setIsRenaming(true); }}
+                    title="Double-click to rename"
+                    {...hp("trackName")}
+                  >
+                    {track.name}
+                  </span>
+                  {compactCapture && !ultraCompactCapture ? (
+                    <span className="mt-1 text-[10px] text-white/38">{trackSubtype}</span>
+                  ) : null}
+                </div>
               )}
               {isReturn && (
                 <span className="text-[7px] font-mono bg-accent/20 text-accent-foreground px-1 rounded leading-none py-0.5 shrink-0">
@@ -272,7 +293,7 @@ export const TrackLane = memo(function TrackLane({
                     onClick={() => onNativeArmToggle(track.id, !nativeArmed)}
                   />
                 )}
-                {onReorder && (
+                {!compactCapture && onReorder && (
                   <>
                     <button type="button" className="h-[18px] w-[14px] flex items-center justify-center rounded-[3px] transition-colors opacity-0 group-hover/track:opacity-100 bg-foreground/[0.08] text-foreground/55 border border-foreground/15 hover:bg-foreground/20 hover:text-foreground" onClick={() => onReorder(track.id, "up")} title="Move up">
                       <ChevronUp className="h-2.5 w-2.5" />
@@ -282,10 +303,10 @@ export const TrackLane = memo(function TrackLane({
                     </button>
                   </>
                 )}
-                <button type="button" className="h-[18px] w-[18px] flex items-center justify-center rounded-[3px] text-[9px] transition-colors opacity-0 group-hover/track:opacity-100 bg-foreground/[0.08] text-foreground/55 border border-foreground/15 hover:bg-destructive/20 hover:text-destructive hover:border-destructive/30" onClick={() => onDeleteTrack(track.id)} title="Delete track">
+                {!compactCapture && <button type="button" className="h-[18px] w-[18px] flex items-center justify-center rounded-[3px] text-[9px] transition-colors opacity-0 group-hover/track:opacity-100 bg-foreground/[0.08] text-foreground/55 border border-foreground/15 hover:bg-destructive/20 hover:text-destructive hover:border-destructive/30" onClick={() => onDeleteTrack(track.id)} title="Delete track">
                   <Trash2 className="h-2.5 w-2.5" />
-                </button>
-                {onAutomationAdd && (
+                </button>}
+                {!compactCapture && onAutomationAdd && (
                   <div className="relative">
                     <button
                       type="button"
@@ -333,13 +354,22 @@ export const TrackLane = memo(function TrackLane({
             {/* Row 2: Volume fader + dB readout + Pan */}
             <div className="flex items-center gap-1.5">
               <div {...hp("volume")} className="flex-1 flex"><VolumeFader value={track.volume} onChange={(v) => onVolumeChange(track.id, v)} /></div>
-              <span className="text-[8px] font-mono text-foreground/65 tabular-nums w-7 text-right shrink-0 leading-none">{volumeToDb(track.volume)}</span>
-              <div {...hp("pan")}><PanControl value={track.pan} onChange={(p) => onPanChange(track.id, p)} /></div>
-              <span className="text-[8px] font-mono text-foreground/65 tabular-nums w-4 text-right shrink-0 leading-none">{panToDisplay(track.pan)}</span>
+              {compactCapture ? null : (
+                <>
+                  <span className="text-[8px] font-mono text-foreground/65 tabular-nums w-7 text-right shrink-0 leading-none">{volumeToDb(track.volume)}</span>
+                  <div {...hp("pan")}><PanControl value={track.pan} onChange={(p) => onPanChange(track.id, p)} /></div>
+                  <span className="text-[8px] font-mono text-foreground/65 tabular-nums w-4 text-right shrink-0 leading-none">{panToDisplay(track.pan)}</span>
+                </>
+              )}
+              {compactCapture ? (
+                <div className={`flex shrink-0 items-center justify-center border border-white/12 bg-white/[0.04] text-white/52 ${ultraCompactCapture ? "h-5 w-5 rounded-md text-[8px]" : "h-7 w-7 rounded-full text-[10px]"}`}>
+                  {nativeArmed ? "●" : "I"}
+                </div>
+              ) : null}
             </div>
 
             {/* Row 3: Send knobs */}
-            {!isReturn && !isMaster && returnTracks.length > 0 && (
+            {!compactCapture && !isReturn && !isMaster && returnTracks.length > 0 && (
               <div className="flex items-center gap-2 mt-[2px]" {...hp("sends")}>
                 <span className="text-[7px] font-mono text-foreground/55 uppercase shrink-0 leading-none">SND</span>
                 {returnTracks.map((rt) => (
@@ -348,7 +378,7 @@ export const TrackLane = memo(function TrackLane({
               </div>
             )}
 
-            <LevelMeter volume={track.volume} isMuted={track.is_muted} nativeMeter={nativeMeter} />
+            {!compactCapture && <LevelMeter volume={track.volume} isMuted={track.is_muted} nativeMeter={nativeMeter} />}
           </div>
         </div>
 

@@ -724,6 +724,7 @@ export interface MixerPanelProps {
   onRenameTrack?: (trackId: string, name: string) => void;
   onDeleteTrack?: (trackId: string) => void;
   onColorChange?: (trackId: string, color: number) => void;
+  captureVariant?: "figma" | null;
 }
 
 export const MixerPanel = memo(function MixerPanel({
@@ -743,6 +744,7 @@ export const MixerPanel = memo(function MixerPanel({
   onRenameTrack,
   onDeleteTrack,
   onColorChange,
+  captureVariant = null,
 }: MixerPanelProps) {
   const regularTracks = useMemo(() => tracks.filter((t) => t.type !== "return" && t.type !== "master"), [tracks]);
   const returnTracks = useMemo(() => tracks.filter((t) => t.type === "return"), [tracks]);
@@ -762,18 +764,73 @@ export const MixerPanel = memo(function MixerPanel({
   }, []);
 
   const faderHeight = 140;
+  const figmaCapture = captureVariant === "figma";
+  const leftLabels = [
+    "Setting",
+    "Gain Reduction",
+    "EQ",
+    "MIDI FX",
+    "Input",
+    "Audio FX",
+    "Sends",
+    "Output",
+    "Group",
+    "Automation",
+    "Pan",
+    "dB",
+  ];
 
   return (
     <div className="h-full flex flex-col" style={{ background: "hsl(var(--background))" }}>
-      {/* ── Toolbar ── */}
-      <div className="flex items-center gap-2 px-2 py-1 border-b border-border shrink-0">
-        <SoloModeSelector mode={soloMode} onChange={setSoloMode} />
-        <div className="flex-1" />
-        <StripConfigMenu visibleSections={visibleSections} onToggle={handleToggleSection} />
-      </div>
+      {figmaCapture ? (
+        <div className="flex items-center justify-between border-b border-white/8 bg-[#5b5b5f] px-3 py-1.5 text-white">
+          <div className="flex items-center gap-3">
+            <button className="rounded-md border border-white/10 bg-white/6 px-3 py-1 text-[12px] font-medium text-white/95">
+              Edit
+            </button>
+            <button className="rounded-md border border-white/10 bg-white/6 px-3 py-1 text-[12px] font-medium text-white/95">
+              Options
+            </button>
+            <button className="rounded-md border border-white/10 bg-white/6 px-3 py-1 text-[12px] font-medium text-white/95">
+              View
+            </button>
+            <div className="ml-2 flex items-center gap-2 text-[12px] text-white/88">
+              <span>Sends on Faders:</span>
+              <button className="rounded-md border border-white/10 bg-white/6 px-2 py-1 text-white/95">Off</button>
+            </div>
+          </div>
+          <div className="flex items-center overflow-hidden rounded-xl border border-white/10 bg-[#444448]">
+            {["Single", "Tracks", "All"].map((label) => (
+              <button
+                key={label}
+                className={`px-4 py-1.5 text-[12px] font-medium ${
+                  label === "Tracks" ? "bg-[#2f7de1] text-white" : "text-white/82"
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <div className="flex items-center gap-2 px-2 py-1 border-b border-border shrink-0">
+          <SoloModeSelector mode={soloMode} onChange={setSoloMode} />
+          <div className="flex-1" />
+          <StripConfigMenu visibleSections={visibleSections} onToggle={handleToggleSection} />
+        </div>
+      )}
 
       {/* ── Strips ── */}
       <div className="flex-1 min-h-0 flex overflow-x-auto overflow-y-hidden">
+        {figmaCapture ? (
+          <div className="flex w-[108px] shrink-0 flex-col items-end justify-start gap-[20px] border-r border-white/10 bg-[#666669] px-3 py-6 text-right text-[10px] font-medium text-white/72">
+            {leftLabels.map((label) => (
+              <div key={label} className="leading-none">
+                {label}
+              </div>
+            ))}
+          </div>
+        ) : null}
         {regularTracks.map((track) => (
           <MixerStrip
             key={track.id}

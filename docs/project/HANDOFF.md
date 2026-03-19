@@ -202,15 +202,17 @@ Unless explicitly overridden by the user:
 181. `src/components/app/ProductShell.tsx`, `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, and `src/components/studio/StudioArrangementWorkspace.tsx` now consume the new token layer for real shell refinement
 182. `docs/project/MH-046_Design_System_Foundation.md` now documents the accepted design-system import boundary and explicitly rejects generated app architecture
 183. live Studio lesson coverage now also includes `studio.sketch-capstone`, so Course 2 now has real Studio lesson-entry coverage across all six modules
+184. the real app now exposes a dev-only Figma capture bridge through `?capture=true` instead of relying on an external or assumed screenshot system
+185. `src/components/app/CaptureBar.tsx` now drives fixed Guided/Standard/Focused, arrangement, mixer, piano-roll, control-bar, and component-showcase scenarios from the real app
+186. `src/pages/CaptureDesignSystemShowcase.tsx` now provides an in-app design-system capture surface so Figma can pull product-shell and Studio token usage from the real repository
 
 ## Current Next Work
 
 1. refine entry surfaces against the design system, starting with Auth, Home, and Studio lesson entry
-2. keep refining Guided/Standard/Focused against the Figma layouts without importing standalone export architecture
-3. implement the next capstone/runtime families after the current lesson set instead of adding decorative catalog depth
-4. keep replacing mock or legacy learning surfaces with real shell-based pages
-5. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
-6. decide whether markers should stay local assist state or graduate into canonical session persistence later
+2. run the new `?capture=true` workflow and verify each Figma capture scenario against the actual design file expectations
+3. keep refining Guided/Standard/Focused against the Figma layouts without importing standalone export architecture
+4. implement the next capstone/runtime families after the current lesson set instead of adding decorative catalog depth
+5. decide whether markers should stay local assist state or graduate into canonical session persistence later
 
 ## Default Instruction For Lovable
 

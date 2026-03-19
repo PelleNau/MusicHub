@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
@@ -7,6 +8,7 @@ import { StudioArrangementWorkspace } from "@/components/studio/StudioArrangemen
 import { StudioBottomWorkspace } from "@/components/studio/StudioBottomWorkspace";
 import { StudioHeaderBar } from "@/components/studio/StudioHeaderBar";
 import { StudioGuideSidebar } from "@/components/studio/StudioGuideSidebar";
+import { PianoRollCaptureOverlay } from "@/components/studio/StudioCaptureOverlays";
 import { GuideAnchorHighlight } from "@/components/studio/lesson/GuideAnchorHighlight";
 import { SessionPicker } from "@/components/studio/SessionPicker";
 import { ConnectionAlert } from "@/components/studio/ConnectionAlert";
@@ -16,6 +18,7 @@ import { StudioInfoProvider, useInfoHover, STUDIO_INFO } from "@/components/stud
 import { Skeleton } from "@/components/ui/skeleton";
 import { Package } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { getCaptureOverlay, getCaptureScenario, isCaptureMode } from "@/lib/captureMode";
 
 function ArrangementHover({ children }: { children: React.ReactNode }) {
   const hp = useInfoHover(STUDIO_INFO.arrangement);
@@ -26,6 +29,34 @@ export default function Studio() {
   const navigate = useNavigate();
   const { settings } = useSettings();
   const { signOut } = useAuth();
+  const captureMode = isCaptureMode();
+  const captureScenario = getCaptureScenario();
+  const captureOverlay = getCaptureOverlay();
+  const showCollapsedMixerFooter = captureMode && captureScenario === "standard-mode";
+  const compactTracksCapture = captureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
+  const arrangementOnlyCapture = captureMode && captureScenario === "arrangement";
+  const cleanPianoRollCapture = captureMode && captureScenario === "piano-roll";
+  const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
+    ? "figma"
+    : null;
+  const arrangementCaptureVariant = compactTracksCapture
+    ? "figma-compact"
+    : captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
+      ? "figma"
+      : null;
+  const hideGuideForCapture = captureMode && captureScenario === "piano-roll";
+  const pianoRollOverlayMode =
+    captureMode && captureScenario === "piano-roll"
+      ? captureOverlay === "humanize-dialog"
+        ? "humanize-dialog"
+        : captureOverlay === "pitch-menu"
+          ? "pitch-menu"
+          : captureOverlay === "duration-menu"
+            ? "duration-menu"
+          : captureOverlay === "transform-menu"
+            ? "transform-menu"
+            : null
+      : null;
   const {
     routeModel,
     sessions,
@@ -39,13 +70,76 @@ export default function Studio() {
     grid,
     presentation,
     lessonViewPolicy,
+    commandDispatch,
   } = useStudioPageRuntime({
     signOut,
     navigateToLab: () => navigate("/lab"),
     preferredMode: settings.studioModePreference,
   });
+  const showGuideSidebar = studioModeModel.shell.showGuideSidebar;
+  const showBrowserPanel = captureMode && captureScenario === "piano-roll"
+    ? false
+    : studioModeModel.shell.showBrowserPanel;
+  const arrangementDefaultSize = arrangementOnlyCapture
+    ? 100
+    : captureMode && captureScenario === "piano-roll"
+    ? 79
+    : studioModeModel.shell.arrangementDefaultSize;
+  const bottomDefaultSize = arrangementOnlyCapture
+    ? 0
+    : captureMode && captureScenario === "piano-roll"
+    ? 21
+    : showCollapsedMixerFooter
+      ? 8
+      : studioModeModel.shell.bottomDefaultSize;
+  const arrangementTrackHeight = compactTracksCapture ? 40 : presentation.arrangementWorkspaceModel.trackHeight;
+
+  useEffect(() => {
+    if (!captureMode) return;
+    if (routeModel.activeSessionId || sessions.length === 0) return;
+    routeModel.selectSession(sessions[0].id);
+  }, [captureMode, routeModel, sessions]);
+
+  useEffect(() => {
+    if (!captureMode || !routeModel.activeSessionId || isLoading) return;
+
+    if (captureScenario === "mixer") {
+      if (presentation.bottomWorkspaceModel.showMixer) return;
+      presentation.bottomWorkspaceModel.setBottomTab("mixer");
+      return;
+    }
+
+    if (captureScenario === "piano-roll") {
+      if (presentation.bottomWorkspaceModel.showPianoRoll) return;
+      const midiTrack = tracks.find((track) => track.type === "midi" && (track.clips ?? []).some((clip) => clip.is_midi));
+      const midiClip = midiTrack?.clips?.find((clip) => clip.is_midi);
+      if (!midiTrack || !midiClip) return;
+
+      presentation.arrangementWorkspaceModel.trackLaneProps.onClipSelect(midiClip.id, midiTrack.id);
+      commandDispatch.openPanel("pianoRoll");
+    }
+  }, [
+    captureMode,
+    captureScenario,
+    commandDispatch,
+    isLoading,
+    presentation.arrangementWorkspaceModel.trackLaneProps,
+    presentation.bottomWorkspaceModel,
+    routeModel.activeSessionId,
+    tracks,
+  ]);
 
   if (!routeModel.activeSessionId) {
+    if (captureMode && sessions.length > 0) {
+      return (
+        <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
+          <Package className="h-6 w-6 animate-pulse text-primary" />
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-3 w-32" />
+        </div>
+      );
+    }
+
     return (
       <SessionPicker
         sessions={sessions}
@@ -96,46 +190,50 @@ export default function Studio() {
             : "false"
         }
       >
-        <StudioHeaderBar
-          studioMode={studioModeModel.mode}
-          sessionName={session?.name || "Loading…"}
-          activeLessonId={routeModel.lessonId}
-          guideVisible={presentation.headerModel.guide.visible}
-          guideCollapsed={presentation.headerModel.guide.collapsed}
-          guideLabel={presentation.headerModel.guide.label}
-          onStartLesson={routeModel.startLesson}
-          onToggleGuide={presentation.headerModel.toggleGuide}
-          onOpenSessions={presentation.headerModel.openSessions}
-          onOpenLab={presentation.headerModel.openLab}
-          onSignOut={presentation.headerModel.signOut}
-        />
+        {!cleanPianoRollCapture ? (
+          <StudioHeaderBar
+            studioMode={studioModeModel.mode}
+            sessionName={session?.name || "Loading…"}
+            activeLessonId={routeModel.lessonId}
+            captureVariant={headerCaptureVariant}
+            guideVisible={presentation.headerModel.guide.visible}
+            guideCollapsed={presentation.headerModel.guide.collapsed}
+            guideLabel={presentation.headerModel.guide.label}
+            onStartLesson={routeModel.startLesson}
+            onToggleGuide={presentation.headerModel.toggleGuide}
+            onOpenSessions={presentation.headerModel.openSessions}
+            onOpenLab={presentation.headerModel.openLab}
+            onSignOut={presentation.headerModel.signOut}
+          />
+        ) : null}
 
         <TransportBar {...presentation.transportBarModel} />
-        <ConnectionAlert {...presentation.connectionAlertModel} />
+        {!cleanPianoRollCapture ? <ConnectionAlert {...presentation.connectionAlertModel} /> : null}
 
         <div
           className={cn(
-            "flex min-h-0 flex-1 overflow-hidden pb-3",
-            studioModeModel.mode === "focused" ? "px-2" : "px-3",
+            "flex min-h-0 flex-1 overflow-hidden",
+            cleanPianoRollCapture ? "px-0 pb-0" : studioModeModel.mode === "focused" ? "px-2 pb-3" : "px-3 pb-3",
           )}
         >
           <ResizablePanelGroup
             direction="vertical"
             className={cn(
               "h-full min-h-0 min-w-0 flex-1 rounded-[24px] border backdrop-blur-xl",
+              cleanPianoRollCapture && "rounded-none border-0 bg-transparent shadow-none backdrop-blur-none",
               studioModeModel.mode === "focused"
                 ? "border-border/60 bg-background/74 shadow-[0_20px_70px_-42px_rgba(15,23,42,0.58)]"
                 : "border-border/70 bg-background/80 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.75)]",
             )}
           >
             <ResizablePanel
-              defaultSize={studioModeModel.shell.arrangementDefaultSize}
+              defaultSize={arrangementDefaultSize}
               minSize={0}
               className="min-h-0 overflow-hidden"
             >
               <StudioArrangementWorkspace
                 mode={studioModeModel.mode}
-                showBrowserPanel={studioModeModel.shell.showBrowserPanel}
+                showBrowserPanel={showBrowserPanel}
                 browserProps={presentation.arrangementWorkspaceModel.browserProps}
                 gridProps={presentation.arrangementWorkspaceModel.gridProps}
                 timelineContainerProps={presentation.arrangementWorkspaceModel.timelineContainerProps}
@@ -148,7 +246,7 @@ export default function Studio() {
                 playheadBeatGetter={presentation.arrangementWorkspaceModel.playheadBeatGetter}
                 effectiveBeat={presentation.arrangementWorkspaceModel.effectiveBeat}
                 onSeek={presentation.arrangementWorkspaceModel.onSeek}
-                trackHeight={presentation.arrangementWorkspaceModel.trackHeight}
+                trackHeight={arrangementTrackHeight}
                 onSetPixelsPerBeat={presentation.arrangementWorkspaceModel.onSetPixelsPerBeat}
                 onSetTrackHeight={presentation.arrangementWorkspaceModel.onSetTrackHeight}
                 loopRegionProps={presentation.arrangementWorkspaceModel.loopRegionProps}
@@ -163,10 +261,11 @@ export default function Studio() {
                 markerModel={presentation.arrangementWorkspaceModel.markerModel}
                 timelineHeaderActions={presentation.arrangementWorkspaceModel.timelineHeaderActions}
                 assetImportInputProps={presentation.arrangementWorkspaceModel.assetImportInputProps}
+                captureVariant={arrangementCaptureVariant}
               />
             </ResizablePanel>
 
-            {studioModeModel.shell.showBottomWorkspace ? (
+            {studioModeModel.shell.showBottomWorkspace && !arrangementOnlyCapture ? (
               <>
                 <ResizableHandle
                   withHandle
@@ -175,13 +274,13 @@ export default function Studio() {
                 />
 
                 <ResizablePanel
-                  defaultSize={studioModeModel.shell.bottomDefaultSize}
+                  defaultSize={bottomDefaultSize}
                   minSize={0}
                   className="min-h-0 overflow-hidden"
                 >
                   <StudioBottomWorkspace
                     mode={studioModeModel.mode}
-                    showTabs={studioModeModel.shell.showBottomTabs}
+                    showTabs={!hideGuideForCapture && !showCollapsedMixerFooter && studioModeModel.shell.showBottomTabs}
                     bottomTab={presentation.bottomWorkspaceModel.bottomTab}
                     setBottomTab={presentation.bottomWorkspaceModel.setBottomTab}
                     showPianoRoll={presentation.bottomWorkspaceModel.showPianoRoll}
@@ -193,6 +292,17 @@ export default function Studio() {
                     mixerPanelProps={presentation.bottomWorkspaceModel.mixerPanelProps}
                     pianoRollProps={presentation.bottomWorkspaceModel.pianoRollProps}
                     detailPanelProps={presentation.bottomWorkspaceModel.detailPanelProps}
+                    collapsedSummaryLabel={showCollapsedMixerFooter ? `Mixer ${tracks.length} tracks` : undefined}
+                    overlay={
+                      pianoRollOverlayMode ? <PianoRollCaptureOverlay mode={pianoRollOverlayMode} /> : undefined
+                    }
+                    captureVariant={
+                      captureMode && captureScenario === "piano-roll"
+                        ? "figma"
+                        : captureMode && captureScenario === "mixer"
+                          ? "figma-mixer"
+                          : null
+                    }
                   />
                 </ResizablePanel>
               </>
@@ -201,7 +311,7 @@ export default function Studio() {
 
           <StudioGuideSidebar
             mode={studioModeModel.mode}
-            visible={studioModeModel.shell.showGuideSidebar}
+            visible={!hideGuideForCapture && showGuideSidebar}
             guideBridge={presentation.guideSidebarModel.guideBridge}
             lessonPanelModel={presentation.guideSidebarModel.lessonPanelModel}
             onDismissCompletion={presentation.guideSidebarModel.onDismissCompletion}

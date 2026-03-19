@@ -1,9 +1,10 @@
-import { Flag, Grid3X3, Minus, Plus, RotateCcw, Upload } from "lucide-react";
+import { ChevronDown, Flag, Grid3X3, Maximize2, Minus, MousePointer2, Plus, Search, Upload, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
 
 interface StudioArrangementToolbarProps {
   mode: "guided" | "standard" | "focused";
+  captureVariant?: "figma" | "figma-compact" | null;
   activeDivision: GridDivision;
   snapEnabled: boolean;
   tripletMode: boolean;
@@ -22,6 +23,7 @@ interface StudioArrangementToolbarProps {
 
 export function StudioArrangementToolbar({
   mode,
+  captureVariant,
   activeDivision,
   snapEnabled,
   tripletMode,
@@ -37,76 +39,92 @@ export function StudioArrangementToolbar({
   onOpenAudioUpload,
   onAddMarkerAtPlayhead,
 }: StudioArrangementToolbarProps) {
-  const dense = mode === "focused";
-
   return (
-    <div className="border-b border-border/50 bg-background/75 px-4 py-2.5 backdrop-blur-sm">
+    <div className="border-b border-white/6 bg-[#232429] px-3 py-1.5">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex flex-wrap items-center gap-2">
-          <Button size="sm" variant="secondary" className="font-mono text-xs" onClick={onCreateAudioTrack}>
-            + Audio
-          </Button>
-          <Button size="sm" variant="secondary" className="font-mono text-xs" onClick={onCreateMidiTrack}>
-            + MIDI
-          </Button>
-          <Button size="sm" variant="ghost" className="font-mono text-xs" onClick={onCreateReturnTrack}>
-            + Return
-          </Button>
-          <Button size="sm" variant="ghost" className="font-mono text-xs" onClick={onOpenAudioUpload}>
-            <Upload className="mr-1.5 h-3.5 w-3.5" />
-            Import
-          </Button>
-          <Button size="sm" variant="ghost" className="font-mono text-xs" onClick={onAddMarkerAtPlayhead}>
-            <Flag className="mr-1.5 h-3.5 w-3.5" />
-            Marker
-          </Button>
+          <button className="flex h-8 items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-[12px] text-white/84">
+            <MousePointer2 className="h-3.5 w-3.5" />
+            Pointer 1
+            <ChevronDown className="h-3.5 w-3.5 text-white/45" />
+          </button>
+          <button
+            className="flex h-8 items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-[12px] text-white/84"
+            onClick={onCreateAudioTrack}
+          >
+            <Plus className="h-3.5 w-3.5" />
+            Track
+            <ChevronDown className="h-3.5 w-3.5 text-white/45" />
+          </button>
+          {captureVariant === "figma" ? null : (
+            <>
+              {captureVariant === "figma-compact" ? (
+                <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white">
+                  Ungroup
+                </Button>
+              ) : (
+                <>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onCreateMidiTrack}>
+                    MIDI
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onCreateReturnTrack}>
+                    Return
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onOpenAudioUpload}>
+                    <Upload className="mr-1.5 h-3.5 w-3.5" />
+                    Import
+                  </Button>
+                  <Button size="sm" variant="ghost" className="h-8 rounded-md px-3 text-[12px] text-white/68 hover:bg-white/6 hover:text-white" onClick={onAddMarkerAtPlayhead}>
+                    <Flag className="mr-1.5 h-3.5 w-3.5" />
+                    Marker
+                  </Button>
+                </>
+              )}
+            </>
+          )}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2">
-          <div className="flex items-center rounded-xl border border-border/60 bg-card/70 px-1 py-1">
+        <div className="flex flex-wrap items-center gap-2 text-white/68">
+          <div className="flex items-center gap-1 rounded-md border border-white/8 bg-[#2b2d33] px-1 py-1">
             <Button
               size="sm"
-              variant={snapEnabled ? "secondary" : "ghost"}
-              className="h-7 px-2 font-mono text-[11px]"
+              variant="ghost"
+              className={`h-6 rounded px-2 text-[12px] ${snapEnabled ? "bg-[#355fa9] text-white hover:bg-[#426bb2]" : "text-white/68 hover:bg-white/6 hover:text-white"}`}
               onClick={onToggleSnap}
             >
               <Grid3X3 className="mr-1 h-3.5 w-3.5" />
-              Snap {activeDivision}
+              Snap
             </Button>
-            <Button
-              size="sm"
-              variant={tripletMode ? "secondary" : "ghost"}
-              className="h-7 px-2 font-mono text-[11px]"
-              onClick={onToggleTriplet}
-            >
-              Triplet
-            </Button>
+            <span className="px-2 text-[12px] text-white/85">{activeDivision}</span>
           </div>
 
-          <div className="flex items-center rounded-xl border border-border/60 bg-card/70 px-1 py-1">
-            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onNarrowGrid} title="Zoom out timeline grid">
+          <button
+            className={`flex h-8 items-center rounded-md border border-white/8 px-3 text-[12px] ${tripletMode ? "bg-[#355fa9] text-white" : "bg-[#2b2d33] text-white/75"}`}
+            onClick={onToggleTriplet}
+          >
+            Triplet
+          </button>
+
+          <div className="flex items-center gap-1">
+            <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-white/6 hover:text-white">
+              <Search className="h-3.5 w-3.5" />
+            </button>
+            <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-white/6 hover:text-white" onClick={onNarrowGrid} title="Zoom out timeline grid">
               <Minus className="h-3.5 w-3.5" />
-            </Button>
-            <div className="min-w-[72px] text-center font-mono text-[11px] text-foreground/60">
-              {Math.round(pixelsPerBeat)} px/beat
-            </div>
-            <Button size="icon" variant="ghost" className="h-7 w-7" onClick={onWidenGrid} title="Zoom in timeline grid">
-              <Plus className="h-3.5 w-3.5" />
-            </Button>
+            </button>
+            <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-white/6 hover:text-white" onClick={onWidenGrid} title="Zoom in timeline grid">
+              <ZoomIn className="h-3.5 w-3.5" />
+            </button>
+            <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-white/6 hover:text-white">
+              <Maximize2 className="h-3.5 w-3.5" />
+            </button>
           </div>
 
-          <div className="hidden items-center gap-2 rounded-xl border border-border/60 bg-card/70 px-2.5 py-1.5 md:flex">
-            <RotateCcw className="h-3.5 w-3.5 text-foreground/45" />
-            <div className="font-mono text-[11px] text-foreground/60">
-              Track height {trackHeight}px
-            </div>
+          <div className="flex items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-3 py-1 text-[12px]">
+            <span className="text-white/55">Height:</span>
+            <span className="text-white">{trackHeight >= 96 ? "Medium" : "Compact"}</span>
+            <ChevronDown className="h-3.5 w-3.5 text-white/45" />
           </div>
-
-          {!dense && (
-            <div className="hidden rounded-full border border-border/60 bg-background/60 px-2.5 py-1 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/45 lg:block">
-              Arrangement Controls
-            </div>
-          )}
         </div>
       </div>
     </div>

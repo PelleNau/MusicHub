@@ -30,20 +30,20 @@ export function StudioLessonPanel({
     return (
       <div
         className={cn(
-          "flex shrink-0 flex-col items-center gap-3 rounded-[20px] border py-3 backdrop-blur-xl",
+          "flex shrink-0 flex-col items-center gap-3 rounded-[12px] border py-3 backdrop-blur-xl",
           mode === "focused"
-            ? "w-10 border-border/60 bg-card/70 shadow-[0_14px_40px_-28px_rgba(15,23,42,0.55)]"
-            : "w-12 border-border/70 bg-card/85 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.7)]",
+            ? "w-10 border-white/8 bg-[#232429] shadow-[0_14px_40px_-28px_rgba(15,23,42,0.55)]"
+            : "w-12 border-white/8 bg-[#232429] shadow-[0_18px_50px_-28px_rgba(15,23,42,0.7)]",
         )}
       >
         <button
           onClick={onToggleCollapsed}
-          className="flex h-8 w-8 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors hover:bg-primary/15"
+          className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-white/4 text-white/65 transition-colors hover:bg-white/8"
           title="Open lesson guide"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <div className="rotate-180 [writing-mode:vertical-rl] text-[10px] font-mono uppercase tracking-[0.24em] text-foreground/45">
+        <div className="rotate-180 [writing-mode:vertical-rl] text-[10px] uppercase tracking-[0.24em] text-white/35">
           Lesson
         </div>
       </div>
@@ -53,10 +53,10 @@ export function StudioLessonPanel({
   return (
     <aside
       className={cn(
-        "flex shrink-0 flex-col overflow-hidden rounded-[24px] border backdrop-blur-xl",
+        "flex shrink-0 flex-col overflow-hidden rounded-none border-l backdrop-blur-xl",
         mode === "focused"
-          ? "w-[288px] border-border/60 bg-card/72 shadow-[0_18px_60px_-38px_rgba(15,23,42,0.58)]"
-          : "w-[360px] border-border/70 bg-card/88 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.82)]",
+          ? "w-[288px] border-white/8 bg-[#1f2025]"
+          : "w-[340px] border-white/8 bg-[#1f2025]",
       )}
     >
       {/* Header */}
@@ -94,18 +94,18 @@ export function StudioLessonPanel({
       </ScrollArea>
 
       {/* Action bar */}
-      <div className="shrink-0 border-t border-border/70 bg-background/55 px-4 py-3">
-        <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/35">
+      <div className="shrink-0 border-t border-white/6 bg-[#1f2025] px-4 py-3">
+        <div className="mb-2 text-[10px] uppercase tracking-[0.18em] text-white/32">
           Step Controls
         </div>
         <div className="flex items-center gap-2">
-        <Button size="sm" variant="outline" className="gap-1.5 font-mono text-xs" onClick={onResetStep}>
+        <Button size="sm" variant="outline" className="gap-1.5 border-white/8 bg-white/4 text-xs text-white/78 hover:bg-white/8" onClick={onResetStep}>
           <RotateCcw className="h-3 w-3" />
           Reset Step
         </Button>
-        <Button size="sm" variant="outline" className="gap-1.5 font-mono text-xs" onClick={onSkipStep}>
+        <Button size="sm" variant="outline" className="gap-1.5 border-white/8 bg-[#4a8fe8] text-xs text-white hover:bg-[#5a9cf1]" onClick={onSkipStep}>
           <SkipForward className="h-3 w-3" />
-          Skip
+          Continue
         </Button>
         </div>
       </div>
