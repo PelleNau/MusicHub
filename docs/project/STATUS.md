@@ -229,10 +229,12 @@ Phase 2 architecture consolidation
 - live Studio lesson coverage now includes `Audio Editing Fundamentals` and `Instruments, Presets, and Chains`
 - the Guide selector snapshot and anchor registry now expose compatibility aliases used by the existing lesson DSL, instead of depending on exact raw runtime IDs only
 - `Recording Basics` still remains curriculum-only because the Studio command/runtime seam does not yet expose first-class record-start behavior
+- the first Figma-manual-guided Studio toolbar refinement now exists in the real shell rather than only in the standalone export
+- the arrangement workspace now exposes a compact editing toolbar and a dedicated vertical track-height slider wired to real timeline state
 
 ## Next Milestone
 
-Refine the lesson-entry flow against the incoming Figma layouts and continue increasing real lesson/runtime coverage, starting with the remaining Studio Fluency gaps after audio and instrument entry.
+Refine the Studio shell against the incoming Figma layouts while keeping imports narrow, and continue increasing real lesson/runtime coverage where the command/runtime seam can observe user actions honestly.
 
 ## Primary Risk
 

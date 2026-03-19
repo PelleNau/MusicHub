@@ -190,13 +190,17 @@ Unless explicitly overridden by the user:
 169. the Guide selector snapshot now includes compatibility `panels`, `tracks`, and selection fields so the current lesson DSL paths resolve against real runtime data
 170. the Guide anchor registry now exposes alias targets like `first-midi-track`, `first-audio-track`, `first-midi-clip`, `first-audio-clip`, and `mixer-strip:any`
 171. `Recording Basics` remains curriculum-only because there is still no first-class record-start command/ack path in the Studio runtime
+172. the first Figma-manual-guided Studio toolbar refinement now exists in the real shell rather than only in the standalone export
+173. `src/components/studio/StudioArrangementToolbar.tsx` now groups arrangement actions, snap controls, and zoom density controls in the real Studio workspace
+174. `src/components/studio/VerticalZoomSlider.tsx` now provides a dedicated track-height control wired into the real timeline state instead of depending only on drag gestures
+175. `docs/project/MH-045_Figma_Studio_Manual_Reference.md` now records which parts of the latest Figma manual were accepted as reference and which were explicitly rejected
 
 ## Current Next Work
 
 1. refine the lesson-entry flow against the incoming Figma layouts and tighten preflight/resume UX
 2. implement the next real Studio lesson after audio and instrument entry, with `Recording Basics` blocked until record actions become observable in the command/runtime seam
-3. keep replacing mock or legacy learning surfaces with real shell-based pages
-4. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
+3. keep refining Guided/Standard/Focused against the Figma layouts without importing standalone export architecture
+4. keep replacing mock or legacy learning surfaces with real shell-based pages
 5. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
 6. decide whether markers should stay local assist state or graduate into canonical session persistence later
 
