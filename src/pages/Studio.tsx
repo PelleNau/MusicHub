@@ -8,7 +8,6 @@ import { StudioArrangementWorkspace } from "@/components/studio/StudioArrangemen
 import { StudioBottomWorkspace } from "@/components/studio/StudioBottomWorkspace";
 import { StudioHeaderBar } from "@/components/studio/StudioHeaderBar";
 import { StudioGuideSidebar } from "@/components/studio/StudioGuideSidebar";
-import { StudioAssistantRail } from "@/components/studio/StudioAssistantRail";
 import { PianoRollCaptureOverlay } from "@/components/studio/StudioCaptureOverlays";
 import { GuideAnchorHighlight } from "@/components/studio/lesson/GuideAnchorHighlight";
 import { SessionPicker } from "@/components/studio/SessionPicker";
@@ -33,7 +32,6 @@ export default function Studio() {
   const captureMode = isCaptureMode();
   const captureScenario = getCaptureScenario();
   const captureOverlay = getCaptureOverlay();
-  const showAssistantRail = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll");
   const showCollapsedMixerFooter = captureMode && captureScenario === "standard-mode";
   const pianoRollOverlayMode =
     captureMode && captureScenario === "piano-roll"
@@ -60,9 +58,7 @@ export default function Studio() {
     navigateToLab: () => navigate("/lab"),
     preferredMode: settings.studioModePreference,
   });
-  const showGuideSidebar =
-    studioModeModel.shell.showGuideSidebar &&
-    !(captureMode && captureScenario === "piano-roll");
+  const showGuideSidebar = studioModeModel.shell.showGuideSidebar;
 
   useEffect(() => {
     if (!captureMode) return;
@@ -183,7 +179,6 @@ export default function Studio() {
             studioModeModel.mode === "focused" ? "px-2" : "px-3",
           )}
         >
-          {showAssistantRail ? <StudioAssistantRail /> : null}
           <ResizablePanelGroup
             direction="vertical"
             className={cn(
@@ -270,7 +265,7 @@ export default function Studio() {
 
           <StudioGuideSidebar
             mode={studioModeModel.mode}
-            visible={Boolean(showGuideSidebar)}
+            visible={showGuideSidebar}
             guideBridge={presentation.guideSidebarModel.guideBridge}
             lessonPanelModel={presentation.guideSidebarModel.lessonPanelModel}
             onDismissCompletion={presentation.guideSidebarModel.onDismissCompletion}
