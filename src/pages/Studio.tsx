@@ -35,6 +35,7 @@ export default function Studio() {
   const showCollapsedMixerFooter = captureMode && captureScenario === "standard-mode";
   const compactTracksCapture = captureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
   const arrangementOnlyCapture = captureMode && captureScenario === "arrangement";
+  const cleanPianoRollCapture = captureMode && captureScenario === "piano-roll";
   const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
     ? "figma"
     : null;
@@ -189,34 +190,37 @@ export default function Studio() {
             : "false"
         }
       >
-        <StudioHeaderBar
-          studioMode={studioModeModel.mode}
-          sessionName={session?.name || "Loading…"}
-          activeLessonId={routeModel.lessonId}
-          captureVariant={headerCaptureVariant}
-          guideVisible={presentation.headerModel.guide.visible}
-          guideCollapsed={presentation.headerModel.guide.collapsed}
-          guideLabel={presentation.headerModel.guide.label}
-          onStartLesson={routeModel.startLesson}
-          onToggleGuide={presentation.headerModel.toggleGuide}
-          onOpenSessions={presentation.headerModel.openSessions}
-          onOpenLab={presentation.headerModel.openLab}
-          onSignOut={presentation.headerModel.signOut}
-        />
+        {!cleanPianoRollCapture ? (
+          <StudioHeaderBar
+            studioMode={studioModeModel.mode}
+            sessionName={session?.name || "Loading…"}
+            activeLessonId={routeModel.lessonId}
+            captureVariant={headerCaptureVariant}
+            guideVisible={presentation.headerModel.guide.visible}
+            guideCollapsed={presentation.headerModel.guide.collapsed}
+            guideLabel={presentation.headerModel.guide.label}
+            onStartLesson={routeModel.startLesson}
+            onToggleGuide={presentation.headerModel.toggleGuide}
+            onOpenSessions={presentation.headerModel.openSessions}
+            onOpenLab={presentation.headerModel.openLab}
+            onSignOut={presentation.headerModel.signOut}
+          />
+        ) : null}
 
         <TransportBar {...presentation.transportBarModel} />
-        <ConnectionAlert {...presentation.connectionAlertModel} />
+        {!cleanPianoRollCapture ? <ConnectionAlert {...presentation.connectionAlertModel} /> : null}
 
         <div
           className={cn(
-            "flex min-h-0 flex-1 overflow-hidden pb-3",
-            studioModeModel.mode === "focused" ? "px-2" : "px-3",
+            "flex min-h-0 flex-1 overflow-hidden",
+            cleanPianoRollCapture ? "px-0 pb-0" : studioModeModel.mode === "focused" ? "px-2 pb-3" : "px-3 pb-3",
           )}
         >
           <ResizablePanelGroup
             direction="vertical"
             className={cn(
               "h-full min-h-0 min-w-0 flex-1 rounded-[24px] border backdrop-blur-xl",
+              cleanPianoRollCapture && "rounded-none border-0 bg-transparent shadow-none backdrop-blur-none",
               studioModeModel.mode === "focused"
                 ? "border-border/60 bg-background/74 shadow-[0_20px_70px_-42px_rgba(15,23,42,0.58)]"
                 : "border-border/70 bg-background/80 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.75)]",
