@@ -209,14 +209,17 @@ Phase 2 architecture consolidation
 - `src/components/studio/StudioHeaderBar.tsx` now makes the active lesson state explicit and reduces header chrome noise
 - `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement area as the primary task surface and fixes the stale `emptyState`/`emptyStateInstruction` mismatch
 - `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now present the guide rail as the dominant guided-work support surface
+- the first standard-shell UI pass now derives a broader production workspace from the same mode contract instead of treating Standard as a separate Studio surface
+- the first focused-shell UI pass now derives a denser production shell from the same runtime and lesson-policy base instead of building an expert-only fork
+- `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioBottomWorkspace.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now distinguish Guided, Standard, and Focused through shell density and lesson-support emphasis instead of diverging runtime behavior
 
 ## Next Milestone
 
-Use the stronger runtime checkpoint to refine Guided and then derive `Standard` and `Focused` from the same explicit shell contract rather than continuing generic extraction work.
+Refine the mode-derived Studio shell against the incoming Figma layouts and start mapping the same mode system onto the broader product surfaces outside Studio.
 
 ## Primary Risk
 
-Letting visual redesign drift away from the current runtime and lesson-policy contracts, which would recreate a second Studio architecture in the UI layer.
+Letting Figma-driven shell work drift away from the current runtime and lesson-policy contracts, which would recreate a second Studio architecture in the UI layer.
 
 ## Default Working Mode
 

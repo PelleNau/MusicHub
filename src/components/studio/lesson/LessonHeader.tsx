@@ -2,8 +2,10 @@ import { ChevronRight, X, BookOpen, ChevronDown, ChevronUp } from "lucide-react"
 import { useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import type { GuideLessonStatus } from "@/types/musicHubGuideRuntime";
+import { cn } from "@/lib/utils";
 
 interface LessonHeaderProps {
+  mode: "guided" | "standard" | "focused";
   title?: string;
   lessonStatus: GuideLessonStatus;
   stepIndex: number;
@@ -28,6 +30,7 @@ function statusBadge(status: GuideLessonStatus) {
 }
 
 export function LessonHeader({
+  mode,
   title,
   lessonStatus,
   stepIndex,
@@ -41,7 +44,14 @@ export function LessonHeader({
   const progressPercent = stepCount > 0 ? Math.round(((stepIndex) / stepCount) * 100) : 0;
 
   return (
-    <div className="shrink-0 border-b border-border/70 bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),transparent_58%)]">
+    <div
+      className={cn(
+        "shrink-0 border-b border-border/70",
+        mode === "focused"
+          ? "bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.08),transparent_62%)]"
+          : "bg-[radial-gradient(circle_at_top,rgba(59,130,246,0.12),transparent_58%)]",
+      )}
+    >
       {/* Title row */}
       <div className="flex items-center justify-between px-4 py-4">
         <div className="min-w-0 flex-1">
@@ -53,7 +63,9 @@ export function LessonHeader({
             {title}
           </div>
           <p className="mt-1 max-w-[240px] text-xs leading-relaxed text-foreground/60">
-            Stay inside the highlighted workspace. The guide will reveal more of Studio only when the lesson needs it.
+            {mode === "focused"
+              ? "Lesson support stays available while the canvas remains prioritized."
+              : "Stay inside the highlighted workspace. The guide will reveal more of Studio only when the lesson needs it."}
           </p>
         </div>
         <div className="flex items-center gap-1 shrink-0 ml-2">
