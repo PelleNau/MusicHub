@@ -177,15 +177,18 @@ Unless explicitly overridden by the user:
 156. the `/learn` route now renders through real shell-based pages instead of the mock curriculum surface
 157. `src/pages/Learn.tsx`, `src/pages/CourseDetail.tsx`, and `src/pages/LessonDetail.tsx` now provide real course, module, and Studio-entry surfaces
 158. `src/data/learningCatalog.ts` now ties curriculum intent, shell policy, and live Studio lesson entry points together for the first learning-surface pass
+159. the first explicit Studio lesson-entry preflight now exists in `src/pages/StudioLessonEntry.tsx`
+160. module detail pages now hand off through a real preflight step instead of jumping straight into Studio query params
+161. lesson entry now tracks local continue/resume state per lesson and exposes unavailable reasons for modules that are still curriculum-only
 
 ## Current Next Work
 
-1. refine the new learning surfaces against the incoming Figma layouts and broaden the catalog beyond the first mapped modules
-2. keep replacing mock or legacy learning surfaces with real shell-based pages
-3. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
-4. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
-5. decide whether markers should stay local assist state or graduate into canonical session persistence later
-6. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
+1. refine the lesson-entry flow against the incoming Figma layouts and tighten preflight/resume UX
+2. broaden the learning catalog beyond the first mapped modules while keeping implementation status honest
+3. keep replacing mock or legacy learning surfaces with real shell-based pages
+4. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
+5. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
+6. decide whether markers should stay local assist state or graduate into canonical session persistence later
 
 ## Default Instruction For Lovable
 
