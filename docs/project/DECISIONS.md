@@ -34,6 +34,24 @@ The product now has enough distinct surfaces that page-local shells create fragm
 - future Figma designs for Courses, Theory, Lab, and inventory should target this shell language
 - mock or legacy pages should be replaced with real shell-based surfaces rather than extended as isolated layouts
 
+---
+
+## 2026-03-19 — Course surfaces should bind curriculum to real Studio entry points
+
+### Decision
+
+The learning path should be rendered through real shell-based course/module pages that connect curriculum metadata, shell policy, and actual Studio lesson entry points instead of sending users through mock curriculum pages.
+
+### Rationale
+
+Once the product shell exists, continuing to route `/learn` through mock pages preserves the wrong source of truth. The course surfaces need to express which modules are implemented, which shell policy they require, and whether a real Studio lesson exists.
+
+### Consequence
+
+- `/learn` and its detail routes should use a real catalog/data layer instead of mock-only page content
+- course/module pages should expose shell policy and implementation status directly
+- Studio entry buttons should only route into real lesson/runtime paths when those paths exist
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision

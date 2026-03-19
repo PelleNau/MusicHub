@@ -1,0 +1,313 @@
+export type LearningSurfaceKey =
+  | "transport"
+  | "arrangement"
+  | "guide"
+  | "browser"
+  | "bottom-workspace"
+  | "piano-roll"
+  | "detail"
+  | "mixer";
+
+export type LearningModuleStatus = "implemented" | "scaffolded" | "planned";
+
+export interface LearningModule {
+  id: string;
+  title: string;
+  summary: string;
+  goal: string;
+  duration: string;
+  lessonCount: number;
+  shell: "guided-constrained" | "guided-expanded" | "standard-assisted";
+  primarySurface: LearningSurfaceKey;
+  visibleSurfaces: LearningSurfaceKey[];
+  status: LearningModuleStatus;
+  studioLessonId?: string;
+  recommendedMode?: "guided" | "standard" | "focused";
+}
+
+export interface LearningCourse {
+  id: string;
+  title: string;
+  tagline: string;
+  summary: string;
+  duration: string;
+  moduleCount: number;
+  moduleIds: string[];
+}
+
+const modules: LearningModule[] = [
+  {
+    id: "course-1-module-1",
+    title: "What Sound Is",
+    summary: "Understand vibration, pitch, loudness, waveforms, and the first Studio surfaces.",
+    goal: "Establish the physical and perceptual basics of sound, then connect them to Studio interaction.",
+    duration: "30–45 min",
+    lessonCount: 8,
+    shell: "guided-constrained",
+    primarySurface: "guide",
+    visibleSurfaces: ["transport", "arrangement", "guide"],
+    status: "scaffolded",
+  },
+  {
+    id: "course-1-module-2",
+    title: "Rhythm and Time",
+    summary: "Pulse, tempo, bars, grid placement, looping, spacing, and a first 1-bar beat.",
+    goal: "Help the user feel and place time-based events inside a constrained Studio view.",
+    duration: "35–50 min",
+    lessonCount: 8,
+    shell: "guided-constrained",
+    primarySurface: "arrangement",
+    visibleSurfaces: ["transport", "arrangement", "guide"],
+    status: "scaffolded",
+  },
+  {
+    id: "course-1-module-3",
+    title: "Melody and Pitch Space",
+    summary: "Steps, leaps, motifs, tension/release, and short melodic phrases.",
+    goal: "Move from abstract pitch awareness into intentional melodic movement and phrase-building.",
+    duration: "40–55 min",
+    lessonCount: 8,
+    shell: "guided-expanded",
+    primarySurface: "piano-roll",
+    visibleSurfaces: ["transport", "arrangement", "guide", "piano-roll"],
+    status: "scaffolded",
+  },
+  {
+    id: "course-2-module-7",
+    title: "Navigation and Workflow",
+    summary: "Read the transport, timeline, panels, and navigation affordances without exposing full expert density at once.",
+    goal: "Teach the Studio shell itself as a bounded workspace rather than a wall of DAW chrome.",
+    duration: "25–35 min",
+    lessonCount: 6,
+    shell: "guided-constrained",
+    primarySurface: "transport",
+    visibleSurfaces: ["transport", "arrangement", "guide"],
+    status: "implemented",
+    studioLessonId: "studio.transport-basics",
+    recommendedMode: "guided",
+  },
+  {
+    id: "course-2-module-8",
+    title: "MIDI Editing Fundamentals",
+    summary: "Create a track, create a MIDI clip, and open the piano roll for note editing.",
+    goal: "Introduce MIDI editing through explicit clip and piano-roll entry points.",
+    duration: "30–40 min",
+    lessonCount: 6,
+    shell: "guided-expanded",
+    primarySurface: "piano-roll",
+    visibleSurfaces: ["transport", "arrangement", "guide", "bottom-workspace", "piano-roll"],
+    status: "implemented",
+    studioLessonId: "studio.midi-clip-basics",
+    recommendedMode: "guided",
+  },
+  {
+    id: "course-2-module-9",
+    title: "Audio Editing Fundamentals",
+    summary: "Clip trim, arrangement placement, and waveform-focused editing behaviors.",
+    goal: "Move clip editing into a bounded arrangement workflow before broadening the shell.",
+    duration: "30–40 min",
+    lessonCount: 6,
+    shell: "guided-expanded",
+    primarySurface: "arrangement",
+    visibleSurfaces: ["transport", "arrangement", "guide", "detail"],
+    status: "scaffolded",
+  },
+  {
+    id: "course-2-module-10",
+    title: "Instruments, Presets, and Chains",
+    summary: "Browse sounds, load instruments, and connect presets/chains to tracks.",
+    goal: "Introduce the browser and chain-selection path as a guided support surface.",
+    duration: "35–45 min",
+    lessonCount: 6,
+    shell: "standard-assisted",
+    primarySurface: "browser",
+    visibleSurfaces: ["transport", "arrangement", "guide", "browser", "detail"],
+    status: "planned",
+  },
+  {
+    id: "course-2-module-11",
+    title: "Recording Basics",
+    summary: "Arm tracks, monitor input, and capture first recordings into the session.",
+    goal: "Teach recording entry points without exposing the entire advanced routing stack.",
+    duration: "35–45 min",
+    lessonCount: 6,
+    shell: "standard-assisted",
+    primarySurface: "arrangement",
+    visibleSurfaces: ["transport", "arrangement", "guide", "detail", "mixer"],
+    status: "planned",
+  },
+  {
+    id: "course-2-module-12",
+    title: "Build a Full Sketch",
+    summary: "Use the learned editing paths to assemble a coherent first production sketch.",
+    goal: "Turn isolated Studio skills into a bounded but complete creative outcome.",
+    duration: "40–60 min",
+    lessonCount: 1,
+    shell: "standard-assisted",
+    primarySurface: "arrangement",
+    visibleSurfaces: ["transport", "arrangement", "guide", "browser", "bottom-workspace"],
+    status: "planned",
+  },
+  {
+    id: "course-3-module-16",
+    title: "Arrangement and Energy",
+    summary: "Build structure and dynamic contrast across a fuller production canvas.",
+    goal: "Teach energy management and arrangement pacing on top of the standard shell.",
+    duration: "40–55 min",
+    lessonCount: 6,
+    shell: "standard-assisted",
+    primarySurface: "arrangement",
+    visibleSurfaces: ["transport", "arrangement", "guide", "browser", "bottom-workspace"],
+    status: "planned",
+  },
+  {
+    id: "course-4-module-21",
+    title: "Modulation and Movement",
+    summary: "Use modulation to add motion, tension, and living texture to sounds.",
+    goal: "Move toward more advanced sound-shaping without breaking the single Studio model.",
+    duration: "40–55 min",
+    lessonCount: 6,
+    shell: "standard-assisted",
+    primarySurface: "detail",
+    visibleSurfaces: ["transport", "arrangement", "detail", "browser", "guide"],
+    status: "planned",
+  },
+  {
+    id: "course-5-module-27",
+    title: "Compression and Dynamics",
+    summary: "Understand level control, punch, sustain, and the practical role of compression.",
+    goal: "Introduce dynamics processing through bounded mixer/detail workflows.",
+    duration: "35–50 min",
+    lessonCount: 6,
+    shell: "standard-assisted",
+    primarySurface: "mixer",
+    visibleSurfaces: ["transport", "arrangement", "mixer", "detail", "guide"],
+    status: "implemented",
+    studioLessonId: "studio.mixer-basics",
+    recommendedMode: "guided",
+  },
+  {
+    id: "course-6-module-34",
+    title: "AI-Assisted Creation in MusicHub",
+    summary: "Use assistive product features without losing authorship or workflow clarity.",
+    goal: "Teach AI as a bounded creative partner inside the product rather than a separate surface.",
+    duration: "30–45 min",
+    lessonCount: 5,
+    shell: "standard-assisted",
+    primarySurface: "guide",
+    visibleSurfaces: ["transport", "arrangement", "guide", "browser", "detail"],
+    status: "planned",
+  },
+];
+
+const courses: LearningCourse[] = [
+  {
+    id: "course-1",
+    title: "Foundations of Sound",
+    tagline: "Hear, place, and shape the basics",
+    summary: "Start with sound, rhythm, melody, and harmony so later Studio work has a real musical base.",
+    duration: "3–4 hours",
+    moduleCount: 6,
+    moduleIds: ["course-1-module-1", "course-1-module-2", "course-1-module-3"],
+  },
+  {
+    id: "course-2",
+    title: "Studio Fluency",
+    tagline: "Learn the workspace through real actions",
+    summary: "Understand navigation, editing, browsing, recording, and first sketch-building inside Studio.",
+    duration: "4–5 hours",
+    moduleCount: 6,
+    moduleIds: [
+      "course-2-module-7",
+      "course-2-module-8",
+      "course-2-module-9",
+      "course-2-module-10",
+      "course-2-module-11",
+      "course-2-module-12",
+    ],
+  },
+  {
+    id: "course-3",
+    title: "Production Core",
+    tagline: "Turn skills into complete demos",
+    summary: "Move from isolated tracks toward groove, bass, hooks, arrangement, and a finished demo.",
+    duration: "4–6 hours",
+    moduleCount: 6,
+    moduleIds: ["course-3-module-16"],
+  },
+  {
+    id: "course-4",
+    title: "Sound Design and Sonic Control",
+    tagline: "Shape timbre deliberately",
+    summary: "Go beyond presets into synthesis, sampling, modulation, layering, and signature sound design.",
+    duration: "4–6 hours",
+    moduleCount: 6,
+    moduleIds: ["course-4-module-21"],
+  },
+  {
+    id: "course-5",
+    title: "Mixing and Finishing",
+    tagline: "Balance, dynamics, depth, and delivery",
+    summary: "Take projects from rough idea to balanced, controlled, export-ready work.",
+    duration: "4–6 hours",
+    moduleCount: 6,
+    moduleIds: ["course-5-module-27"],
+  },
+  {
+    id: "course-6",
+    title: "Artist Development and Advanced Creation",
+    tagline: "Work faster with stronger intent",
+    summary: "Push into workflow, collaboration, AI assistance, and end-to-end creative execution.",
+    duration: "4–6 hours",
+    moduleCount: 6,
+    moduleIds: ["course-6-module-34"],
+  },
+];
+
+export function listLearningCourses() {
+  return courses;
+}
+
+export function getLearningCourse(courseId?: string) {
+  return courses.find((course) => course.id === courseId);
+}
+
+export function listCourseModules(courseId?: string) {
+  const course = getLearningCourse(courseId);
+  if (!course) return [];
+  return course.moduleIds
+    .map((moduleId) => modules.find((module) => module.id === moduleId))
+    .filter((module): module is LearningModule => Boolean(module));
+}
+
+export function getLearningModule(courseId?: string, moduleId?: string) {
+  return listCourseModules(courseId).find((module) => module.id === moduleId);
+}
+
+export function countImplementedModules(courseId?: string) {
+  return listCourseModules(courseId).filter((module) => module.status === "implemented").length;
+}
+
+export function getSurfaceLabel(surface: LearningSurfaceKey) {
+  const labels: Record<LearningSurfaceKey, string> = {
+    transport: "Transport",
+    arrangement: "Arrangement",
+    guide: "Guide",
+    browser: "Browser",
+    "bottom-workspace": "Bottom Workspace",
+    "piano-roll": "Piano Roll",
+    detail: "Detail",
+    mixer: "Mixer",
+  };
+  return labels[surface];
+}
+
+export function getShellLabel(shell: LearningModule["shell"]) {
+  const labels: Record<LearningModule["shell"], string> = {
+    "guided-constrained": "Guided Constrained",
+    "guided-expanded": "Guided Expanded",
+    "standard-assisted": "Standard Assisted",
+  };
+  return labels[shell];
+}
+
