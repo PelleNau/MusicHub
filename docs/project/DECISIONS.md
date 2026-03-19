@@ -844,3 +844,22 @@ Even after runtime unification, page-runtime assembly should not own low-level e
 - `src/hooks/useStudioPageCoordination.ts` now owns timeline/grid coordination and keyboard binding
 - `useStudioPageRuntime.ts` is narrower and more declarative
 - the remaining work is no longer page wiring; it is either publish or move into redesign work
+
+---
+
+## 2026-03-19 — Guided Studio should behave like a lesson-first shell, not a flat DAW panel stack
+
+### Decision
+
+The first Studio redesign pass should make Guided mode read as a lesson-first workspace where the arrangement surface is primary and the guide rail is the dominant support surface, without changing runtime authority or introducing a second Studio architecture.
+
+### Rationale
+
+The runtime seam is now stable enough that the next material improvement is presentation, not more extraction. Guided mode fails if it looks like a generic pro-Daw layout with an instructional panel bolted on the side. The shell has to make task focus explicit while still using the same underlying Studio runtime.
+
+### Consequence
+
+- `src/pages/Studio.tsx` now frames the shell as a guided workspace when a lesson is active
+- `src/components/studio/StudioHeaderBar.tsx` carries lesson context instead of acting like a generic toolbar strip
+- `src/components/studio/StudioArrangementWorkspace.tsx` now presents the arrangement area as the main task region
+- `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now treat the guide rail as the dominant guided-work support surface

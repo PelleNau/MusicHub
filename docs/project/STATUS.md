@@ -194,17 +194,21 @@ Phase 2 architecture consolidation
 - Studio session list/query composition now lives in `src/hooks/useStudioSessionQueries.ts`
 - Studio runtime core and interaction runtime now compose behind a single `src/hooks/useStudioRuntime.ts` adapter before page-level presentation wiring
 - timeline/grid coordination now lives in `src/hooks/useStudioPageCoordination.ts` instead of being wired directly inside `useStudioPageRuntime.ts`
+- the first guided-shell UI pass now presents Studio as a lesson-first workspace instead of a flat stack of panels
+- `src/components/studio/StudioHeaderBar.tsx` now makes the active lesson state explicit and reduces header chrome noise
+- `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement area as the primary task surface and fixes the stale `emptyState`/`emptyStateInstruction` mismatch
+- `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now present the guide rail as the dominant guided-work support surface
 
 ## Next Milestone
 
-Shift from extraction-heavy cleanup to deeper runtime/store consolidation so the selector/command/domain path becomes the dominant Studio runtime rather than an adapter layer around legacy page behavior.
+Implement the first Figma-driven Studio shell pass on top of the current lesson-aware scaffolding, starting with Guided and then deriving the denser modes from the same shell system.
 
 ## Primary Risk
 
-Stopping at page cleanup and leaving the selector/command/domain surfaces as a thin orchestration wrapper instead of consolidating the underlying runtime/store model.
+Letting visual redesign drift away from the current runtime and lesson-policy contracts, which would recreate a second Studio architecture in the UI layer.
 
 ## Default Working Mode
 
-- architecture-first
-- adapter-first
-- command/state model before redesign-heavy implementation
+- shell-first on top of the stabilized runtime seam
+- preserve runtime authority while reshaping Studio presentation
+- treat Figma output as design reference, not repo structure

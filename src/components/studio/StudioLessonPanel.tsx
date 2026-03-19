@@ -25,15 +25,15 @@ export function StudioLessonPanel({
 
   if (state.collapsed) {
     return (
-      <div className="w-10 shrink-0 border-l border-border bg-card/80 flex flex-col items-center py-3 gap-3">
+      <div className="flex w-12 shrink-0 flex-col items-center gap-3 rounded-[20px] border border-border/70 bg-card/85 py-3 shadow-[0_18px_50px_-28px_rgba(15,23,42,0.7)] backdrop-blur-xl">
         <button
           onClick={onToggleCollapsed}
-          className="h-8 w-8 rounded-md border border-border bg-background/80 text-foreground/70 hover:text-foreground hover:bg-background transition-colors flex items-center justify-center"
+          className="flex h-8 w-8 items-center justify-center rounded-xl border border-primary/20 bg-primary/10 text-primary transition-colors hover:bg-primary/15"
           title="Open lesson guide"
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
-        <div className="rotate-180 [writing-mode:vertical-rl] text-[10px] font-mono uppercase tracking-wider text-foreground/45">
+        <div className="rotate-180 [writing-mode:vertical-rl] text-[10px] font-mono uppercase tracking-[0.24em] text-foreground/45">
           Lesson
         </div>
       </div>
@@ -41,7 +41,7 @@ export function StudioLessonPanel({
   }
 
   return (
-    <aside className="w-[320px] shrink-0 border-l border-border bg-card/80 backdrop-blur-sm flex flex-col">
+    <aside className="flex w-[360px] shrink-0 flex-col overflow-hidden rounded-[24px] border border-border/70 bg-card/88 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.82)] backdrop-blur-xl">
       {/* Header */}
       <LessonHeader
         title={state.title}
@@ -55,7 +55,7 @@ export function StudioLessonPanel({
 
       {/* Scrollable content */}
       <ScrollArea className="flex-1">
-        <div className="px-3 py-3 space-y-4">
+        <div className="space-y-4 px-4 py-4">
           {/* Progress rail */}
           <LessonProgressRail
             stepIndex={state.stepIndex}
@@ -75,15 +75,20 @@ export function StudioLessonPanel({
       </ScrollArea>
 
       {/* Action bar */}
-      <div className="shrink-0 flex items-center gap-2 px-3 py-3 border-t border-border">
-        <Button size="sm" variant="outline" className="font-mono text-xs gap-1.5" onClick={onResetStep}>
+      <div className="shrink-0 border-t border-border/70 bg-background/55 px-4 py-3">
+        <div className="mb-2 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground/35">
+          Step Controls
+        </div>
+        <div className="flex items-center gap-2">
+        <Button size="sm" variant="outline" className="gap-1.5 font-mono text-xs" onClick={onResetStep}>
           <RotateCcw className="h-3 w-3" />
           Reset Step
         </Button>
-        <Button size="sm" variant="outline" className="font-mono text-xs gap-1.5" onClick={onSkipStep}>
+        <Button size="sm" variant="outline" className="gap-1.5 font-mono text-xs" onClick={onSkipStep}>
           <SkipForward className="h-3 w-3" />
           Skip
         </Button>
+        </div>
       </div>
     </aside>
   );

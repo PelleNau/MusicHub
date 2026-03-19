@@ -16,7 +16,7 @@ export function StudioGuideSidebar({
 }: StudioGuideSidebarProps) {
   if (guideBridge.runtime.state.lessonStatus === "completed" && guideBridge.lesson) {
     return (
-      <div className="w-72 border-l border-border bg-card overflow-auto">
+      <div className="ml-3 w-80 overflow-auto rounded-[24px] border border-emerald-500/20 bg-card/90 shadow-[0_24px_80px_-36px_rgba(16,185,129,0.45)] backdrop-blur-xl">
         <ModuleCompletionCelebration
           title={guideBridge.lesson.title}
           objectives={guideBridge.lesson.objectives ?? []}
@@ -28,12 +28,14 @@ export function StudioGuideSidebar({
   }
 
   return (
-    <StudioLessonPanel
-      state={lessonPanelModel.lessonState}
-      onToggleCollapsed={lessonPanelModel.toggleCollapsed}
-      onSkipStep={lessonPanelModel.skipCurrentStep}
-      onResetStep={lessonPanelModel.resetCurrentStep}
-      onAbortLesson={() => lessonPanelModel.abortLesson("user_closed")}
-    />
+    <div className="ml-3 flex h-full">
+      <StudioLessonPanel
+        state={lessonPanelModel.lessonState}
+        onToggleCollapsed={lessonPanelModel.toggleCollapsed}
+        onSkipStep={lessonPanelModel.skipCurrentStep}
+        onResetStep={lessonPanelModel.resetCurrentStep}
+        onAbortLesson={() => lessonPanelModel.abortLesson("user_closed")}
+      />
+    </div>
   );
 }

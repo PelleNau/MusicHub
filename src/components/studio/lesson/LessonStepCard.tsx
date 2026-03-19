@@ -50,16 +50,16 @@ export function LessonStepCard({
   activeHints,
 }: LessonStepCardProps) {
   return (
-    <div className="space-y-3">
+    <div className="space-y-4 rounded-[20px] border border-border/70 bg-background/55 p-4 shadow-[0_18px_50px_-32px_rgba(15,23,42,0.7)]">
       {/* Step title + status */}
       {currentStepTitle && (
         <div className="flex items-start gap-2.5">
           <StepStatusIndicator status={stepStatus} />
           <div className="min-w-0 flex-1">
-            <div className="text-sm font-mono font-medium text-foreground leading-tight">
+            <div className="text-sm font-mono font-medium leading-tight text-foreground">
               {currentStepTitle}
             </div>
-            <div className="mt-0.5 text-[10px] font-mono text-foreground/40 capitalize">
+            <div className="mt-1 text-[10px] font-mono uppercase tracking-[0.18em] text-foreground/40">
               {stepStatus.replace(/_/g, " ")}
             </div>
           </div>
@@ -68,8 +68,11 @@ export function LessonStepCard({
 
       {/* Instruction */}
       {instruction && (
-        <div className="rounded-md border border-primary/20 bg-primary/5 px-3 py-2.5">
-          <p className="text-xs leading-relaxed text-foreground/80">
+        <div className="rounded-2xl border border-primary/20 bg-primary/8 px-4 py-3">
+          <div className="mb-1 font-mono text-[10px] uppercase tracking-[0.18em] text-primary/70">
+            Current Action
+          </div>
+          <p className="text-sm leading-relaxed text-foreground/82">
             {instruction}
           </p>
         </div>
@@ -77,14 +80,14 @@ export function LessonStepCard({
 
       {/* Hints */}
       {activeHints.length > 0 && (
-        <div className="space-y-1.5">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-foreground/40">
+        <div className="space-y-2">
+          <div className="text-[10px] font-mono uppercase tracking-[0.18em] text-foreground/40">
             Hints
           </div>
           {activeHints.map((hint) => (
             <div
               key={hint.id}
-              className="rounded-md border border-border bg-background/60 px-2.5 py-2 text-[11px] text-foreground/65 leading-relaxed"
+              className="rounded-xl border border-border/70 bg-card/65 px-3 py-2.5 text-[11px] leading-relaxed text-foreground/65"
             >
               {hint.text}
             </div>

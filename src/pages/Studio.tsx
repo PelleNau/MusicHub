@@ -13,9 +13,9 @@ import { ConnectionAlert } from "@/components/studio/ConnectionAlert";
 import { StudioStatusBar } from "@/components/studio/StudioStatusBar";
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { StudioInfoProvider, useStudioInfo, useInfoHover, STUDIO_INFO } from "@/components/studio/StudioInfoContext";
-import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Package } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 // Track height is now managed by grid.trackHeight (useTimelineGrid)
 
@@ -74,10 +74,21 @@ export default function Studio() {
   return (
     <StudioInfoProvider>
     <div
-      className={`flex h-screen flex-col bg-background ${settings.theme === "ocean" ? "dawn-lagoon-bg" : ""}`}
+      className={cn(
+        "flex h-screen flex-col overflow-hidden bg-background",
+        settings.theme === "ocean" && "dawn-lagoon-bg",
+        guideBridge.lesson
+          ? "bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.12),transparent_28%),radial-gradient(circle_at_top_left,rgba(34,197,94,0.08),transparent_24%)]"
+          : "bg-[radial-gradient(circle_at_top,rgba(148,163,184,0.08),transparent_32%)]",
+      )}
+      data-studio-shell={guideBridge.lesson ? "guided" : "standard"}
       data-guide-lesson={guideBridge.lesson?.lessonId ?? ""}
       data-guide-status={guideBridge.runtime.state.lessonStatus}
       data-guide-step={guideBridge.runtime.state.currentStep?.stepId ?? ""}
+      data-guide-visible={presentation.guideSidebarModel.lessonPanelModel.lessonState.visible ? "true" : "false"}
+      data-guide-collapsed={presentation.guideSidebarModel.lessonPanelModel.lessonState.collapsed ? "true" : "false"}
+      data-lesson-focus={guideBridge.runtime.state.currentStep?.viewPolicy?.focus?.target ?? ""}
+      data-lesson-dim={guideBridge.runtime.state.currentStep?.viewPolicy?.focus?.dimNonTarget ? "true" : "false"}
     >
       <StudioHeaderBar
         sessionName={session?.name || "Loading…"}
@@ -99,10 +110,10 @@ export default function Studio() {
       <ConnectionAlert {...presentation.connectionAlertModel} />
 
       {/* Browser + Timeline + Detail Panel */}
-      <div className="flex-1 flex min-h-0 overflow-hidden">
+      <div className="flex min-h-0 flex-1 overflow-hidden px-3 pb-3">
         <ResizablePanelGroup
           direction="vertical"
-          className="h-full min-h-0 flex-1 min-w-0"
+          className="h-full min-h-0 min-w-0 flex-1 rounded-[24px] border border-border/70 bg-background/80 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.75)] backdrop-blur-xl"
         >
           <ResizablePanel defaultSize={72} minSize={0} className="min-h-0 overflow-hidden">
             <StudioArrangementWorkspace
@@ -138,7 +149,7 @@ export default function Studio() {
           <ResizableHandle
             withHandle
             hitAreaMargins={{ coarse: 14, fine: 8 }}
-            className="h-4 border-y border-border bg-card/80"
+            className="h-4 border-y border-border/70 bg-card/60"
           />
 
           <ResizablePanel defaultSize={28} minSize={0} className="min-h-0 overflow-hidden">

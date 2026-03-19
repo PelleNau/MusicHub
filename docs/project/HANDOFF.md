@@ -148,17 +148,17 @@ Unless explicitly overridden by the user:
 127. Studio session list/query composition now lives in `src/hooks/useStudioSessionQueries.ts`
 128. Studio runtime core and interaction runtime now compose behind a single `src/hooks/useStudioRuntime.ts` adapter before page-level presentation wiring
 129. timeline/grid coordination now lives in `src/hooks/useStudioPageCoordination.ts` instead of being wired directly inside `src/hooks/useStudioPageRuntime.ts`
+130. the first guided-shell UI pass now presents Studio as a lesson-first workspace instead of a flat panel stack
+131. `src/components/studio/StudioHeaderBar.tsx` now exposes active guided-session context instead of acting as a generic toolbar row
+132. `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement region as the primary task surface and fixes the stale `emptyState` prop mismatch
+133. `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now treat the lesson rail as the dominant support surface for guided work
 
 ## Current Next Work
 
-1. decide whether the new `useStudioRuntime.ts` adapter is sufficient as the publishable runtime checkpoint or whether one more normalization pass is still warranted
-2. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
-3. decide whether continuous controls remain a bounded edit stream or need broader runtime normalization
-4. decide whether lesson DSL should gain first-class continuous-edit expectations and validation nodes
-5. decide whether selector-facing session state should adopt a stronger canonical normalized adapter instead of continuing to consume raw session shapes
-6. use the desktop-primary assumption to tighten any remaining host/core seams instead of preserving web-era ambiguity
-7. decide whether the next iteration should formalize a stronger normalized selector/runtime layer or stop at the current stronger checkpoint
-8. if continuing before publish, target the remaining raw session/runtime shapes above `useStudioRuntime.ts` or cut a publishable branch from the now-stable runtime seam
+1. pull the new guided-shell branch into GitHub and review the visual pass against the Figma direction
+2. derive `Standard` and `Focused` from the same shell structure instead of building new surfaces
+3. keep browser preview/info as local assistance state unless a concrete lesson requires broader observability
+4. only return to runtime/store normalization if a real shell requirement proves the current adapter insufficient
 
 ## Default Instruction For Lovable
 
