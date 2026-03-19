@@ -221,14 +221,17 @@ Phase 2 architecture consolidation
 - the first real Studio lesson-entry surface now exists in `src/pages/StudioLessonEntry.tsx`
 - learning pages now hand off through an explicit preflight step instead of jumping straight into Studio query params
 - lesson entry now tracks local continue/resume state per lesson and exposes unavailable reasons for curriculum-only modules
+- Course 1 now has full module coverage in the real learning catalog instead of stopping at Module 3
+- the real catalog now covers all six Course 1 modules and all six Course 2 modules with explicit shell policy and availability state
+- catalog expansion still keeps live Studio entry limited to the lessons that actually exist in the current runtime
 
 ## Next Milestone
 
-Refine the lesson-entry flow against the incoming Figma layouts and broaden the learning catalog and module coverage without falling back to mock-only surfaces.
+Refine the lesson-entry flow against the incoming Figma layouts and continue expanding catalog coverage into Courses 3–6 without inventing fake runtime availability.
 
 ## Primary Risk
 
-Letting lesson-entry UX drift into decorative preflight chrome without tightening the actual Studio handoff contract and resume behavior.
+Letting catalog expansion overstate runtime availability, which would make the learning surfaces look more complete than the actual lesson inventory.
 
 ## Default Working Mode
 

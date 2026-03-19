@@ -180,11 +180,14 @@ Unless explicitly overridden by the user:
 159. the first explicit Studio lesson-entry preflight now exists in `src/pages/StudioLessonEntry.tsx`
 160. module detail pages now hand off through a real preflight step instead of jumping straight into Studio query params
 161. lesson entry now tracks local continue/resume state per lesson and exposes unavailable reasons for modules that are still curriculum-only
+162. Course 1 now has all six modules represented in the real learning catalog instead of stopping at Module 3
+163. the real learning catalog now covers all six Course 1 modules and all six Course 2 modules with explicit shell policy and honest availability state
+164. catalog expansion still limits live Studio handoff to the lessons that actually exist in the current runtime
 
 ## Current Next Work
 
 1. refine the lesson-entry flow against the incoming Figma layouts and tighten preflight/resume UX
-2. broaden the learning catalog beyond the first mapped modules while keeping implementation status honest
+2. continue expanding catalog coverage into Courses 3–6 while keeping implementation status honest
 3. keep replacing mock or legacy learning surfaces with real shell-based pages
 4. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
 5. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus

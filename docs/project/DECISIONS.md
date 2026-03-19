@@ -70,6 +70,24 @@ The real user decision at the learning-to-Studio boundary is not just "open Stud
 - the lesson-entry surface should expose unavailable states for curriculum-only modules
 - local continue/resume state can be tracked at the lesson-entry layer without modifying the Studio runtime contract
 
+---
+
+## 2026-03-19 — Catalog expansion must keep runtime availability honest
+
+### Decision
+
+The learning catalog should expand to represent broader curriculum coverage, but live Studio entry must remain limited to modules backed by real lesson/runtime implementations.
+
+### Rationale
+
+Course and module coverage is valuable even before every lesson is implemented, but overstating runtime availability would turn the new learning surfaces into decorative curriculum maps instead of operational entry points.
+
+### Consequence
+
+- additional modules can be added as scaffolded or planned catalog entries
+- every module should carry explicit shell policy and unavailability reasoning when no live Studio lesson exists
+- only modules backed by real lesson definitions should expose direct Studio handoff
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision
