@@ -17,6 +17,7 @@ This spec is designed to work with:
 - `docs/MusicHub_Studio_Domain_Model_v2.md`
 - `docs/MusicHub_Interaction_Flows_v1.md`
 - `src/types/musicHubCommands.ts`
+- `docs/project/MH-044_Lesson_View_Policy.md`
 
 The core rule is:
 
@@ -45,6 +46,8 @@ The DSL must not depend on:
 - route-specific implementation details
 - raw plugin-host payloads
 
+The DSL may describe lesson-time view policy, but only in product terms such as panel visibility, focus target, or zoom intent. It must not encode component structure.
+
 ---
 
 ## Runtime model
@@ -59,6 +62,11 @@ Every lesson step operates against four concepts:
    - what must become true before the step completes
 4. **assist/reset behavior**
    - what the runtime may do to help the user recover or continue
+
+Lessons may also define a fifth overlay concept:
+
+5. **view policy**
+   - how the Studio shell should focus, collapse, hide, or emphasize surfaces for the current lesson or step
 
 Step completion should prefer, in order:
 
@@ -105,6 +113,10 @@ version: 1
 difficulty: beginner
 estimatedMinutes: 6
 layoutMode: guided
+viewPolicy:
+  panels:
+    browser: hide
+    guide: show
 
 objectives:
   - Recognize higher vs lower pitch
@@ -146,6 +158,7 @@ steps: []
 - `layoutMode`
 - `objectives`
 - `entry`
+- `viewPolicy`
 - `tags`
 
 ---
@@ -195,6 +208,7 @@ Each step is declarative and self-contained.
 
 - `title`
 - `expected`
+- `viewPolicy`
 - `hints`
 - `reset`
 - `onSuccess`
@@ -245,6 +259,54 @@ anchor:
 ### Anchor resolution rule
 
 The runtime must resolve anchors through stable product IDs or anchor registries exposed by the app. It must not rely on ad hoc component structure.
+
+---
+
+## View policy schema
+
+Lessons may define optional shell/view overrides at:
+
+- top-level lesson
+- `entry`
+- per-step
+
+These overrides are declarative and must not name React components or DOM nodes.
+
+```yaml
+viewPolicy:
+  panels:
+    browser: hide
+    guide: show
+    bottomWorkspace: contextual
+  viewport:
+    focus: arrangement
+    anchorTargetId: rhythm-grid
+    zoomToAnchor: true
+  interaction:
+    emphasizeAnchor: true
+    dimNonEssentialPanels: true
+```
+
+### Supported panel states
+
+- `inherit`
+- `show`
+- `hide`
+- `collapse`
+- `contextual`
+
+### Supported focus targets
+
+- `arrangement`
+- `browser`
+- `guide`
+- `mixer`
+- `pianoRoll`
+- `detail`
+- `transport`
+- `statusBar`
+
+View policy changes shell presentation only. It does not redefine runtime authority.
 
 ---
 

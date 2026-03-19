@@ -20,6 +20,7 @@ interface UseStudioBrowserPanelStateOptions {
   infoText: Record<string, StudioBrowserAssistInfo>;
   onAddDevice: (type: DeviceType) => void;
   onAddHostPlugin: (plugin: HostPlugin) => void;
+  preferredCollapsed?: boolean;
 }
 
 const PANEL_WIDTH_KEY = "studio-browser-width";
@@ -33,6 +34,7 @@ export function useStudioBrowserPanelState({
   infoText,
   onAddDevice,
   onAddHostPlugin,
+  preferredCollapsed = false,
 }: UseStudioBrowserPanelStateOptions) {
   const {
     filteredAssets,
@@ -52,7 +54,7 @@ export function useStudioBrowserPanelState({
     findSimilar,
   } = useBrowserAssets({ hostPlugins });
 
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(preferredCollapsed);
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [panelWidth, setPanelWidth] = useState<number>(() => {
@@ -76,6 +78,10 @@ export function useStudioBrowserPanelState({
   useEffect(() => {
     setSelectedIndex(-1);
   }, [filteredAssets.length, searchQuery, activeCategory, activeSubcategory, showFavorites, showRecents]);
+
+  useEffect(() => {
+    setCollapsed(preferredCollapsed);
+  }, [preferredCollapsed]);
 
   useEffect(() => {
     if (selectedIndex >= 0 && selectedRowRef.current && listRef.current) {

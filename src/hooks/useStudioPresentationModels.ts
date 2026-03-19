@@ -19,12 +19,16 @@ interface UseStudioPresentationModelsOptions {
     | "assetImportInputProps"
     | "timelineContainerProps"
     | "loopRegionProps"
+    | "markerModel"
+    | "studioModeModel"
   >;
+  studioModeModel: Parameters<typeof useStudioBehaviorModels>[0]["studioModeModel"];
 }
 
 export function useStudioPresentationModels({
   behavior,
   shell,
+  studioModeModel,
 }: UseStudioPresentationModelsOptions) {
   const behaviorModels = useStudioBehaviorModels(behavior);
 
@@ -41,6 +45,7 @@ export function useStudioPresentationModels({
     assetImportInputProps: behaviorModels.assetImportModel.inputProps,
     timelineContainerProps: behaviorModels.timelineShellModel.timelineContainerProps,
     loopRegionProps: behaviorModels.timelineShellModel.loopRegionProps,
+    studioModeModel,
   });
 
   return {

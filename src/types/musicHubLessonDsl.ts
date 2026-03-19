@@ -133,6 +133,56 @@ export interface LessonHint {
   showAfterSeconds?: number;
 }
 
+export type LessonPanelVisibility =
+  | "inherit"
+  | "show"
+  | "hide"
+  | "collapse"
+  | "contextual";
+
+export type LessonViewFocusTarget =
+  | "arrangement"
+  | "browser"
+  | "guide"
+  | "mixer"
+  | "pianoRoll"
+  | "detail"
+  | "transport"
+  | "statusBar";
+
+export interface LessonPanelVisibilityPolicy {
+  browser?: LessonPanelVisibility;
+  guide?: LessonPanelVisibility;
+  bottomWorkspace?: LessonPanelVisibility;
+  mixer?: LessonPanelVisibility;
+  pianoRoll?: LessonPanelVisibility;
+  detail?: LessonPanelVisibility;
+}
+
+export interface LessonViewportPolicy {
+  focus?: LessonViewFocusTarget;
+  anchorTargetId?: string;
+  zoomToAnchor?: boolean;
+  zoomToSelection?: boolean;
+  beatRange?: {
+    start: number;
+    end: number;
+  };
+}
+
+export interface LessonInteractionPolicy {
+  emphasizeAnchor?: boolean;
+  dimNonEssentialPanels?: boolean;
+  lockPanelSwitching?: boolean;
+  lockBottomTab?: boolean;
+}
+
+export interface LessonViewPolicy {
+  panels?: LessonPanelVisibilityPolicy;
+  viewport?: LessonViewportPolicy;
+  interaction?: LessonInteractionPolicy;
+}
+
 export interface LessonCommandRef<TType extends MusicHubCommand["type"] = MusicHubCommand["type"]> {
   type: TType;
   payload: Extract<MusicHubCommand, { type: TType }>["payload"];
@@ -159,6 +209,7 @@ export interface LessonStepDefinition {
   title?: string;
   instruction: string;
   anchor: LessonAnchorRef;
+  viewPolicy?: LessonViewPolicy;
   expected?: LessonExpected;
   validation: LessonValidationNode;
   hints?: LessonHint[];
@@ -172,6 +223,7 @@ export interface LessonStepDefinition {
 
 export interface LessonEntry {
   commands?: LessonCommandRef[];
+  viewPolicy?: LessonViewPolicy;
 }
 
 export interface LessonDefinition {
@@ -186,6 +238,7 @@ export interface LessonDefinition {
   prerequisites?: string[];
   tags?: string[];
   entry?: LessonEntry;
+  viewPolicy?: LessonViewPolicy;
   steps: LessonStepDefinition[];
 }
 

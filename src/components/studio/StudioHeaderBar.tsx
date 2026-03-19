@@ -4,6 +4,7 @@ import { LessonLauncher } from "@/components/studio/LessonLauncher";
 import { cn } from "@/lib/utils";
 
 interface StudioHeaderBarProps {
+  studioMode: "guided" | "standard" | "focused";
   sessionName: string;
   activeLessonId: string | null;
   guideVisible: boolean;
@@ -17,6 +18,7 @@ interface StudioHeaderBarProps {
 }
 
 export function StudioHeaderBar({
+  studioMode,
   sessionName,
   activeLessonId,
   guideVisible,
@@ -34,12 +36,14 @@ export function StudioHeaderBar({
     <header className="border-b border-border/70 bg-background/70 px-4 py-3 backdrop-blur-xl">
       <div className="flex items-center justify-between gap-4">
         <div className="flex min-w-0 items-center gap-3">
-          <div className={cn(
-            "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-sm",
-            lessonActive
-              ? "border-primary/30 bg-primary/10 text-primary"
-              : "border-border/70 bg-card text-foreground/70",
-          )}>
+          <div
+            className={cn(
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border shadow-sm",
+              lessonActive
+                ? "border-primary/30 bg-primary/10 text-primary"
+                : "border-border/70 bg-card text-foreground/70",
+            )}
+          >
             <Package className="h-4 w-4" />
           </div>
           <div className="min-w-0">
@@ -47,13 +51,18 @@ export function StudioHeaderBar({
               <span className="truncate font-mono text-sm font-semibold text-foreground">
                 {sessionName}
               </span>
-              <span className={cn(
-                "inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em]",
-                lessonActive
-                  ? "border-primary/30 bg-primary/10 text-primary"
-                  : "border-border/70 bg-card text-foreground/45",
-              )}>
+              <span
+                className={cn(
+                  "inline-flex items-center rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase tracking-[0.18em]",
+                  lessonActive
+                    ? "border-primary/30 bg-primary/10 text-primary"
+                    : "border-border/70 bg-card text-foreground/45",
+                )}
+              >
                 {lessonActive ? "Guided Session" : "Studio"}
+              </span>
+              <span className="rounded border border-border/50 bg-muted/20 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-foreground/60">
+                {studioMode}
               </span>
             </div>
             <p className="mt-1 truncate text-xs text-foreground/55">
@@ -64,10 +73,7 @@ export function StudioHeaderBar({
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1.5">
-          <LessonLauncher
-            activeLessonId={activeLessonId}
-            onStartLesson={onStartLesson}
-          />
+          <LessonLauncher activeLessonId={activeLessonId} onStartLesson={onStartLesson} />
           {guideVisible && (
             <Button
               onClick={onToggleGuide}
@@ -84,13 +90,28 @@ export function StudioHeaderBar({
               {guideLabel}
             </Button>
           )}
-          <Button onClick={onOpenSessions} size="sm" variant="ghost" className="gap-1.5 border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground">
+          <Button
+            onClick={onOpenSessions}
+            size="sm"
+            variant="ghost"
+            className="gap-1.5 border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground"
+          >
             <FolderOpen className="h-3.5 w-3.5" /> Sessions
           </Button>
-          <Button onClick={onOpenLab} size="sm" variant="ghost" className="gap-1.5 border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground">
+          <Button
+            onClick={onOpenLab}
+            size="sm"
+            variant="ghost"
+            className="gap-1.5 border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground"
+          >
             <ArrowLeft className="h-3.5 w-3.5" /> Lab
           </Button>
-          <Button onClick={onSignOut} size="sm" variant="ghost" className="border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground">
+          <Button
+            onClick={onSignOut}
+            size="sm"
+            variant="ghost"
+            className="border border-border/60 bg-card/60 font-mono text-xs text-foreground/70 hover:border-border hover:text-foreground"
+          >
             <LogOut className="h-3.5 w-3.5" />
           </Button>
         </div>

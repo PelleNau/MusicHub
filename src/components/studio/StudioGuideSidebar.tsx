@@ -4,19 +4,30 @@ import type { StudioLessonPanelModelResult } from "@/hooks/useStudioLessonPanelM
 import type { StudioGuideBridgeResult } from "@/hooks/useStudioGuideBridge";
 
 interface StudioGuideSidebarProps {
+  mode: "guided" | "standard" | "focused";
+  visible: boolean;
   guideBridge: StudioGuideBridgeResult;
   lessonPanelModel: StudioLessonPanelModelResult;
   onDismissCompletion: () => void;
 }
 
 export function StudioGuideSidebar({
+  mode,
+  visible,
   guideBridge,
   lessonPanelModel,
   onDismissCompletion,
 }: StudioGuideSidebarProps) {
+  if (!visible) {
+    return null;
+  }
+
   if (guideBridge.runtime.state.lessonStatus === "completed" && guideBridge.lesson) {
     return (
-      <div className="ml-3 w-80 overflow-auto rounded-[24px] border border-emerald-500/20 bg-card/90 shadow-[0_24px_80px_-36px_rgba(16,185,129,0.45)] backdrop-blur-xl">
+      <div
+        className="ml-3 w-80 overflow-auto rounded-[24px] border border-emerald-500/20 bg-card/90 shadow-[0_24px_80px_-36px_rgba(16,185,129,0.45)] backdrop-blur-xl"
+        data-studio-mode={mode}
+      >
         <ModuleCompletionCelebration
           title={guideBridge.lesson.title}
           objectives={guideBridge.lesson.objectives ?? []}
@@ -28,7 +39,7 @@ export function StudioGuideSidebar({
   }
 
   return (
-    <div className="ml-3 flex h-full">
+    <div className="ml-3 flex h-full" data-studio-mode={mode}>
       <StudioLessonPanel
         state={lessonPanelModel.lessonState}
         onToggleCollapsed={lessonPanelModel.toggleCollapsed}

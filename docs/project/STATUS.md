@@ -194,6 +194,17 @@ Phase 2 architecture consolidation
 - Studio session list/query composition now lives in `src/hooks/useStudioSessionQueries.ts`
 - Studio runtime core and interaction runtime now compose behind a single `src/hooks/useStudioRuntime.ts` adapter before page-level presentation wiring
 - timeline/grid coordination now lives in `src/hooks/useStudioPageCoordination.ts` instead of being wired directly inside `useStudioPageRuntime.ts`
+- Studio now has an explicit mode contract in `src/types/musicHubStudioModes.ts` and `src/hooks/useStudioModeModel.ts`
+- Studio route state now understands a `mode` override in `src/hooks/useStudioRouteModel.ts`
+- Studio settings now persist a `studioModePreference` instead of assuming one implicit shell layout forever
+- Studio shell behavior now consumes mode-driven visibility and density policy before rendering the page shell
+- browser and lesson panel collapse defaults are now controlled through the mode contract instead of hardcoded component state
+- `Studio.tsx` now renders arrangement, bottom workspace, and guide sidebar through explicit mode-aware shell policy
+- Studio timeline markers now exist as session-scoped local assist state in `src/hooks/useStudioMarkerModel.ts` instead of being blocked on backend/session schema work
+- marker rendering and marker actions now live in the real timeline shell (`src/components/studio/TimelineCanvas.tsx` and `src/components/studio/TimelineMarkerOverlay.tsx`) instead of only in the standalone Figma export
+- the `M` shortcut now adds a marker at the playhead when no clips are selected, while preserving clip mute behavior when a clip selection exists
+- lesson view policy is now defined as an explicit DSL/runtime contract in `src/types/musicHubLessonDsl.ts` and `docs/project/MH-044_Lesson_View_Policy.md`
+- the curriculum can now target different Guided sub-views without requiring one rigid Guided shell or many bespoke lesson screens
 - the first guided-shell UI pass now presents Studio as a lesson-first workspace instead of a flat stack of panels
 - `src/components/studio/StudioHeaderBar.tsx` now makes the active lesson state explicit and reduces header chrome noise
 - `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement area as the primary task surface and fixes the stale `emptyState`/`emptyStateInstruction` mismatch
@@ -201,7 +212,7 @@ Phase 2 architecture consolidation
 
 ## Next Milestone
 
-Implement the first Figma-driven Studio shell pass on top of the current lesson-aware scaffolding, starting with Guided and then deriving the denser modes from the same shell system.
+Use the stronger runtime checkpoint to refine Guided and then derive `Standard` and `Focused` from the same explicit shell contract rather than continuing generic extraction work.
 
 ## Primary Risk
 

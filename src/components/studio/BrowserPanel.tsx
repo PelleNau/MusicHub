@@ -182,9 +182,16 @@ interface BrowserPanelProps {
   onAddHostPlugin: (plugin: HostPlugin) => void;
   hostPlugins?: HostPlugin[];
   onRefreshHostPlugins?: () => void;
+  preferredCollapsed?: boolean;
 }
 
-export function BrowserPanel({ onAddDevice, onAddHostPlugin, hostPlugins = [], onRefreshHostPlugins }: BrowserPanelProps) {
+export function BrowserPanel({
+  onAddDevice,
+  onAddHostPlugin,
+  hostPlugins = [],
+  onRefreshHostPlugins,
+  preferredCollapsed,
+}: BrowserPanelProps) {
   const { hoveredInfo: contextInfo, setHoveredInfo } = useStudioInfo();
   const {
     filteredAssets,
@@ -223,6 +230,7 @@ export function BrowserPanel({ onAddDevice, onAddHostPlugin, hostPlugins = [], o
     infoText: INFO_TEXT,
     onAddDevice,
     onAddHostPlugin,
+    preferredCollapsed,
   });
 
   const hoveredInfo = localInfo || contextInfo || INFO_TEXT.browser;

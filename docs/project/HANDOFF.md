@@ -148,17 +148,35 @@ Unless explicitly overridden by the user:
 127. Studio session list/query composition now lives in `src/hooks/useStudioSessionQueries.ts`
 128. Studio runtime core and interaction runtime now compose behind a single `src/hooks/useStudioRuntime.ts` adapter before page-level presentation wiring
 129. timeline/grid coordination now lives in `src/hooks/useStudioPageCoordination.ts` instead of being wired directly inside `src/hooks/useStudioPageRuntime.ts`
-130. the first guided-shell UI pass now presents Studio as a lesson-first workspace instead of a flat panel stack
-131. `src/components/studio/StudioHeaderBar.tsx` now exposes active guided-session context instead of acting as a generic toolbar row
-132. `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement region as the primary task surface and fixes the stale `emptyState` prop mismatch
-133. `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now treat the lesson rail as the dominant support surface for guided work
+130. Studio mode contracts now live in `src/types/musicHubStudioModes.ts`
+131. Studio shell mode resolution now lives in `src/hooks/useStudioModeModel.ts`
+132. Studio route state now supports an explicit `mode` override in `src/hooks/useStudioRouteModel.ts`
+133. Studio settings now persist `studioModePreference` for shell-level mode defaults
+134. lesson panel collapse defaults now come from the Studio mode contract instead of only local component state
+135. browser panel collapse defaults now come from the Studio mode contract instead of only local component state
+136. arrangement workspace, bottom workspace, and guide sidebar now consume explicit Studio mode props before shell rendering
+137. `Studio.tsx` now renders the page shell through mode-aware visibility policy instead of one fixed shell layout
+138. Studio markers now live in `src/hooks/useStudioMarkerModel.ts` as session-scoped local UI state persisted in localStorage instead of waiting on canonical backend schema work
+139. Studio timeline markers now render through `src/components/studio/TimelineMarkerOverlay.tsx` and `src/components/studio/TimelineCanvas.tsx`
+140. the arrangement workspace now exposes an explicit marker action in its header controls instead of relying on standalone export-only UI
+141. the `M` shortcut now adds a marker at the playhead when no clips are selected, while preserving selected-clip mute behavior
+142. the active local Studio shell now includes a working marker import from the Figma export without importing the export’s standalone app architecture
+143. lesson view policy now has an explicit DSL/runtime contract in `src/types/musicHubLessonDsl.ts`
+144. lesson shell/view policy is documented in `docs/project/MH-044_Lesson_View_Policy.md`
+145. the lesson DSL spec now supports declarative panel visibility, viewport focus, and interaction-emphasis overlays without depending on component structure
+146. the first guided-shell UI pass now presents Studio as a lesson-first workspace instead of a flat panel stack
+147. `src/components/studio/StudioHeaderBar.tsx` now exposes active guided-session context instead of acting as a generic toolbar row
+148. `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement region as the primary task surface and fixes the stale `emptyState` prop mismatch
+149. `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now treat the lesson rail as the dominant support surface for guided work
 
 ## Current Next Work
 
-1. pull the new guided-shell branch into GitHub and review the visual pass against the Figma direction
-2. derive `Standard` and `Focused` from the same shell structure instead of building new surfaces
-3. keep browser preview/info as local assistance state unless a concrete lesson requires broader observability
-4. only return to runtime/store normalization if a real shell requirement proves the current adapter insufficient
+1. implement the new Figma-driven Guided/Standard/Focused shell against the explicit Studio mode contract
+2. review the guided-shell pass against the Figma direction and refine the remaining shell density choices
+3. derive `Standard` and `Focused` from the same shell structure instead of building new surfaces
+4. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
+5. decide whether markers should stay local assist state or graduate into canonical session persistence later
+6. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
 
 ## Default Instruction For Lovable
 
