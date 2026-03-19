@@ -218,14 +218,17 @@ Phase 2 architecture consolidation
 - the `/learn` route no longer depends on the mock curriculum surface
 - real shell-based learning pages now exist in `src/pages/Learn.tsx`, `src/pages/CourseDetail.tsx`, and `src/pages/LessonDetail.tsx`
 - the learning catalog now lives in `src/data/learningCatalog.ts` and ties curriculum intent, lesson-shell policy, and real Studio entry points together
+- the first real Studio lesson-entry surface now exists in `src/pages/StudioLessonEntry.tsx`
+- learning pages now hand off through an explicit preflight step instead of jumping straight into Studio query params
+- lesson entry now tracks local continue/resume state per lesson and exposes unavailable reasons for curriculum-only modules
 
 ## Next Milestone
 
-Refine the new learning surfaces against the incoming Figma layouts and expand the catalog from the first real course/module pages toward fuller curriculum coverage.
+Refine the lesson-entry flow against the incoming Figma layouts and broaden the learning catalog and module coverage without falling back to mock-only surfaces.
 
 ## Primary Risk
 
-Letting the learning catalog drift away from the real lesson/runtime inventory, which would turn the new course surfaces back into decorative curriculum pages instead of operational entry points.
+Letting lesson-entry UX drift into decorative preflight chrome without tightening the actual Studio handoff contract and resume behavior.
 
 ## Default Working Mode
 

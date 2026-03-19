@@ -17,6 +17,7 @@ const Home = lazy(() => import("./pages/Home.tsx"));
 const Learn = lazy(() => import("./pages/Learn.tsx"));
 const CourseDetail = lazy(() => import("./pages/CourseDetail.tsx"));
 const LessonDetail = lazy(() => import("./pages/LessonDetail.tsx"));
+const StudioLessonEntry = lazy(() => import("./pages/StudioLessonEntry.tsx"));
 const Inventory = lazy(() => import("./pages/Index.tsx"));
 const Playground = lazy(() => import("./pages/Playground.tsx"));
 const DeepDive = lazy(() => import("./pages/MySpace.tsx"));
@@ -87,6 +88,7 @@ const App = () => {
               <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
               <Route path="/learn/course/:courseId" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
               <Route path="/learn/course/:courseId/module/:moduleId" element={<ProtectedRoute><LessonDetail /></ProtectedRoute>} />
+              <Route path="/learn/course/:courseId/module/:moduleId/studio-entry" element={<ProtectedRoute><StudioLessonEntry /></ProtectedRoute>} />
               <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
               <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />
               <Route path="/lab/deep-dive" element={<ProtectedRoute><DeepDive /></ProtectedRoute>} />

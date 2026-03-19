@@ -52,6 +52,24 @@ Once the product shell exists, continuing to route `/learn` through mock pages p
 - course/module pages should expose shell policy and implementation status directly
 - Studio entry buttons should only route into real lesson/runtime paths when those paths exist
 
+---
+
+## 2026-03-19 — Studio lesson entry should use an explicit preflight step
+
+### Decision
+
+Course/module pages should hand off into Studio through an explicit lesson-entry preflight that confirms lesson availability, shell mode, and resume state instead of navigating directly into Studio with query params.
+
+### Rationale
+
+The real user decision at the learning-to-Studio boundary is not just "open Studio." It is whether a lesson is available, which shell mode should be used, and whether the user is starting or continuing prior work. Encoding that in a direct route jump hides too much state.
+
+### Consequence
+
+- module pages should route to a lesson-entry surface first
+- the lesson-entry surface should expose unavailable states for curriculum-only modules
+- local continue/resume state can be tracked at the lesson-entry layer without modifying the Studio runtime contract
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision

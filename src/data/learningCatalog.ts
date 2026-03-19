@@ -23,6 +23,7 @@ export interface LearningModule {
   status: LearningModuleStatus;
   studioLessonId?: string;
   recommendedMode?: "guided" | "standard" | "focused";
+  unavailableReason?: string;
 }
 
 export interface LearningCourse {
@@ -47,6 +48,7 @@ const modules: LearningModule[] = [
     primarySurface: "guide",
     visibleSurfaces: ["transport", "arrangement", "guide"],
     status: "scaffolded",
+    unavailableReason: "The runtime lesson for this module has not been wired yet.",
   },
   {
     id: "course-1-module-2",
@@ -59,6 +61,7 @@ const modules: LearningModule[] = [
     primarySurface: "arrangement",
     visibleSurfaces: ["transport", "arrangement", "guide"],
     status: "scaffolded",
+    unavailableReason: "This module is defined in the curriculum but still needs a concrete Studio lesson implementation.",
   },
   {
     id: "course-1-module-3",
@@ -71,6 +74,7 @@ const modules: LearningModule[] = [
     primarySurface: "piano-roll",
     visibleSurfaces: ["transport", "arrangement", "guide", "piano-roll"],
     status: "scaffolded",
+    unavailableReason: "This module still depends on the first note-editing lesson runtime and dedicated piano-roll validation work.",
   },
   {
     id: "course-2-module-7",
@@ -111,6 +115,7 @@ const modules: LearningModule[] = [
     primarySurface: "arrangement",
     visibleSurfaces: ["transport", "arrangement", "guide", "detail"],
     status: "scaffolded",
+    unavailableReason: "Audio editing needs a dedicated Studio lesson and waveform-edit validation path before direct entry should be exposed.",
   },
   {
     id: "course-2-module-10",
@@ -123,6 +128,7 @@ const modules: LearningModule[] = [
     primarySurface: "browser",
     visibleSurfaces: ["transport", "arrangement", "guide", "browser", "detail"],
     status: "planned",
+    unavailableReason: "Browser and preset-selection lessons have not been mapped into the live lesson runtime yet.",
   },
   {
     id: "course-2-module-11",
@@ -135,6 +141,7 @@ const modules: LearningModule[] = [
     primarySurface: "arrangement",
     visibleSurfaces: ["transport", "arrangement", "guide", "detail", "mixer"],
     status: "planned",
+    unavailableReason: "Recording entry is not yet packaged as a lesson-backed Studio preflight.",
   },
   {
     id: "course-2-module-12",
@@ -147,6 +154,7 @@ const modules: LearningModule[] = [
     primarySurface: "arrangement",
     visibleSurfaces: ["transport", "arrangement", "guide", "browser", "bottom-workspace"],
     status: "planned",
+    unavailableReason: "This capstone should open from a fuller lesson sequence once the sketch-building flow is implemented.",
   },
   {
     id: "course-3-module-16",
@@ -159,6 +167,7 @@ const modules: LearningModule[] = [
     primarySurface: "arrangement",
     visibleSurfaces: ["transport", "arrangement", "guide", "browser", "bottom-workspace"],
     status: "planned",
+    unavailableReason: "This module is still curriculum-only and does not yet have a Studio entry flow.",
   },
   {
     id: "course-4-module-21",
@@ -171,6 +180,7 @@ const modules: LearningModule[] = [
     primarySurface: "detail",
     visibleSurfaces: ["transport", "arrangement", "detail", "browser", "guide"],
     status: "planned",
+    unavailableReason: "Advanced sound-design lessons are not yet mapped to a live Studio entry surface.",
   },
   {
     id: "course-5-module-27",
@@ -197,6 +207,7 @@ const modules: LearningModule[] = [
     primarySurface: "guide",
     visibleSurfaces: ["transport", "arrangement", "guide", "browser", "detail"],
     status: "planned",
+    unavailableReason: "AI-assisted creation remains a curriculum target and is not yet a live Studio lesson entry.",
   },
 ];
 
@@ -310,4 +321,3 @@ export function getShellLabel(shell: LearningModule["shell"]) {
   };
   return labels[shell];
 }
-

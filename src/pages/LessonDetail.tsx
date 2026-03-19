@@ -33,9 +33,7 @@ export default function LessonDetail() {
   }
 
   const canOpenStudio = Boolean(module.studioLessonId);
-  const studioHref = module.studioLessonId
-    ? `/lab/studio?lesson=${encodeURIComponent(module.studioLessonId)}&mode=${module.recommendedMode ?? "guided"}`
-    : null;
+  const studioEntryHref = `/learn/course/${course.id}/module/${module.id}/studio-entry`;
 
   return (
     <ProductShell
@@ -67,10 +65,9 @@ export default function LessonDetail() {
             <Button
               size="sm"
               className="font-mono text-xs"
-              disabled={!canOpenStudio}
-              onClick={() => studioHref && navigate(studioHref)}
+              onClick={() => navigate(studioEntryHref)}
             >
-              Open in Guided Studio <ArrowRight className="ml-1 h-3.5 w-3.5" />
+              {canOpenStudio ? "Open Studio Entry" : "Review Entry State"} <ArrowRight className="ml-1 h-3.5 w-3.5" />
             </Button>
           </>
         }
