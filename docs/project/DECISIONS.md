@@ -124,6 +124,24 @@ Audio Editing and Browser/Instrument lessons can already validate against comman
 - future recording lessons should wait for a first-class command/ack path or equivalent lesson-visible event contract
 - lesson coverage should expand only where the Guide runtime can observe real user actions defensibly
 
+---
+
+## 2026-03-19 — Figma manual drops should be imported as bounded shell refinements, not app architecture
+
+### Decision
+
+Figma Make manual and component drops should only be imported into `MusicHub` as bounded shell refinements and documentation references, not as standalone application structure.
+
+### Rationale
+
+The export is useful for design language, toolbar grouping, and interaction vocabulary, but it still assumes a generated `src/app/...` application that does not match the real runtime seams. Importing the whole structure would reintroduce a second architecture.
+
+### Consequence
+
+- accept isolated controls such as toolbar patterns and zoom affordances when they map cleanly to existing shell state
+- document accepted reference material in project docs
+- reject standalone export structure, process docs, and any runtime claims that are not backed by the real `MusicHub` codebase
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision

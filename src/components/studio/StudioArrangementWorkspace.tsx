@@ -1,4 +1,3 @@
-import { Flag, Plus, Undo2, Upload } from "lucide-react";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
 import type { StudioMarkerModelResult } from "@/hooks/useStudioMarkerModel";
 import type { AutomationPoint, SessionTrack } from "@/types/studio";
@@ -6,9 +5,10 @@ import type { MeterLevel } from "@/services/pluginHostSocket";
 import { BrowserPanel } from "@/components/studio/BrowserPanel";
 import { GridContextMenu } from "@/components/studio/GridOverlay";
 import { LoopRegion } from "@/components/studio/LoopRegion";
+import { StudioArrangementToolbar } from "@/components/studio/StudioArrangementToolbar";
 import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/TimelineMarkerOverlay";
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
-import { ZoomDragHandle } from "@/components/studio/ZoomDragHandle";
+import { VerticalZoomSlider } from "@/components/studio/VerticalZoomSlider";
 import { TrackLane } from "@/components/studio/TrackLane";
 
 interface StudioArrangementWorkspaceProps {
@@ -160,6 +160,23 @@ export function StudioArrangementWorkspace({
               </div>
             </div>
           </div>
+          <StudioArrangementToolbar
+            mode={mode}
+            activeDivision={gridProps.activeDivision}
+            snapEnabled={gridProps.snapEnabled}
+            tripletMode={gridProps.tripletMode}
+            pixelsPerBeat={pixelsPerBeat}
+            trackHeight={trackHeight}
+            onToggleSnap={gridProps.onToggleSnap}
+            onToggleTriplet={gridProps.onToggleTriplet}
+            onNarrowGrid={gridProps.onNarrow}
+            onWidenGrid={gridProps.onWiden}
+            onCreateAudioTrack={timelineHeaderActions.createAudioTrack}
+            onCreateMidiTrack={timelineHeaderActions.createMidiTrack}
+            onCreateReturnTrack={timelineHeaderActions.createReturnTrack}
+            onOpenAudioUpload={timelineHeaderActions.openAudioUpload}
+            onAddMarkerAtPlayhead={timelineHeaderActions.addMarkerAtPlayhead}
+          />
           <GridContextMenu {...gridProps}>
             <div
               ref={timelineRef}
@@ -180,11 +197,9 @@ export function StudioArrangementWorkspace({
                     beatGetter={playheadBeatGetter}
                     staticBeat={effectiveBeat}
                     zoomHandle={
-                      <ZoomDragHandle
-                        pixelsPerBeat={pixelsPerBeat}
-                        trackHeight={trackHeight}
-                        onZoomH={onSetPixelsPerBeat}
-                        onZoomV={onSetTrackHeight}
+                      <VerticalZoomSlider
+                        value={(trackHeight - 32) / (200 - 32)}
+                        onChange={(value) => onSetTrackHeight(32 + value * (200 - 32))}
                       />
                     }
                     rulerOverlayContent={
