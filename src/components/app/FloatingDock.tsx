@@ -19,6 +19,17 @@ const NAV_ITEMS = [
   { label: "Flight Case", icon: Package, path: "/inventory" },
 ] as const;
 
+function shouldHideDock(pathname: string) {
+  return (
+    pathname === "/" ||
+    pathname === "/lab" ||
+    pathname === "/inventory" ||
+    pathname === "/lab/bridge" ||
+    pathname === "/lab/deep-dive" ||
+    pathname.startsWith("/lab/theory")
+  );
+}
+
 function isActive(pathname: string, itemPath: string) {
   if (itemPath === "/") return pathname === "/";
   return pathname.startsWith(itemPath);
@@ -29,7 +40,10 @@ export function FloatingDock() {
   const { pathname } = useLocation();
   const { signOut } = useAuth();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  
+
+  if (shouldHideDock(pathname)) {
+    return <SettingsSheet open={settingsOpen} onOpenChange={setSettingsOpen} />;
+  }
 
   return (
     <>

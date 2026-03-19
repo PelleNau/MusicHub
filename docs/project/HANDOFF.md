@@ -171,14 +171,18 @@ Unless explicitly overridden by the user:
 150. the first standard-shell UI pass now derives a broader production workspace from the same Studio mode contract instead of branching the product into a second shell architecture
 151. the first focused-shell UI pass now derives a denser production shell from the same runtime and lesson-policy base instead of inventing an expert-only Studio fork
 152. `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioBottomWorkspace.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now distinguish Guided, Standard, and Focused through shell density and lesson-support emphasis rather than different runtime behavior
+153. the first non-Studio product shell foundation now exists in `src/components/app/ProductShell.tsx`
+154. Home, Lab, Theory, Bridge, Deep Dive, and Flight Case now render inside one persistent sidebar/top-bar shell instead of behaving like separate mini-products
+155. shared non-Studio page-header and surface-card primitives now exist so future Figma work can land against one product-shell vocabulary instead of ad hoc page layouts
 
 ## Current Next Work
 
-1. review the current Guided/Standard/Focused shell passes against the Figma layouts and tighten the remaining density, hierarchy, and panel-default differences
-2. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
-3. decide whether markers should stay local assist state or graduate into canonical session persistence later
-4. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
-5. start mapping the same mode-aware shell language onto Home, Courses, and the other non-Studio product surfaces as those Figma designs stabilize
+1. review the shared product shell against the incoming Figma layouts and tighten navigation, header hierarchy, and page-density decisions
+2. replace mock or legacy learning surfaces with real pages that use the same shell foundation
+3. keep refining Guided/Standard/Focused against the Figma layouts without reopening runtime architecture
+4. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
+5. decide whether markers should stay local assist state or graduate into canonical session persistence later
+6. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
 
 ## Default Instruction For Lovable
 

@@ -16,6 +16,24 @@ The lesson view-policy and mode contracts already provide the correct seam for p
 - Figma-driven refinements should change density, defaults, and emphasis rather than inventing new runtime behavior per mode
 - future lesson-specific view changes should land through lesson view policy overlays on top of this shared shell system
 
+---
+
+## 2026-03-19 — Non-Studio surfaces should share one product shell
+
+### Decision
+
+Home, Lab, Theory, Bridge, Deep Dive, and Flight Case should render inside one shared product shell with a persistent sidebar, top bar, and common page-header language instead of each page behaving like a standalone mini-application.
+
+### Rationale
+
+The product now has enough distinct surfaces that page-local shells create fragmentation and make the application feel like a bundle of unrelated tools. A shared shell gives Figma and implementation one stable navigation and layout vocabulary outside Studio.
+
+### Consequence
+
+- non-Studio page work should prefer shared shell primitives over local full-page chrome
+- future Figma designs for Courses, Theory, Lab, and inventory should target this shell language
+- mock or legacy pages should be replaced with real shell-based surfaces rather than extended as isolated layouts
+
 ## 2026-03-18 — MusicHub should be treated as a desktop-primary product
 
 ### Decision

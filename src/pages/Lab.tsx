@@ -1,5 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { Microscope, Cable, Music, Radio, BookOpen, Layout } from "lucide-react";
+import {
+  ProductMetaPill,
+  ProductPageHeader,
+  ProductSectionCard,
+  ProductShell,
+  ProductSurfaceGrid,
+} from "@/components/app/ProductShell";
 
 const areas = [
   {
@@ -44,40 +51,40 @@ export default function Lab() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background pb-20">
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="max-w-2xl text-center mb-12">
-          <h2 className="text-3xl font-mono font-bold tracking-tight text-foreground mb-3">
-            The Lab
-          </h2>
-          <p className="text-muted-foreground font-mono text-sm leading-relaxed">
-            Your experimental playground — dissect projects, prototype signal chains,
-            and discover creative possibilities hiding in your gear collection.
-          </p>
-        </div>
+    <ProductShell
+      section="Lab"
+      title="Exploration surfaces"
+      description="Use Lab for experimentation, analysis, and support workflows that feed back into Studio."
+    >
+      <ProductPageHeader
+        eyebrow="Lab"
+        title="Experiment before you commit"
+        description="Lab is the exploration layer around Studio. Use it to inspect arrangements, test routing, explore theory, and review prototype directions without fragmenting the product."
+        meta={
+          <>
+            <ProductMetaPill>Support surface, not a separate product</ProductMetaPill>
+            <ProductMetaPill>Feeds back into Studio</ProductMetaPill>
+          </>
+        }
+      />
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-4xl px-4 sm:px-0">
-          {areas.map((area) => (
-            <button
-              key={area.route}
-              onClick={() => navigate(area.route)}
-              className="group relative flex flex-col items-start gap-4 rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/50 hover:shadow-md hover:shadow-primary/5"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <area.icon className="h-6 w-6" strokeWidth={2.25} />
-              </div>
-              <div>
-                <h3 className="font-mono text-sm font-semibold text-foreground mb-1">
-                  {area.title}
-                </h3>
-                <p className="font-mono text-xs text-muted-foreground leading-relaxed">
-                  {area.description}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+      <ProductSurfaceGrid className="md:grid-cols-2 xl:grid-cols-12">
+        {areas.map((area) => (
+          <button
+            key={area.route}
+            type="button"
+            onClick={() => navigate(area.route)}
+            className="text-left xl:col-span-4"
+          >
+            <ProductSectionCard
+              icon={area.icon}
+              title={area.title}
+              description={area.description}
+              className="h-full transition-colors hover:border-primary/30"
+            />
+          </button>
+        ))}
+      </ProductSurfaceGrid>
+    </ProductShell>
   );
 }

@@ -1,6 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { BookOpen, Wrench, BarChart3, PenTool } from "lucide-react";
-import { TheoryHeader } from "@/components/theory/TheoryHeader";
+import {
+  ProductMetaPill,
+  ProductPageHeader,
+  ProductSectionCard,
+  ProductShell,
+  ProductSurfaceGrid,
+} from "@/components/app/ProductShell";
 
 const sections = [
   {
@@ -35,49 +41,42 @@ export default function TheoryLab() {
   const navigate = useNavigate();
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
-      <TheoryHeader title="Theory Lab" />
+    <ProductShell
+      section="Theory"
+      title="Theory Lab"
+      description="Applied theory reference, exploration, and utilities aligned to the production workflow."
+    >
+      <ProductPageHeader
+        eyebrow="Theory"
+        title="Use theory as a working tool"
+        description="Theory Lab should stay practical. Move from explanation to exploration to action without turning the product into a disconnected classroom."
+        meta={
+          <>
+            <ProductMetaPill>Reference + tools</ProductMetaPill>
+            <ProductMetaPill>Direct path back to Studio</ProductMetaPill>
+          </>
+        }
+      />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-6">
-        <div className="max-w-2xl text-center mb-12">
-          <h2 className="text-3xl font-mono font-bold tracking-tight text-foreground mb-3">
-            Theory Lab
-          </h2>
-          <p className="text-muted-foreground font-mono text-sm leading-relaxed">
-            Learn, explore, and apply music theory as a practical composition tool — not a textbook.
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 w-full max-w-xl">
-          {sections.map((section) => (
-            <button
-              key={section.route}
-              onClick={() => !section.disabled && navigate(section.route)}
-              disabled={section.disabled}
-              className="group relative flex flex-col items-start gap-4 rounded-lg border border-border bg-card p-6 text-left transition-all hover:border-primary/50 hover:shadow-md hover:shadow-primary/5 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:border-border disabled:hover:shadow-none"
-            >
-              <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/15 text-primary transition-colors group-hover:bg-primary group-hover:text-primary-foreground group-disabled:group-hover:bg-primary/15 group-disabled:group-hover:text-primary">
-                <section.icon className="h-6 w-6" strokeWidth={2.25} />
-              </div>
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <h3 className="font-mono text-sm font-semibold text-foreground">
-                    {section.title}
-                  </h3>
-                  {section.disabled && (
-                    <span className="text-[8px] font-mono uppercase tracking-wider text-muted-foreground bg-muted px-1.5 py-0.5 rounded">
-                      Coming Soon
-                    </span>
-                  )}
-                </div>
-                <p className="font-mono text-xs text-muted-foreground leading-relaxed">
-                  {section.description}
-                </p>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
+      <ProductSurfaceGrid className="md:grid-cols-2 xl:grid-cols-12">
+        {sections.map((section) => (
+          <button
+            key={section.route}
+            type="button"
+            onClick={() => !section.disabled && navigate(section.route)}
+            disabled={section.disabled}
+            className="text-left disabled:cursor-not-allowed disabled:opacity-45 xl:col-span-6"
+          >
+            <ProductSectionCard
+              icon={section.icon}
+              title={section.title}
+              description={section.description}
+              eyebrow={section.disabled ? "Coming soon" : "Available"}
+              className="h-full transition-colors hover:border-primary/30"
+            />
+          </button>
+        ))}
+      </ProductSurfaceGrid>
+    </ProductShell>
   );
 }

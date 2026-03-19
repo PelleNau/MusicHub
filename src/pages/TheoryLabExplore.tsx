@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { TheoryHeader } from "@/components/theory/TheoryHeader";
 import { IntervalPanel } from "@/components/theory/IntervalPanel";
 import { ScalePanel } from "@/components/theory/ScalePanel";
 import { ModePanel } from "@/components/theory/ModePanel";
@@ -10,6 +9,7 @@ import { CircleOfFifths } from "@/components/theory/CircleOfFifths";
 import { EarTrainingPanel } from "@/components/theory/EarTrainingPanel";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ProductPageHeader, ProductShell } from "@/components/app/ProductShell";
 import { cn } from "@/lib/utils";
 import { Layers, Music, Piano, Boxes, GitBranch, ListMusic, Circle, Ear } from "lucide-react";
 
@@ -30,10 +30,22 @@ export default function TheoryLabExplore() {
   const ActiveComponent = activePanel.Component;
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden bg-background">
-      <TheoryHeader title="Explore" />
+    <ProductShell
+      section="Theory"
+      title="Explore"
+      description="Visualize core theory concepts and keep the active topic in one bounded workspace."
+      contentClassName="p-0"
+    >
+      <div className="flex h-full flex-col overflow-hidden">
+        <div className="px-4 pt-4 md:px-6">
+          <ProductPageHeader
+            eyebrow="Theory / Explore"
+            title="Explore concepts visually"
+            description="Keep the active concept isolated in one workspace so the theory surface stays legible and useful during composition."
+          />
+        </div>
 
-      <div className="flex flex-1 overflow-hidden">
+        <div className="flex min-h-0 flex-1 overflow-hidden">
         {/* Sidebar — hidden on small screens */}
         <nav className="hidden md:block w-52 shrink-0 border-r border-border bg-chrome/50 overflow-y-auto">
           <div className="p-3 space-y-0.5">
@@ -81,6 +93,7 @@ export default function TheoryLabExplore() {
           </div>
         </ScrollArea>
       </div>
-    </div>
+      </div>
+    </ProductShell>
   );
 }
