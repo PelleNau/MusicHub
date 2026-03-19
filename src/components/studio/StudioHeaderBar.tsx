@@ -31,6 +31,14 @@ export function StudioHeaderBar({
   onSignOut,
 }: StudioHeaderBarProps) {
   const lessonActive = Boolean(activeLessonId);
+  const modeLabel = studioMode === "guided" ? "Guided" : studioMode === "focused" ? "Focused" : "Standard";
+  const modeDescription = lessonActive
+    ? "Follow the active step and keep your attention on the highlighted workspace."
+    : studioMode === "standard"
+      ? "Balanced production workspace with the browser and editing surfaces available by default."
+      : studioMode === "focused"
+        ? "Dense production workspace with less instructional chrome and faster access to editing surfaces."
+        : "Low-density lesson-first workspace with progressive disclosure.";
 
   return (
     <header className="border-b border-border/70 bg-background/70 px-4 py-3 backdrop-blur-xl">
@@ -62,13 +70,11 @@ export function StudioHeaderBar({
                 {lessonActive ? "Guided Session" : "Studio"}
               </span>
               <span className="rounded border border-border/50 bg-muted/20 px-1.5 py-0.5 font-mono text-[10px] uppercase tracking-wide text-foreground/60">
-                {studioMode}
+                {modeLabel}
               </span>
             </div>
             <p className="mt-1 truncate text-xs text-foreground/55">
-              {lessonActive
-                ? "Follow the active step and keep your attention on the highlighted workspace."
-                : "Balanced production workspace with lesson support available on demand."}
+              {modeDescription}
             </p>
           </div>
         </div>

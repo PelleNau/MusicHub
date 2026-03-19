@@ -10,6 +10,7 @@ import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/Ti
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
 import { ZoomDragHandle } from "@/components/studio/ZoomDragHandle";
 import { TrackLane } from "@/components/studio/TrackLane";
+import { cn } from "@/lib/utils";
 
 interface StudioArrangementWorkspaceProps {
   mode: "guided" | "standard" | "focused";
@@ -129,25 +130,45 @@ export function StudioArrangementWorkspace({
   assetImportInputProps,
   markerModel,
 }: StudioArrangementWorkspaceProps) {
+  const workspaceLabel =
+    mode === "guided"
+      ? "Main Workspace"
+      : mode === "standard"
+        ? "Arrangement Workspace"
+        : "Focused Workspace";
+  const workspaceDescription = emptyStateInstruction
+    ? "Follow the current lesson step in the timeline."
+    : mode === "standard"
+      ? "Arrange clips, browse source material, and move quickly between composition and editing."
+      : mode === "focused"
+        ? "Keep the timeline dense and efficient while the rest of Studio stays out of the way."
+        : "Arrange clips, shape timing, and build the session.";
+
   return (
     <div
-      className="flex min-h-0 flex-1 overflow-hidden bg-[linear-gradient(180deg,rgba(15,23,42,0.14),transparent_22%)]"
+      className={cn(
+        "flex min-h-0 flex-1 overflow-hidden",
+        mode === "guided"
+          ? "bg-[linear-gradient(180deg,rgba(15,23,42,0.14),transparent_22%)]"
+          : "bg-[linear-gradient(180deg,rgba(15,23,42,0.08),transparent_18%)]",
+      )}
       data-studio-mode={mode}
     >
       {showBrowserPanel ? <BrowserPanel {...browserProps} /> : null}
 
       <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-          <div className="border-b border-border/60 bg-card/65 px-4 py-3 backdrop-blur-sm">
+          <div className={cn(
+            "border-b border-border/60 px-4 py-3 backdrop-blur-sm",
+            mode === "guided" ? "bg-card/65" : "bg-card/50",
+          )}>
             <div className="flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <div className="font-mono text-[10px] uppercase tracking-[0.22em] text-foreground/45">
-                  Main Workspace
+                  {workspaceLabel}
                 </div>
                 <div className="mt-1 text-sm font-medium text-foreground">
-                  {emptyStateInstruction
-                    ? "Follow the current lesson step in the timeline."
-                    : "Arrange clips, shape timing, and build the session."}
+                  {workspaceDescription}
                 </div>
               </div>
               <div className="hidden shrink-0 items-center gap-2 md:flex">

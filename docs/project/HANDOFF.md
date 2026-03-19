@@ -168,15 +168,17 @@ Unless explicitly overridden by the user:
 147. `src/components/studio/StudioHeaderBar.tsx` now exposes active guided-session context instead of acting as a generic toolbar row
 148. `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement region as the primary task surface and fixes the stale `emptyState` prop mismatch
 149. `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now treat the lesson rail as the dominant support surface for guided work
+150. the first standard-shell UI pass now broadens the same shell contract instead of introducing a second Studio layout
+151. `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioArrangementWorkspace.tsx`, and `src/components/studio/StudioBottomWorkspace.tsx` now express different production density between Guided and Standard
+152. `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now render a less dominant lesson rail in Standard while preserving the same lesson runtime surface
 
 ## Current Next Work
 
-1. implement the new Figma-driven Guided/Standard/Focused shell against the explicit Studio mode contract
-2. review the guided-shell pass against the Figma direction and refine the remaining shell density choices
-3. derive `Standard` and `Focused` from the same shell structure instead of building new surfaces
-4. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
-5. decide whether markers should stay local assist state or graduate into canonical session persistence later
-6. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
+1. derive `Focused` from the same shell structure instead of building a new surface
+2. review Guided and Standard against the Figma direction and tighten any remaining shell density choices
+3. implement runtime resolution of lesson view policy into shell visibility, bottom-tab targeting, and viewport focus
+4. decide whether markers should stay local assist state or graduate into canonical session persistence later
+5. keep browser preview/info as local assistance state unless a concrete lesson requirement proves otherwise
 
 ## Default Instruction For Lovable
 

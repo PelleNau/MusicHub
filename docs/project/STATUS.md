@@ -209,10 +209,13 @@ Phase 2 architecture consolidation
 - `src/components/studio/StudioHeaderBar.tsx` now makes the active lesson state explicit and reduces header chrome noise
 - `src/components/studio/StudioArrangementWorkspace.tsx` now frames the arrangement area as the primary task surface and fixes the stale `emptyState`/`emptyStateInstruction` mismatch
 - `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now present the guide rail as the dominant guided-work support surface
+- the first standard-shell UI pass now broadens the same shell contract instead of creating a second Studio layout
+- `src/components/studio/StudioHeaderBar.tsx`, `src/components/studio/StudioArrangementWorkspace.tsx`, and `src/components/studio/StudioBottomWorkspace.tsx` now express different production density between Guided and Standard
+- `src/components/studio/StudioLessonPanel.tsx`, `src/components/studio/StudioGuideSidebar.tsx`, `src/components/studio/lesson/LessonHeader.tsx`, and `src/components/studio/lesson/LessonStepCard.tsx` now render a less dominant lesson rail in Standard while keeping the same lesson runtime surface
 
 ## Next Milestone
 
-Use the stronger runtime checkpoint to refine Guided and then derive `Standard` and `Focused` from the same explicit shell contract rather than continuing generic extraction work.
+Derive `Focused` from the same explicit shell contract and then tighten any remaining shell density or lesson-view-policy behavior exposed by the redesign.
 
 ## Primary Risk
 
