@@ -292,7 +292,13 @@ export default function Studio() {
                     overlay={
                       pianoRollOverlayMode ? <PianoRollCaptureOverlay mode={pianoRollOverlayMode} /> : undefined
                     }
-                    captureVariant={captureMode && captureScenario === "piano-roll" ? "figma" : null}
+                    captureVariant={
+                      captureMode && captureScenario === "piano-roll"
+                        ? "figma"
+                        : captureMode && captureScenario === "mixer"
+                          ? "figma-mixer"
+                          : null
+                    }
                   />
                 </ResizablePanel>
               </>

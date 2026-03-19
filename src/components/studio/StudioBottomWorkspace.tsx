@@ -21,7 +21,7 @@ interface StudioBottomWorkspaceProps {
   collapsedSummaryLabel?: string;
   collapsedSummaryMeta?: string;
   overlay?: React.ReactNode;
-  captureVariant?: "figma" | "figma-compact" | null;
+  captureVariant?: "figma" | "figma-compact" | "figma-mixer" | null;
 }
 
 export function StudioBottomWorkspace({
@@ -96,7 +96,7 @@ export function StudioBottomWorkspace({
               </div>
             </div>
           ) : (
-            <MixerPanel {...mixerPanelProps} />
+            <MixerPanel {...mixerPanelProps} captureVariant={captureVariant === "figma-mixer" ? "figma" : null} />
           )
         ) : showPianoRoll && pianoRollProps ? (
           <PianoRoll {...pianoRollProps} captureVariant={captureVariant} />
