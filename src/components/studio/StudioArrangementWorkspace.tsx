@@ -132,10 +132,6 @@ export function StudioArrangementWorkspace({
   assetImportInputProps,
   markerModel,
 }: StudioArrangementWorkspaceProps) {
-  const timelineLabels = mode === "standard"
-    ? ["Tracks", "Arrangement"]
-    : ["Timeline", "Arrangement"];
-
   return (
     <div
       className="flex min-h-0 flex-1 overflow-hidden bg-[#17181b]"
@@ -145,20 +141,6 @@ export function StudioArrangementWorkspace({
 
       <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-          <div className="border-b border-white/6 bg-[#232429] px-4 py-2">
-            <div className="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-white/40">
-              <div className="flex items-center gap-4">
-                {timelineLabels.map((label) => (
-                  <span key={label}>{label}</span>
-                ))}
-              </div>
-              {captureVariant ? null : (
-                <div className="text-white/28">
-                  {emptyStateInstruction ? "Lesson Focus" : "Edit View"}
-                </div>
-              )}
-            </div>
-          </div>
           <StudioArrangementToolbar
             mode={mode}
             captureVariant={captureVariant}

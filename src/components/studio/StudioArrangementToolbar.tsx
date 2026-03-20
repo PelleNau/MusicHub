@@ -1,6 +1,7 @@
 import { ChevronDown, Flag, Grid3X3, Maximize2, Minus, MousePointer2, Plus, Search, Upload, ZoomIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
+import { TrackTemplateMenu } from "@/components/studio/TrackTemplateMenu";
 
 interface StudioArrangementToolbarProps {
   mode: "guided" | "standard" | "focused";
@@ -48,14 +49,19 @@ export function StudioArrangementToolbar({
             Pointer 1
             <ChevronDown className="h-3.5 w-3.5 text-white/45" />
           </button>
-          <button
-            className="flex h-8 items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-[12px] text-white/84"
-            onClick={onCreateAudioTrack}
+          <TrackTemplateMenu
+            onCreateAudioTrack={onCreateAudioTrack}
+            onCreateMidiTrack={onCreateMidiTrack}
+            onCreateReturnTrack={onCreateReturnTrack}
           >
-            <Plus className="h-3.5 w-3.5" />
-            Track
-            <ChevronDown className="h-3.5 w-3.5 text-white/45" />
-          </button>
+            <button
+              className="flex h-8 items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-[12px] text-white/84"
+            >
+              <Plus className="h-3.5 w-3.5" />
+              Track
+              <ChevronDown className="h-3.5 w-3.5 text-white/45" />
+            </button>
+          </TrackTemplateMenu>
           {captureVariant === "figma" ? null : (
             <>
               {captureVariant === "figma-compact" ? (

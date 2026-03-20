@@ -1,12 +1,11 @@
 import { useMemo, useCallback } from "react";
 import {
   Pencil, Eraser, MousePointer, Music, X, Paintbrush, Scissors,
-  Lock, FoldVertical, ArrowUpDown, Palette, ZoomIn, ZoomOut,
+  Lock, FoldVertical, Palette, ZoomIn, ZoomOut,
   ChevronDown, Grip, Layers
 } from "lucide-react";
 import {
-  ContextMenu, ContextMenuContent, ContextMenuItem,
-  ContextMenuSeparator, ContextMenuTrigger,
+  ContextMenu, ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import type { SessionClip } from "@/types/studio";
 import {
@@ -28,6 +27,8 @@ import { ChordPalette, type ChordType } from "@/components/studio/ChordPalette";
 import { ChordDetector } from "@/components/studio/ChordDetector";
 import { PianoRollMinimap } from "@/components/studio/PianoRollMinimap";
 import { StepSequencer } from "@/components/studio/StepSequencer";
+import { PianoRollContextMenu } from "@/components/studio/PianoRollContextMenu";
+import { PianoRollToolbar } from "@/components/studio/PianoRollToolbar";
 import { extractMidiNotesFromData } from "@/domain/studio/studioMidiCommandProtocol";
 
 // Refactored sub-components
@@ -174,22 +175,19 @@ export function PianoRoll({
       )}
 
       {/* ── Toolbar ── */}
-      <div className="flex items-center gap-1 px-3 py-1 border-b shrink-0 flex-wrap" style={{ borderColor: "hsl(var(--border))" }}>
-        {compactCapture ? (
-          <>
-            <span className="text-[12px] font-semibold text-white/92">Piano Roll</span>
-            <span className="text-[12px] text-white/42">•</span>
-            <span className="text-[12px] text-white/52">{clip.name}</span>
-            <div className="ml-auto flex items-center gap-3 text-white/58">
-              <ZoomOut className="h-4 w-4" />
-              <ZoomIn className="h-4 w-4" />
-              <span className="text-[12px] font-medium text-[#4f8df5]">Snap</span>
-              <span className="text-[12px] text-white/72">1/4</span>
-              <ArrowUpDown className="h-4 w-4" />
-              {onClose && <X className="h-4 w-4 cursor-pointer" onClick={onClose} />}
-            </div>
-          </>
-        ) : (
+      {compactCapture ? (
+        <PianoRollToolbar
+          clipName={clip.name}
+          snapEnabled
+          snapDivision="1/4"
+          onToggleSnap={() => toolbar.setSnapBeats(toolbar.snapBeats === 0.25 ? 0.5 : 0.25)}
+          onZoomOut={() => toolbar.setPxPerBeat(Math.max(MIN_PX_PER_BEAT, Math.round(pxPerBeat * 0.85)))}
+          onZoomIn={() => toolbar.setPxPerBeat(Math.min(MAX_PX_PER_BEAT, Math.round(pxPerBeat * 1.15)))}
+          onFit={() => toolbar.setPxPerBeat(128)}
+          onClose={onClose}
+        />
+      ) : (
+        <div className="flex items-center gap-1 px-3 py-1 border-b shrink-0 flex-wrap" style={{ borderColor: "hsl(var(--border))" }}>
           <>
         <span className="text-[10px] font-mono font-semibold text-foreground/80 mr-1 truncate max-w-[120px]">{clip.name}</span>
         <span className="text-[8px] font-mono text-foreground/45 mr-2">{Math.ceil(clipDuration / beatsPerBar)} bars</span>
@@ -326,8 +324,8 @@ export function PianoRoll({
         {ix.selectedIds.size > 0 && <div className="ml-auto flex items-center gap-2"><span className="text-[8px] font-mono text-foreground/50">{ix.selectedIds.size} selected</span></div>}
         {onClose && <button onClick={onClose} className="ml-auto text-foreground/40 hover:text-foreground/70 transition-colors"><X className="h-3.5 w-3.5" /></button>}
           </>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* Minimap */}
       {compactCapture ? null : (
@@ -424,44 +422,23 @@ export function PianoRoll({
               )}
             </div>
               </ContextMenuTrigger>
-              <ContextMenuContent className="min-w-[160px]">
-                <ContextMenuItem onClick={ix.selectAll} className="text-xs font-mono">
-                  Select All <span className="ml-auto text-foreground/40 text-[9px]">⌘A</span>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={ix.deselectAll} disabled={ix.selectedIds.size === 0} className="text-xs font-mono">
-                  Deselect
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem onClick={ix.cutSelected} disabled={ix.selectedIds.size === 0} className="text-xs font-mono">
-                  Cut <span className="ml-auto text-foreground/40 text-[9px]">⌘X</span>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={ix.copySelected} disabled={ix.selectedIds.size === 0} className="text-xs font-mono">
-                  Copy <span className="ml-auto text-foreground/40 text-[9px]">⌘C</span>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={ix.pasteNotes} disabled={!ix.hasClipboard} className="text-xs font-mono">
-                  Paste <span className="ml-auto text-foreground/40 text-[9px]">⌘V</span>
-                </ContextMenuItem>
-                <ContextMenuItem onClick={ix.deleteSelected} disabled={ix.selectedIds.size === 0} className="text-xs font-mono text-destructive">
-                  Delete <span className="ml-auto text-foreground/40 text-[9px]">⌫</span>
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem disabled={ix.selectedIds.size === 0} onClick={() => ix.applyTransform((n, ids) => quantizeNotes(n, ids, toolbar.snapBeats, toolbar.quantizeStrength / 100))} className="text-xs font-mono">
-                  Quantize <span className="ml-auto text-foreground/40 text-[9px]">⌘U</span>
-                </ContextMenuItem>
-                <ContextMenuItem disabled={ix.selectedIds.size === 0} onClick={() => ix.applyTransform(humanizeNotes)} className="text-xs font-mono">
-                  Humanize <span className="ml-auto text-foreground/40 text-[9px]">H</span>
-                </ContextMenuItem>
-                <ContextMenuSeparator />
-                <ContextMenuItem disabled={ix.selectedIds.size < 2} onClick={() => ix.applyTransform(legatoNotes)} className="text-xs font-mono">
-                  Legato
-                </ContextMenuItem>
-                <ContextMenuItem disabled={ix.selectedIds.size < 2} onClick={() => ix.applyTransform(reverseNotes)} className="text-xs font-mono">
-                  Reverse
-                </ContextMenuItem>
-                <ContextMenuItem disabled={ix.selectedIds.size < 2} onClick={() => ix.applyTransform(invertNotes)} className="text-xs font-mono">
-                  Invert
-                </ContextMenuItem>
-              </ContextMenuContent>
+              <PianoRollContextMenu
+                hasSelection={ix.selectedIds.size > 0}
+                hasMultipleSelection={ix.selectedIds.size > 1}
+                hasClipboard={ix.hasClipboard}
+                onSelectAll={ix.selectAll}
+                onDeselectAll={ix.deselectAll}
+                onCut={ix.cutSelected}
+                onCopy={ix.copySelected}
+                onPaste={ix.pasteNotes}
+                onDelete={ix.deleteSelected}
+                onQuantize={() => ix.applyTransform((n, ids) => quantizeNotes(n, ids, toolbar.snapBeats, toolbar.quantizeStrength / 100))}
+                onHumanize={() => ix.applyTransform(humanizeNotes)}
+                onTransposeOpen={() => toolbar.setShowTranspose(true)}
+                onLegato={() => ix.applyTransform(legatoNotes)}
+                onReverse={() => ix.applyTransform(reverseNotes)}
+                onInvert={() => ix.applyTransform(invertNotes)}
+              />
             </ContextMenu>
           </div>
         </div>

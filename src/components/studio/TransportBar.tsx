@@ -35,6 +35,7 @@ interface TransportBarProps {
   onRestartShellHost?: () => void;
   recording?: boolean;
   onRecordToggle?: () => void;
+  captureVariant?: "figma" | null;
 }
 
 function beatToBarDisplay(beat: number, beatsPerBar = 4): string {
@@ -70,6 +71,7 @@ export function TransportBar({
   onRestartShellHost,
   recording = false,
   onRecordToggle,
+  captureVariant = null,
 }: TransportBarProps) {
   const beatsPerBar = parseInt(timeSignature.split("/")[0]) || 4;
   const { setHoveredInfo } = useStudioInfo();
@@ -78,8 +80,14 @@ export function TransportBar({
     onMouseLeave: () => setHoveredInfo(null),
   });
 
+  const figmaCapture = captureVariant === "figma";
+
   return (
-    <div className="flex items-center gap-4 border-b border-white/6 bg-[#232429] px-4 py-2 font-mono text-xs text-white/85">
+    <div
+      className={`flex items-center border-b border-white/6 bg-[#232429] font-mono text-xs text-white/85 ${
+        figmaCapture ? "gap-3 px-3 py-1.5" : "gap-4 px-4 py-2"
+      }`}
+    >
       <div className="flex items-center gap-1 border-r border-white/8 pr-3">
         <Button
           size="icon"
@@ -144,31 +152,33 @@ export function TransportBar({
         )}
       </div>
 
-      <div className="flex items-center gap-0.5 border-r border-white/8 pr-3" {...hoverProps("undo")}>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
-          onClick={onUndo}
-          disabled={!canUndo}
-          title="Undo (⌘Z)"
-        >
-          <Undo2 className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
-          onClick={onRedo}
-          disabled={!canRedo}
-          title="Redo (⌘⇧Z)"
-          {...hoverProps("redo")}
-        >
-          <Redo2 className="h-3.5 w-3.5" />
-        </Button>
-      </div>
+      {!figmaCapture ? (
+        <div className="flex items-center gap-0.5 border-r border-white/8 pr-3" {...hoverProps("undo")}>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
+            onClick={onUndo}
+            disabled={!canUndo}
+            title="Undo (⌘Z)"
+          >
+            <Undo2 className="h-3.5 w-3.5" />
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
+            onClick={onRedo}
+            disabled={!canRedo}
+            title="Redo (⌘⇧Z)"
+            {...hoverProps("redo")}
+          >
+            <Redo2 className="h-3.5 w-3.5" />
+          </Button>
+        </div>
+      ) : null}
 
-      <div className="flex items-center gap-3 border-r border-white/8 pr-4" {...hoverProps("position")}>
+      <div className={`flex items-center border-r border-white/8 ${figmaCapture ? "gap-2.5 pr-3" : "gap-3 pr-4"}`} {...hoverProps("position")}>
         <span className="tabular-nums text-sm font-semibold text-white min-w-[6ch]">
           {beatToBarDisplay(currentBeat, beatsPerBar)}
         </span>
@@ -176,7 +186,7 @@ export function TransportBar({
         <span className="text-[12px] text-white/78">New Project</span>
       </div>
 
-      <div className="mx-auto flex items-center gap-3">
+      <div className={`flex items-center ${figmaCapture ? "mx-auto gap-2.5" : "mx-auto gap-3"}`}>
         <div className="flex items-center gap-1.5 text-white/45" {...hoverProps("tempo")}>
           <span className="text-[11px] uppercase">BPM</span>
           <input
@@ -198,19 +208,33 @@ export function TransportBar({
         </select>
       </div>
 
-      <div className="ml-auto flex items-center gap-2 text-white/62">
+      <div className={`ml-auto flex items-center text-white/62 ${figmaCapture ? "gap-1.5" : "gap-2"}`}>
         <button className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-white/6 hover:text-white">
           <Search className="h-3.5 w-3.5" />
         </button>
-        <div className="flex items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-2 py-1">
-          <span>80%</span>
-          <button className="hover:text-white">
-            <ZoomIn className="h-3.5 w-3.5" />
-          </button>
-          <button className="hover:text-white">
-            <Maximize2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
+        {figmaCapture ? (
+          <>
+            <div className="flex h-8 min-w-[56px] items-center justify-center rounded-md border border-white/8 bg-[#2b2d33] px-2 text-[12px] text-white/82">
+              75%
+            </div>
+            <button className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-white/6 hover:text-white">
+              <ZoomIn className="h-3.5 w-3.5" />
+            </button>
+            <button className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-white/6 hover:text-white">
+              <Maximize2 className="h-3.5 w-3.5" />
+            </button>
+          </>
+        ) : (
+          <div className="flex items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-2 py-1">
+            <span>80%</span>
+            <button className="hover:text-white">
+              <ZoomIn className="h-3.5 w-3.5" />
+            </button>
+            <button className="hover:text-white">
+              <Maximize2 className="h-3.5 w-3.5" />
+            </button>
+          </div>
+        )}
         <div className="flex items-center gap-2">
           <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#245ea8] bg-[#1b3452] text-[11px] text-[#7db7ff]">G</span>
           <span className="text-[11px] uppercase tracking-wide">CPU 12%</span>

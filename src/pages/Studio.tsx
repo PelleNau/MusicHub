@@ -32,10 +32,11 @@ export default function Studio() {
   const captureMode = isCaptureMode();
   const captureScenario = getCaptureScenario();
   const captureOverlay = getCaptureOverlay();
-  const showCollapsedMixerFooter = captureMode && captureScenario === "standard-mode";
+  const showCollapsedMixerFooter =
+    captureMode && (captureScenario === "standard-mode" || captureScenario === "arrangement");
   const compactTracksCapture = captureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
   const arrangementOnlyCapture = captureMode && captureScenario === "arrangement";
-  const cleanPianoRollCapture = captureMode && captureScenario === "piano-roll";
+  const cleanCaptureShell = captureMode;
   const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
     ? "figma"
     : null;
@@ -81,12 +82,12 @@ export default function Studio() {
     ? false
     : studioModeModel.shell.showBrowserPanel;
   const arrangementDefaultSize = arrangementOnlyCapture
-    ? 100
+    ? 96
     : captureMode && captureScenario === "piano-roll"
     ? 79
     : studioModeModel.shell.arrangementDefaultSize;
   const bottomDefaultSize = arrangementOnlyCapture
-    ? 0
+    ? 4
     : captureMode && captureScenario === "piano-roll"
     ? 21
     : showCollapsedMixerFooter
@@ -190,7 +191,7 @@ export default function Studio() {
             : "false"
         }
       >
-        {!cleanPianoRollCapture ? (
+        {!cleanCaptureShell ? (
           <StudioHeaderBar
             studioMode={studioModeModel.mode}
             sessionName={session?.name || "Loading…"}
@@ -207,20 +208,20 @@ export default function Studio() {
           />
         ) : null}
 
-        <TransportBar {...presentation.transportBarModel} />
-        {!cleanPianoRollCapture ? <ConnectionAlert {...presentation.connectionAlertModel} /> : null}
+        <TransportBar {...presentation.transportBarModel} captureVariant={captureMode ? "figma" : null} />
+        {!cleanCaptureShell ? <ConnectionAlert {...presentation.connectionAlertModel} /> : null}
 
         <div
           className={cn(
             "flex min-h-0 flex-1 overflow-hidden",
-            cleanPianoRollCapture ? "px-0 pb-0" : studioModeModel.mode === "focused" ? "px-2 pb-3" : "px-3 pb-3",
+            cleanCaptureShell ? "px-0 pb-0" : studioModeModel.mode === "focused" ? "px-2 pb-3" : "px-3 pb-3",
           )}
         >
           <ResizablePanelGroup
             direction="vertical"
             className={cn(
               "h-full min-h-0 min-w-0 flex-1 rounded-[24px] border backdrop-blur-xl",
-              cleanPianoRollCapture && "rounded-none border-0 bg-transparent shadow-none backdrop-blur-none",
+              cleanCaptureShell && "rounded-none border-0 bg-transparent shadow-none backdrop-blur-none",
               studioModeModel.mode === "focused"
                 ? "border-border/60 bg-background/74 shadow-[0_20px_70px_-42px_rgba(15,23,42,0.58)]"
                 : "border-border/70 bg-background/80 shadow-[0_24px_80px_-36px_rgba(15,23,42,0.75)]",
@@ -265,7 +266,7 @@ export default function Studio() {
               />
             </ResizablePanel>
 
-            {studioModeModel.shell.showBottomWorkspace && !arrangementOnlyCapture ? (
+            {(studioModeModel.shell.showBottomWorkspace || arrangementOnlyCapture) ? (
               <>
                 <ResizableHandle
                   withHandle

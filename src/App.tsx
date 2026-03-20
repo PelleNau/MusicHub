@@ -30,6 +30,7 @@ const TheoryLabTools = lazy(() => import("./pages/TheoryLabTools.tsx"));
 const Studio = lazy(() => import("./pages/Studio.tsx"));
 const Bridge = lazy(() => import("./pages/Bridge.tsx"));
 const CaptureDesignSystemShowcase = lazy(() => import("./pages/CaptureDesignSystemShowcase.tsx"));
+const ImportedComponentsShowcase = lazy(() => import("./pages/ImportedComponentsShowcase.tsx"));
 
 const MockAppLayout = lazy(() => import("./pages/mockups/MockAppLayout.tsx"));
 
@@ -113,6 +114,8 @@ const App = () => {
               <Route path="/lab/theory/explore" element={<ProtectedRoute><TheoryLabExplore /></ProtectedRoute>} />
               <Route path="/lab/theory/tools" element={<ProtectedRoute><TheoryLabTools /></ProtectedRoute>} />
               <Route path="/capture/design-system" element={<ProtectedRoute><CaptureDesignSystemShowcase /></ProtectedRoute>} />
+              <Route path="/capture/imported-components" element={<ProtectedRoute><ImportedComponentsShowcase /></ProtectedRoute>} />
+              <Route path="/preview/imported-components" element={<ProtectedRoute><ImportedComponentsShowcase /></ProtectedRoute>} />
               {/* Mockup routes — unified shell layout */}
               <Route path="/mockup" element={<Suspense fallback={<PageLoader />}><MockAppLayout /></Suspense>}>
                 <Route index element={<Navigate to="/" replace />} />
