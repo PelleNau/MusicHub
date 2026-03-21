@@ -28,7 +28,7 @@ export function TrackToggle({
         e.stopPropagation();
         onClick();
       }}
-      className={`h-[18px] w-[18px] flex items-center justify-center rounded-[3px] text-[9px] font-bold leading-none transition-colors border
+      className={`h-[15px] w-[15px] flex items-center justify-center rounded-[3px] text-[7.5px] font-bold leading-none transition-colors border
         ${active ? `${activeClass} border-transparent` : "border-transparent hover:border-transparent"}`}
       style={!active ? {
         backgroundColor: "hsl(var(--studio-surface))",
@@ -74,7 +74,7 @@ export function VolumeFader({ value, onChange }: { value: number; onChange: (v: 
   return (
     <div
       ref={trackRef}
-      className="relative h-[10px] flex-1 rounded-sm cursor-ew-resize overflow-hidden"
+      className="relative h-[7px] flex-1 rounded-sm cursor-ew-resize overflow-hidden"
       style={{
         backgroundColor: "hsl(var(--studio-surface))",
         border: "1px solid hsl(var(--studio-border))",
@@ -85,7 +85,14 @@ export function VolumeFader({ value, onChange }: { value: number; onChange: (v: 
     >
       <div className="absolute inset-y-0 left-0 rounded-sm bg-primary/70" style={{ width: `${pct}%` }} />
       <div className="absolute top-0 bottom-0 w-px" style={{ left: "82.5%", backgroundColor: "hsl(var(--studio-text-dim))" }} />
-      <div className="absolute top-0 bottom-0 w-[3px] -ml-[1px] rounded-sm" style={{ left: `${pct}%`, backgroundColor: "hsl(var(--studio-needle))" }} />
+      <div className="absolute top-0 bottom-0 w-px rounded-sm" style={{ left: `${pct}%`, backgroundColor: "hsl(var(--studio-needle))" }} />
+      <div
+        className="absolute top-1/2 h-[9px] w-[9px] -translate-y-1/2 rounded-full border border-white/22 shadow-[0_1px_3px_rgba(0,0,0,0.35)]"
+        style={{
+          left: `calc(${pct}% - 4.5px)`,
+          backgroundColor: "hsl(var(--studio-knob-bg))",
+        }}
+      />
     </div>
   );
 }
@@ -122,7 +129,7 @@ export function PanControl({ value, onChange }: { value: number; onChange: (v: n
   return (
     <div
       ref={ref}
-      className="relative h-[10px] w-10 rounded-sm cursor-ew-resize overflow-hidden"
+      className="relative h-[5px] w-6 rounded-sm cursor-ew-resize overflow-hidden"
       style={{
         backgroundColor: "hsl(var(--studio-surface))",
         border: "1px solid hsl(var(--studio-border))",
@@ -140,7 +147,7 @@ export function PanControl({ value, onChange }: { value: number; onChange: (v: n
           width: `${Math.abs(value) * 50}%`,
         }}
       />
-      <div className="absolute top-0 bottom-0 w-[3px] -ml-[1px] rounded-sm" style={{ left: `${thumbPct}%`, backgroundColor: "hsl(var(--studio-needle))" }} />
+      <div className="absolute top-0 bottom-0 w-px rounded-sm" style={{ left: `${thumbPct}%`, backgroundColor: "hsl(var(--studio-needle))" }} />
     </div>
   );
 }

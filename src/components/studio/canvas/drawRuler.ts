@@ -26,7 +26,7 @@ export function drawRuler({
   viewport,
 }: DrawRulerOptions) {
   ctx.clearRect(0, 0, width, height);
-  ctx.fillStyle = "hsl(var(--muted) / 0.2)";
+  ctx.fillStyle = "#1f2127";
   ctx.fillRect(0, 0, width, height);
 
   const barOffsetBeats = getBarOffsetBeats(beatsPerBar);
@@ -35,7 +35,7 @@ export function drawRuler({
 
   ctx.save();
   ctx.translate(-viewport.startX, 0);
-  ctx.font = '9px ui-monospace, SFMono-Regular, Menlo, monospace';
+  ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
   ctx.textBaseline = "top";
 
   const startBarBeat = Math.max(
@@ -44,15 +44,25 @@ export function drawRuler({
   );
 
   ctx.beginPath();
-  ctx.strokeStyle = "hsl(var(--foreground) / 0.28)";
+  ctx.strokeStyle = "rgba(255,255,255,0.24)";
   for (let beat = startBarBeat, bar = Math.floor((startBarBeat - barOffsetBeats) / beatsPerBar) + 1;
     beat <= totalBeats + GRID_EPSILON && beat <= viewport.endBeat + beatsPerBar;
     beat += beatsPerBar, bar += 1) {
     const x = beatToX(beat, pixelsPerBeat);
     ctx.moveTo(x + 0.5, 0);
     ctx.lineTo(x + 0.5, height);
-    ctx.fillStyle = "hsl(var(--foreground) / 0.7)";
-    ctx.fillText(String(bar), x + 4, 2);
+
+    ctx.fillStyle = "rgba(255,255,255,0.94)";
+    ctx.font = '700 11px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillText(`${bar}.1.1`, x + 6, 2);
+
+    ctx.font = '10px ui-monospace, SFMono-Regular, Menlo, monospace';
+    ctx.fillStyle = "rgba(255,255,255,0.42)";
+    for (let beatIndex = 2; beatIndex <= beatsPerBar; beatIndex += 1) {
+      const beatX = beatToX(beat + (beatIndex - 1), pixelsPerBeat);
+      if (beatX > viewport.endX + viewport.startX) break;
+      ctx.fillText(String(beatIndex), beatX + 6, 3);
+    }
   }
   ctx.stroke();
 
@@ -63,10 +73,10 @@ export function drawRuler({
 
     const x = beatToX(beat, pixelsPerBeat);
     const isBeat = Math.abs(beat - Math.round(beat)) < GRID_EPSILON;
-    const tickHeight = isBeat ? height * 0.6 : height * 0.35;
+    const tickHeight = isBeat ? height * 0.52 : height * 0.28;
     ctx.strokeStyle = isBeat
-      ? "hsl(var(--foreground) / 0.18)"
-      : "hsl(var(--foreground) / 0.1)";
+      ? "rgba(255,255,255,0.16)"
+      : "rgba(255,255,255,0.09)";
     ctx.moveTo(x + 0.5, height - tickHeight);
     ctx.lineTo(x + 0.5, height);
     ctx.stroke();

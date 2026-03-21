@@ -4,22 +4,26 @@ import path from "path";
 import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
-export default defineConfig(({ mode }) => ({
-  base: "./",
-  server: {
-    host: "::",
-    port: 5173,
-    hmr: {
-      overlay: false,
+export default defineConfig(({ mode }) => {
+  const isTauriBuild = process.env.VITE_BUILD_TARGET === "tauri";
+
+  return {
+    base: isTauriBuild ? "./" : "/",
+    server: {
+      host: "::",
+      port: 5173,
+      hmr: {
+        overlay: false,
+      },
     },
-  },
-  plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+    plugins: [react(), mode === "development" && componentTagger()].filter(Boolean),
+    resolve: {
+      alias: {
+        "@": path.resolve(__dirname, "./src"),
+      },
     },
-  },
-  build: {
-    rollupOptions: {},
-  },
-}));
+    build: {
+      rollupOptions: {},
+    },
+  };
+});

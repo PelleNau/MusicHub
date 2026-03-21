@@ -28,7 +28,9 @@ function readHistory(): HistoryEntry[] {
 function writeHistory(entries: HistoryEntry[]) {
   try {
     localStorage.setItem(HISTORY_KEY, JSON.stringify(entries.slice(0, MAX_HISTORY)));
-  } catch {}
+  } catch {
+    // Ignore storage write failures and keep the in-memory view usable.
+  }
 }
 
 function migrateLegacyEntry(): HistoryEntry | null {

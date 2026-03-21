@@ -1,13 +1,17 @@
-import { Play, Pause, Square, SkipBack, Repeat, Undo2, Redo2, Circle, Search, ZoomIn, Maximize2, Wifi, SunMedium, ChevronDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+import { Search, Undo2, Redo2, Wifi, SunMedium } from "lucide-react";
 import type { ConnectionState } from "@/services/hostConnector";
 import type { MeterLevel } from "@/services/pluginHostSocket";
 import type { SyncStatus } from "@/hooks/useHostConnector";
 import { ConnectionBadge } from "@/components/studio/ConnectionAlert";
 import { MasterMeter } from "@/components/studio/NativeMeterBridge";
+import { Button } from "@/components/ui/button";
 import type { SidecarStatus } from "@/services/tauriShell";
 import type { StudioPlaybackState } from "@/hooks/useStudioTransport";
 import { useStudioInfo, STUDIO_INFO } from "./StudioInfoContext";
+import { TransportButton } from "./TransportButton";
+import { ZoomControl } from "./ZoomControl";
+import { KeySelector } from "./KeySelector";
 
 interface TransportBarProps {
   tempo: number;
@@ -35,6 +39,7 @@ interface TransportBarProps {
   onRestartShellHost?: () => void;
   recording?: boolean;
   onRecordToggle?: () => void;
+  captureVariant?: "figma" | null;
 }
 
 function beatToBarDisplay(beat: number, beatsPerBar = 4): string {
@@ -70,6 +75,7 @@ export function TransportBar({
   onRestartShellHost,
   recording = false,
   onRecordToggle,
+  captureVariant = null,
 }: TransportBarProps) {
   const beatsPerBar = parseInt(timeSignature.split("/")[0]) || 4;
   const { setHoveredInfo } = useStudioInfo();
@@ -78,149 +84,127 @@ export function TransportBar({
     onMouseLeave: () => setHoveredInfo(null),
   });
 
+  const figmaCapture = captureVariant === "figma";
+  const [keyRoot, setKeyRoot] = useState(0);
+  const [keyScale, setKeyScale] = useState("major");
+  const [zoomLevel, setZoomLevel] = useState(figmaCapture ? 75 : 80);
+
   return (
-    <div className="flex items-center gap-4 border-b border-white/6 bg-[#232429] px-4 py-2 font-mono text-xs text-white/85">
-      <div className="flex items-center gap-1 border-r border-white/8 pr-3">
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 rounded-md text-white/72 hover:bg-white/6 hover:text-white"
-          onClick={onStop}
-          title="Return to start"
-          data-guide-anchor="transport.skipBack"
-          {...hoverProps("stop")}
-        >
-          <SkipBack className="h-3.5 w-3.5" />
-        </Button>
+    <div
+      className={`flex items-center border-b border-white/6 bg-[#232429] font-mono text-xs text-white/85 ${
+        figmaCapture ? "gap-2 px-2.5 py-1" : "gap-4 px-4 py-2"
+      }`}
+    >
+      <div className={`flex items-center gap-0.5 border-r border-white/8 ${figmaCapture ? "pr-2" : "pr-3"}`}>
+        <div data-guide-anchor="transport.skipBack" {...hoverProps("stop")}>
+          <TransportButton action="rewind" size="sm" onClick={onStop} />
+        </div>
 
-        {playbackState === "playing" ? (
-          <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md bg-white/6 text-primary hover:bg-white/8" onClick={onPause} title="Pause" data-guide-anchor="transport.pause" {...hoverProps("pause")}>
-            <Pause className="h-3.5 w-3.5" />
-          </Button>
-        ) : (
-          <Button size="icon" variant="ghost" className="h-8 w-8 rounded-md bg-white/6 text-white hover:bg-white/8" onClick={onPlay} title="Play" data-guide-anchor="transport.play" {...hoverProps("play")}>
-            <Play className="h-3.5 w-3.5" />
-          </Button>
-        )}
+        <div data-guide-anchor={playbackState === "playing" ? "transport.pause" : "transport.play"} {...hoverProps(playbackState === "playing" ? "pause" : "play")}>
+          <TransportButton
+            action={playbackState === "playing" ? "pause" : "play"}
+            active={playbackState === "playing"}
+            onClick={playbackState === "playing" ? onPause : onPlay}
+            size="sm"
+          />
+        </div>
 
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 rounded-md text-white/72 hover:bg-white/6 hover:text-white"
-          onClick={onStop}
-          title="Stop"
-          data-guide-anchor="transport.stop"
-          {...hoverProps("stop")}
-        >
-          <Square className="h-3 w-3" />
-        </Button>
+        <div data-guide-anchor="transport.stop" {...hoverProps("stop")}>
+          <TransportButton action="stop" size="sm" onClick={onStop} />
+        </div>
 
-        {onRecordToggle && (
+        {onRecordToggle ? (
+          <div data-guide-anchor="transport.record" {...hoverProps("record")}>
+            <TransportButton action="record" active={recording} size="sm" onClick={onRecordToggle} />
+          </div>
+        ) : null}
+
+        {onLoopToggle ? (
+          <div data-guide-anchor="transport.loop" {...hoverProps("loop")}>
+            <TransportButton action="loop" active={loopEnabled} size="sm" onClick={onLoopToggle} />
+          </div>
+        ) : null}
+      </div>
+
+      {!figmaCapture ? (
+        <div className="flex items-center gap-0.5 border-r border-white/8 pr-3" {...hoverProps("undo")}>
           <Button
             size="icon"
             variant="ghost"
-            className={`h-8 w-8 rounded-md ${recording ? "bg-red-500/15 text-red-400" : "text-white/72 hover:bg-white/6 hover:text-white"}`}
-            onClick={onRecordToggle}
-            title={recording ? "Stop recording" : "Start recording"}
-            {...hoverProps("record")}
+            className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
+            onClick={onUndo}
+            disabled={!canUndo}
+            title="Undo (⌘Z)"
           >
-            <Circle className="h-3.5 w-3.5" />
+            <Undo2 className="h-3.5 w-3.5" />
           </Button>
-        )}
-
-        {/* Loop toggle */}
-        {onLoopToggle && (
           <Button
             size="icon"
             variant="ghost"
-            className={`h-8 w-8 rounded-md ${loopEnabled ? "bg-primary/14 text-primary" : "text-white/72 hover:bg-white/6 hover:text-white"}`}
-            onClick={onLoopToggle}
-            title="Toggle loop (⌘L)"
-            data-guide-anchor="transport.loop"
-            {...hoverProps("loop")}
+            className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
+            onClick={onRedo}
+            disabled={!canRedo}
+            title="Redo (⌘⇧Z)"
+            {...hoverProps("redo")}
           >
-            <Repeat className="h-3.5 w-3.5" />
+            <Redo2 className="h-3.5 w-3.5" />
           </Button>
-        )}
-      </div>
+        </div>
+      ) : null}
 
-      <div className="flex items-center gap-0.5 border-r border-white/8 pr-3" {...hoverProps("undo")}>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
-          onClick={onUndo}
-          disabled={!canUndo}
-          title="Undo (⌘Z)"
-        >
-          <Undo2 className="h-3.5 w-3.5" />
-        </Button>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 rounded-md text-white/65 hover:bg-white/6 hover:text-white"
-          onClick={onRedo}
-          disabled={!canRedo}
-          title="Redo (⌘⇧Z)"
-          {...hoverProps("redo")}
-        >
-          <Redo2 className="h-3.5 w-3.5" />
-        </Button>
-      </div>
-
-      <div className="flex items-center gap-3 border-r border-white/8 pr-4" {...hoverProps("position")}>
-        <span className="tabular-nums text-sm font-semibold text-white min-w-[6ch]">
+      <div className={`flex items-center border-r border-white/8 ${figmaCapture ? "gap-1.5 pr-2" : "gap-3 pr-4"}`} {...hoverProps("position")}>
+        <span className={`tabular-nums font-semibold text-white min-w-[6ch] ${figmaCapture ? "text-[12px]" : "text-sm"}`}>
           {beatToBarDisplay(currentBeat, beatsPerBar)}
         </span>
+        {playbackState === "playing" ? (
+          <span className="rounded-sm border border-emerald-500/25 bg-emerald-500/10 px-1.5 py-0.5 text-[10px] font-semibold tracking-[0.18em] text-emerald-300">
+            PLAY
+          </span>
+        ) : null}
         <div className="h-1.5 w-1.5 rounded-full bg-[#2b7cff]" />
-        <span className="text-[12px] text-white/78">New Project</span>
+        <span className={`${figmaCapture ? "text-[10px]" : "text-[12px]"} text-white/78`}>New Project</span>
       </div>
 
-      <div className="mx-auto flex items-center gap-3">
-        <div className="flex items-center gap-1.5 text-white/45" {...hoverProps("tempo")}>
-          <span className="text-[11px] uppercase">BPM</span>
+      <div className={`flex items-center ${figmaCapture ? "mx-auto gap-1.5" : "mx-auto gap-3"}`}>
+        <div className={`flex items-center text-white/45 ${figmaCapture ? "gap-1" : "gap-1.5"}`} {...hoverProps("tempo")}>
+          <span className={`${figmaCapture ? "text-[10px]" : "text-[11px]"} uppercase`}>BPM</span>
           <input
             type="number"
             value={tempo}
             onChange={(e) => onTempoChange(Number(e.target.value) || 120)}
-            className="h-8 w-14 rounded-md border border-white/8 bg-[#2b2d33] px-1.5 py-0.5 text-center text-xs tabular-nums text-white focus:outline-none focus:ring-1 focus:ring-primary"
+            className={`${figmaCapture ? "h-7 rounded-[5px]" : "h-8 rounded-md"} w-14 border border-white/8 bg-[#2b2d33] px-1.5 py-0.5 text-center text-xs tabular-nums text-white focus:outline-none focus:ring-1 focus:ring-primary`}
             min={20}
             max={300}
           />
         </div>
         <span className="text-white/35">•</span>
-        <span className="rounded-md border border-white/8 bg-[#2b2d33] px-3 py-1.5 text-white/76" {...hoverProps("timeSig")}>{timeSignature}</span>
-        <select className="h-8 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-white/82 outline-none">
-          <option>C</option>
-        </select>
-        <select className="h-8 rounded-md border border-white/8 bg-[#2b2d33] px-3 text-white/82 outline-none">
-          <option>Major (Ionian)</option>
-        </select>
+        <span className={`${figmaCapture ? "rounded-[5px] px-2.5 py-1 text-[10px]" : "rounded-md px-3 py-1.5"} border border-white/8 bg-[#2b2d33] text-white/76`} {...hoverProps("timeSig")}>{timeSignature}</span>
+        <KeySelector
+          root={keyRoot}
+          scale={keyScale}
+          onChangeRoot={setKeyRoot}
+          onChangeScale={setKeyScale}
+          compact
+          className={`${figmaCapture ? "[&_select]:h-7 [&_select]:rounded-[5px] [&_select]:px-2.5 [&_select]:text-[10px]" : "[&_select]:h-8 [&_select]:rounded-md [&_select]:px-3"} [&_select]:border-white/8 [&_select]:bg-[#2b2d33] [&_select]:text-white/82 [&_select]:outline-none [&_select]:focus:ring-0`}
+        />
       </div>
 
-      <div className="ml-auto flex items-center gap-2 text-white/62">
-        <button className="flex h-7 w-7 items-center justify-center rounded-md hover:bg-white/6 hover:text-white">
+      <div className={`ml-auto flex items-center text-white/62 ${figmaCapture ? "gap-0.5" : "gap-2"}`}>
+        <button className={`flex items-center justify-center rounded-md hover:bg-white/6 hover:text-white ${figmaCapture ? "h-6 w-6" : "h-7 w-7"}`}>
           <Search className="h-3.5 w-3.5" />
         </button>
-        <div className="flex items-center gap-2 rounded-md border border-white/8 bg-[#2b2d33] px-2 py-1">
-          <span>80%</span>
-          <button className="hover:text-white">
-            <ZoomIn className="h-3.5 w-3.5" />
-          </button>
-          <button className="hover:text-white">
-            <Maximize2 className="h-3.5 w-3.5" />
-          </button>
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="flex h-7 w-7 items-center justify-center rounded-full border border-[#245ea8] bg-[#1b3452] text-[11px] text-[#7db7ff]">G</span>
-          <span className="text-[11px] uppercase tracking-wide">CPU 12%</span>
+        <ZoomControl
+          zoomLevel={zoomLevel}
+          onChange={setZoomLevel}
+          compact
+          className="[&_.bg-border]:bg-white/8 [&_.bg-foreground\\/70]:text-white/70 [&_.bg-foreground\\/90]:text-white/90 [&_.border-\\[var\\(--border\\)\\]]:border-white/8 [&_.bg-\\[var\\(--surface-1\\)\\]]:bg-[#2b2d33] [&_.hover\\:bg-\\[var\\(--surface-2\\)\\]:hover]:bg-white/6 [&_.hover\\:text-foreground:hover]:text-white [&_.hover\\:border-primary:hover]:border-white/18"
+        />
+        <div className={`flex items-center ${figmaCapture ? "gap-1" : "gap-2"}`}>
+          <span className={`flex items-center justify-center rounded-full border border-[#245ea8] bg-[#1b3452] text-[#7db7ff] ${figmaCapture ? "h-6 w-6 text-[9px]" : "h-7 w-7 text-[11px]"}`}>G</span>
+          <span className={`${figmaCapture ? "text-[9px] tracking-[0.12em]" : "text-[10px] tracking-[0.16em]"} uppercase text-white/56`}>CPU 12%</span>
         </div>
         <Wifi className="h-3.5 w-3.5 text-emerald-400" />
         <SunMedium className="h-3.5 w-3.5" />
-        <div className="flex items-center gap-1 border-l border-white/8 pl-2 text-white/72">
-          <span>Features</span>
-          <ChevronDown className="h-3.5 w-3.5" />
-        </div>
       </div>
 
       {masterMeter && (
@@ -231,18 +215,20 @@ export function TransportBar({
           </span>
         </div>
       )}
-      <div className="hidden">
-        <ConnectionBadge
-          connectionState={connectionState}
-          isMock={isMock}
-          inShell={inShell}
-          sidecarStatus={sidecarStatus}
-          syncState={syncStatus?.state}
-          onConnect={onConnect}
-          onDisconnect={onDisconnect}
-          onRestartShellHost={onRestartShellHost}
-        />
-      </div>
+      {!figmaCapture ? (
+        <div className="hidden">
+          <ConnectionBadge
+            connectionState={connectionState}
+            isMock={isMock}
+            inShell={inShell}
+            sidecarStatus={sidecarStatus}
+            syncState={syncStatus?.state}
+            onConnect={onConnect}
+            onDisconnect={onDisconnect}
+            onRestartShellHost={onRestartShellHost}
+          />
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -31,7 +31,9 @@ export function useBatchImages(inventoryData: InventoryItem[]) {
           await supabase.from("inventory_items").update({ image_url: data.imageUrl }).eq("id", item.id);
           found++;
         }
-      } catch {}
+      } catch {
+        // Ignore per-item failures and continue the batch.
+      }
       setProgress({ done: i + 1, total: missing.length });
       if (i < missing.length - 1) await new Promise((r) => setTimeout(r, 500));
     }

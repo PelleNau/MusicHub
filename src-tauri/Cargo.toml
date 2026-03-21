@@ -2,7 +2,7 @@
 name = "plint-studio"
 version = "0.1.0"
 edition = "2021"
-description = "The Flightcase desktop shell"
+description = "MusicHub desktop shell"
 
 [lib]
 name = "plint_studio"

@@ -8,7 +8,9 @@ function getInitialTheme(): Theme {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark" || stored === "ocean") return stored;
-  } catch {}
+  } catch {
+    // Ignore storage read failures and use the default theme.
+  }
   return "dark";
 }
 
@@ -32,7 +34,11 @@ export function useThemeToggle() {
   const toggleTheme = useCallback(() => {
     setThemeState((prev) => {
       const next = prev === "dark" ? "light" : prev === "light" ? "ocean" : "dark";
-      try { localStorage.setItem(STORAGE_KEY, next); } catch {}
+      try {
+        localStorage.setItem(STORAGE_KEY, next);
+      } catch {
+        // Ignore storage write failures; the active session can still update theme state.
+      }
       return next;
     });
   }, []);

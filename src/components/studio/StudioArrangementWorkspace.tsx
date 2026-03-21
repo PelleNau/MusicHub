@@ -10,6 +10,7 @@ import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/Ti
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
 import { VerticalZoomSlider } from "@/components/studio/VerticalZoomSlider";
 import { TrackLane } from "@/components/studio/TrackLane";
+import { TRACK_HEADER_WIDTH } from "@/components/studio/timelineMath";
 import { Flag, Plus, Undo2, Upload } from "lucide-react";
 
 interface StudioArrangementWorkspaceProps {
@@ -132,33 +133,15 @@ export function StudioArrangementWorkspace({
   assetImportInputProps,
   markerModel,
 }: StudioArrangementWorkspaceProps) {
-  const timelineLabels = mode === "standard"
-    ? ["Tracks", "Arrangement"]
-    : ["Timeline", "Arrangement"];
-
   return (
     <div
-      className="flex min-h-0 flex-1 overflow-hidden bg-[#17181b]"
+      className="flex min-h-0 flex-1 overflow-hidden bg-[#141518]"
       data-studio-mode={mode}
     >
       {showBrowserPanel ? <BrowserPanel {...browserProps} /> : null}
 
       <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
         <div className="flex h-full min-h-0 flex-col overflow-hidden">
-          <div className="border-b border-white/6 bg-[#232429] px-4 py-2">
-            <div className="flex items-center justify-between gap-3 text-[11px] uppercase tracking-[0.18em] text-white/40">
-              <div className="flex items-center gap-4">
-                {timelineLabels.map((label) => (
-                  <span key={label}>{label}</span>
-                ))}
-              </div>
-              {captureVariant ? null : (
-                <div className="text-white/28">
-                  {emptyStateInstruction ? "Lesson Focus" : "Edit View"}
-                </div>
-              )}
-            </div>
-          </div>
           <StudioArrangementToolbar
             mode={mode}
             captureVariant={captureVariant}
@@ -181,7 +164,7 @@ export function StudioArrangementWorkspace({
             <div
               ref={timelineRef}
               data-timeline
-              className="relative min-h-0 flex-1 overflow-auto bg-[#17181b]"
+              className="relative min-h-0 flex-1 overflow-auto bg-[#131417]"
               {...timelineContainerProps}
             >
               {arrangementWrapper(
@@ -196,12 +179,17 @@ export function StudioArrangementWorkspace({
                     onSeek={onSeek}
                     beatGetter={playheadBeatGetter}
                     staticBeat={effectiveBeat}
-                    zoomHandle={
+                    zoomHandle={captureVariant ? (
+                      <div
+                        className="sticky left-0 z-10 shrink-0 border-r border-white/8 bg-[#1d1f24]"
+                        style={{ width: TRACK_HEADER_WIDTH }}
+                      />
+                    ) : (
                       <VerticalZoomSlider
                         value={(trackHeight - 32) / (200 - 32)}
                         onChange={(value) => onSetTrackHeight(32 + value * (200 - 32))}
                       />
-                    }
+                    )}
                     rulerOverlayContent={
                       <TimelineMarkerFlags
                         markers={markerModel.sortedMarkers}
@@ -235,10 +223,11 @@ export function StudioArrangementWorkspace({
                         </div>
                       </div>
                     ) : (
-                      displayTracks.map((track) => (
+                      displayTracks.map((track, index) => (
                         <TrackLane
                           key={track.id}
                           track={track}
+                          trackIndex={index + 1}
                           returnTracks={displayReturnTracks}
                           pixelsPerBeat={pixelsPerBeat}
                           totalBeats={totalBeats}

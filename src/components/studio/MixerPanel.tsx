@@ -353,14 +353,18 @@ const MixerStrip = memo(function MixerStrip({
     <ContextMenu>
       <ContextMenuTrigger asChild>
     <div
-      className={`flex flex-col items-center px-[5px] py-1.5 border-r border-border/40 transition-colors cursor-pointer select-none h-full min-h-0 ${
-        isSelected ? "bg-primary/8" : ""
+      className={`flex h-full min-h-0 w-[76px] min-w-[76px] flex-col items-center rounded-none border-r border-white/8 px-[6px] py-1.5 transition-colors cursor-pointer select-none ${
+        isSelected ? "bg-white/[0.03]" : "bg-[#26272c]"
       }`}
-      style={{ width: 68, minWidth: 68 }}
+      style={{
+        boxShadow: isSelected
+          ? `inset 0 1px 0 rgba(255,255,255,0.06), inset 0 0 0 1px ${color}55`
+          : "inset 0 1px 0 rgba(255,255,255,0.03)",
+      }}
       onClick={handleSelect}
     >
       {/* ── Top section: Type icon ── */}
-      <div className="flex items-center gap-1 mb-1" style={{ color: "hsl(var(--studio-text-dim))" }}>
+      <div className="mb-1 flex items-center gap-1" style={{ color: "hsl(var(--studio-text-dim))" }}>
         {STRIP_ICON[track.type]}
         <span className="font-mono text-[7px] uppercase">{track.type}</span>
       </div>
@@ -438,7 +442,7 @@ const MixerStrip = memo(function MixerStrip({
       </div>
 
       {/* ── Fader + Meter section (side by side) ── */}
-      <div className="flex items-end gap-[3px] flex-1 min-h-0" {...hp("volume")}>
+      <div className="flex min-h-0 flex-1 items-end gap-[3px]" {...hp("volume")}>
         <VerticalFader
           value={track.volume}
           onChange={handleVolume}
@@ -460,7 +464,7 @@ const MixerStrip = memo(function MixerStrip({
       <PeakDisplay meter={meter} isMuted={track.is_muted} />
 
       {/* ── Scribble strip ── */}
-      <div {...hp("trackName")}><ScribbleStrip name={track.name} color={color} isSelected={isSelected} /></div>
+      <div className="mt-1 w-full" {...hp("trackName")}><ScribbleStrip name={track.name} color={color} isSelected={isSelected} /></div>
     </div>
       </ContextMenuTrigger>
       <ContextMenuContent className="min-w-[160px]">
@@ -544,8 +548,11 @@ const MasterStrip = memo(function MasterStrip({
 
   return (
     <div
-      className="flex flex-col items-center px-2 py-1.5 border-l-2 border-primary/20 h-full min-h-0"
-      style={{ width: 84, minWidth: 84, background: "hsl(var(--card) / 0.6)" }}
+      className="flex h-full min-h-0 w-[88px] min-w-[88px] flex-col items-center border-l border-white/10 px-2 py-1.5"
+      style={{
+        background: "linear-gradient(180deg, rgba(34,35,40,0.98) 0%, rgba(28,29,33,1) 100%)",
+        boxShadow: "inset 0 1px 0 rgba(255,255,255,0.04)",
+      }}
     >
       <Crown className="h-3 w-3 text-primary mb-0.5" />
       <span className="font-mono text-[9px] font-semibold text-primary mb-1">MASTER</span>
@@ -606,7 +613,7 @@ const MasterStrip = memo(function MasterStrip({
 
 function SectionLabel({ label }: { label: string }) {
   return (
-    <div className="w-px shrink-0 relative bg-border">
+    <div className="relative w-px shrink-0 bg-white/10">
       <span className="absolute top-2 left-1/2 -translate-x-1/2 font-mono text-[7px] uppercase whitespace-nowrap -rotate-90 origin-center" style={{ transform: "translateX(-50%) rotate(-90deg)", top: 30, color: "hsl(var(--studio-text-dim))" }}>
         {label}
       </span>
@@ -813,7 +820,12 @@ export const MixerPanel = memo(function MixerPanel({
           </div>
         </div>
       ) : (
-        <div className="flex items-center gap-2 px-2 py-1 border-b border-border shrink-0">
+      <div className="flex shrink-0 items-center gap-2 border-b border-white/8 bg-[#202126] px-3 py-1.5">
+        <div className="flex items-center gap-2">
+          <Volume2 className="h-3.5 w-3.5 text-white/55" />
+          <span className="text-[12px] font-medium text-white/84">Mixer</span>
+          <span className="text-[11px] text-white/38">{tracks.length} tracks</span>
+        </div>
           <SoloModeSelector mode={soloMode} onChange={setSoloMode} />
           <div className="flex-1" />
           <StripConfigMenu visibleSections={visibleSections} onToggle={handleToggleSection} />
@@ -821,7 +833,7 @@ export const MixerPanel = memo(function MixerPanel({
       )}
 
       {/* ── Strips ── */}
-      <div className="flex-1 min-h-0 flex overflow-x-auto overflow-y-hidden">
+      <div className="flex min-h-0 flex-1 overflow-x-auto overflow-y-hidden bg-[#1c1d22]">
         {figmaCapture ? (
           <div className="flex w-[108px] shrink-0 flex-col items-end justify-start gap-[20px] border-r border-white/10 bg-[#666669] px-3 py-6 text-right text-[10px] font-medium text-white/72">
             {leftLabels.map((label) => (
@@ -831,6 +843,7 @@ export const MixerPanel = memo(function MixerPanel({
             ))}
           </div>
         ) : null}
+        <div className="flex min-h-0 items-stretch px-1.5 py-1.5">
         {regularTracks.map((track) => (
           <MixerStrip
             key={track.id}
@@ -887,7 +900,8 @@ export const MixerPanel = memo(function MixerPanel({
           faderHeight={faderHeight}
         />
 
-        <div className="flex-1 min-w-[20px]" />
+        <div className="min-w-[20px] flex-1" />
+        </div>
       </div>
     </div>
   );

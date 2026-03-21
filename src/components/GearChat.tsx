@@ -215,8 +215,8 @@ export function GearChat({ focusItemId, focusItemName }: GearChatProps) {
           setIsLoading(false);
         },
       });
-    } catch (e: any) {
-      setError(e.message || "Chat failed");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Chat failed");
       setIsLoading(false);
     }
   }, [messages, isLoading, focusItemId, userId, persistMessage]);

@@ -21,6 +21,10 @@ interface TrackNode {
   instrument: Instrument | null;
 }
 
+interface ChainedAudioNode extends AudioNode {
+  __lastNode?: AudioNode;
+}
+
 /**
  * Pure-JS audio engine — zero React dependencies.
  *
@@ -219,7 +223,7 @@ export class AudioEngine {
         `safeConnect: source context !== destination context`
       );
     }
-    source.connect(destination as any);
+    source.connect(destination);
   }
 
   /* ════════════════════════════════════════════
@@ -393,7 +397,7 @@ export class AudioEngine {
 
         low.connect(mid);
         mid.connect(high);
-        (low as any).__lastNode = high;
+        (low as ChainedAudioNode).__lastNode = high;
         return low;
       }
 
@@ -430,7 +434,7 @@ export class AudioEngine {
         dry.connect(output);
         wet.connect(output);
 
-        (input as any).__lastNode = output;
+        (input as ChainedAudioNode).__lastNode = output;
         return input;
       }
 
@@ -458,7 +462,7 @@ export class AudioEngine {
         dry.connect(output);
         wet.connect(output);
 
-        (input as any).__lastNode = output;
+        (input as ChainedAudioNode).__lastNode = output;
         return input;
       }
 
@@ -474,7 +478,7 @@ export class AudioEngine {
   }
 
   private getLastNode(node: AudioNode): AudioNode {
-    return (node as any).__lastNode || node;
+    return (node as ChainedAudioNode).__lastNode || node;
   }
 
   private rebuildDeviceChain(ctx: AudioContext, tn: TrackNode, devices: DeviceInstance[]) {

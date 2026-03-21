@@ -37,6 +37,23 @@ interface ClipBlockProps {
   onSetAsLoop?: (clipId: string) => void;
 }
 
+function parseHslColor(color: string) {
+  const match = color.match(/hsl\(([\d.]+),\s*([\d.]+)%,\s*([\d.]+)%\)/i);
+  if (!match) {
+    return { h: 0, s: 0, l: 40 };
+  }
+
+  return {
+    h: Number(match[1]),
+    s: Number(match[2]),
+    l: Number(match[3]),
+  };
+}
+
+function hsla(color: { h: number; s: number; l: number }, alpha = 1) {
+  return `hsla(${color.h}, ${color.s}%, ${color.l}%, ${alpha})`;
+}
+
 export function ClipBlock({
   clip,
   pixelsPerBeat,
@@ -61,8 +78,26 @@ export function ClipBlock({
   const left = beatToContentX(clip.start_beats, pixelsPerBeat);
   const width = beatToContentX(clip.end_beats - clip.start_beats, pixelsPerBeat);
   const color = getTrackColor(clip.color);
-  const peaks = clip.waveform_peaks as number[] | null;
   const isMuted = clip.is_muted === true;
+  const baseColor = useMemo(() => parseHslColor(color), [color]);
+  const clipChrome = useMemo(() => {
+    const accent = { ...baseColor, s: Math.max(baseColor.s - 8, 26), l: Math.min(baseColor.l + 4, 58) };
+    const body = { ...baseColor, s: Math.max(baseColor.s - 34, 18), l: 31 };
+    const bodySelected = { ...baseColor, s: Math.max(baseColor.s - 18, 26), l: 35 };
+    const title = { ...baseColor, s: Math.max(baseColor.s - 22, 20), l: 24 };
+    const border = { ...baseColor, s: Math.max(baseColor.s - 24, 18), l: 44 };
+
+    return {
+      accent,
+      body,
+      bodySelected,
+      title,
+      border,
+      waveform: hsla(accent, isMuted ? 0.18 : 0.48),
+      midi: hsla(accent, 1),
+    };
+  }, [baseColor, isMuted]);
+  const peaks = clip.waveform_peaks as number[] | null;
 
   // Parse MIDI notes for mini preview
   const midiNotes: MiniNote[] = useMemo(() => {
@@ -234,17 +269,17 @@ export function ClipBlock({
 
   const clipElement = (
     <div
-      className={`absolute top-1 bottom-1 rounded-[3px] overflow-hidden group cursor-grab active:cursor-grabbing transition-shadow ${
-        isSelected ? "ring-1 ring-white/60 shadow-lg" : ""
+      className={`absolute top-[1px] bottom-[1px] overflow-hidden rounded-[3px] group cursor-grab active:cursor-grabbing transition-[box-shadow,opacity] ${
+        isSelected ? "ring-1 ring-white/70" : ""
       }`}
       style={{
         left,
         width: Math.max(width, 4),
-        backgroundColor: color,
-        opacity: isMuted ? 0.4 : isSelected ? 1 : 0.9,
+        backgroundColor: hsla(isSelected ? clipChrome.bodySelected : clipChrome.body),
+        opacity: isMuted ? 0.52 : 1,
         boxShadow: isSelected
-          ? `inset 0 0 0 1px rgba(255,255,255,0.25), 0 0 8px ${color}40`
-          : "inset 0 0 0 1px rgba(255,255,255,0.08)",
+          ? `inset 0 0 0 1px rgba(255,255,255,0.26), 0 0 0 1px rgba(255,255,255,0.08)`
+          : `inset 0 0 0 1px ${hsla(clipChrome.border, 0.38)}`,
         touchAction: "none",
       }}
       onPointerDown={handleDragStart}
@@ -252,7 +287,11 @@ export function ClipBlock({
       onPointerUp={handleDragEnd}
       onDoubleClick={(e) => { e.stopPropagation(); onDoubleClick?.(); }}
     >
-      {/* Internal beat/bar lines aligned with ruler */}
+      <div
+        className="absolute inset-y-0 left-0 w-[3px] z-[2]"
+        style={{ backgroundColor: hsla(clipChrome.accent, isMuted ? 0.34 : 0.92) }}
+      />
+
       <div className="absolute inset-0 pointer-events-none z-[1]">
         {beatGridLines.map((line, i) => (
           <div
@@ -261,7 +300,13 @@ export function ClipBlock({
             style={{
               left: line.x,
               height: line.weight === "bar" ? "100%" : line.weight === "beat" ? "60%" : "35%",
-              borderLeft: `1px solid ${line.weight === "bar" ? "hsl(var(--foreground) / 0.24)" : line.weight === "beat" ? "hsl(var(--foreground) / 0.16)" : "hsl(var(--foreground) / 0.1)"}`,
+              borderLeft: `1px solid ${
+                line.weight === "bar"
+                  ? "rgba(255,255,255,0.12)"
+                  : line.weight === "beat"
+                    ? "rgba(255,255,255,0.07)"
+                    : "rgba(255,255,255,0.035)"
+              }`,
             }}
           />
         ))}
@@ -280,7 +325,7 @@ export function ClipBlock({
       {/* Left resize handle */}
       <div
         data-resize="left"
-        className="absolute left-0 top-0 bottom-0 w-[8px] cursor-col-resize z-20 bg-white/10 hover:bg-white/30 transition-opacity"
+        className="absolute left-0 top-0 bottom-0 w-[7px] cursor-col-resize z-20 bg-transparent transition-all before:absolute before:inset-y-1 before:left-[1px] before:w-[1px] before:rounded-full before:bg-white/0 hover:before:bg-white/30"
         style={{ touchAction: "none" }}
         onPointerDown={handleResizeLStart}
         onPointerMove={handleResizeLMove}
@@ -289,7 +334,7 @@ export function ClipBlock({
       {/* Right resize handle */}
       <div
         data-resize="right"
-        className="absolute right-0 top-0 bottom-0 w-[8px] cursor-col-resize z-20 bg-white/10 hover:bg-white/30 transition-opacity"
+        className="absolute right-0 top-0 bottom-0 w-[7px] cursor-col-resize z-20 bg-transparent transition-all before:absolute before:inset-y-1 before:right-[1px] before:w-[1px] before:rounded-full before:bg-white/0 hover:before:bg-white/30"
         style={{ touchAction: "none" }}
         onPointerDown={handleResizeStart}
         onPointerMove={handleResizeMove}
@@ -297,23 +342,30 @@ export function ClipBlock({
       />
       {/* Waveform for audio clips */}
       {peaks && peaks.length > 0 && (
-        <ClipWaveform peaks={peaks} color={isMuted ? "rgba(255,255,255,0.25)" : "rgba(255,255,255,0.55)"} width={Math.max(width, 4)} height={28} />
+        <ClipWaveform
+          peaks={peaks}
+          color={clipChrome.waveform}
+          width={Math.max(width, 4)}
+          height={24}
+        />
       )}
-      {/* SVG MIDI note preview with pitch-class colors */}
       {midiNotes.length > 0 && (
-        <ClipMidiPreview notes={midiNotes} clipDuration={clipDuration} isMuted={isMuted} />
+        <ClipMidiPreview
+          notes={midiNotes}
+          clipDuration={clipDuration}
+          isMuted={isMuted}
+          color={clipChrome.midi}
+        />
       )}
-      {/* Clip title bar */}
-      <div className="absolute inset-x-0 top-0 h-[12px] flex items-center px-1"
-        style={{ backgroundColor: "rgba(0,0,0,0.25)" }}>
+      <div
+        className="absolute inset-x-0 top-0 flex h-[11px] items-center px-1.5"
+        style={{ backgroundColor: hsla(clipChrome.title, 0.94) }}
+      >
         {isMuted && <VolumeXIcon className="h-2 w-2 text-white/50 mr-0.5 shrink-0" />}
         {showName && (
-          <span className={`text-[9px] font-mono truncate leading-none ${isMuted ? "text-white/40 line-through" : "text-white/85"}`}>
+          <span className={`text-[7.5px] font-medium tracking-[0.01em] truncate leading-none ${isMuted ? "text-white/34 line-through" : "text-white/84"}`}>
             {clip.name}
           </span>
-        )}
-        {clip.alias_of && (
-          <span className="ml-auto text-[7px] text-white/40">🔗</span>
         )}
       </div>
     </div>

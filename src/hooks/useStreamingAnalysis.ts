@@ -75,8 +75,8 @@ export function useStreamingAnalysis() {
           }
         }
       }
-    } catch (e: any) {
-      if (e.name !== "AbortError") {
+    } catch (e: unknown) {
+      if (!(e instanceof Error && e.name === "AbortError")) {
         console.error("Analysis error:", e);
         toast.error("Analysis failed");
       }

@@ -104,8 +104,9 @@ async function tryOgImage(pageUrl: string): Promise<string | null> {
         return imageUrl;
       }
     }
-  } catch {}
-  return null;
+  } catch {
+    return null;
+  }
 }
 
 async function verifyImage(imageUrl: string): Promise<boolean> {

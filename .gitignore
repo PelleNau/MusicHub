@@ -18,6 +18,11 @@ src-tauri/target
 src-tauri/gen
 src-tauri/.cargo
 src-tauri/binaries/plugin_host-*
+src-tauri-design/target
+src-tauri-design/gen
+src-tauri-design/.cargo
+src-tauri-design/binaries/plugin_host-*
+.codex-artifacts
 
 # Editor directories and files
 .vscode/*

@@ -40,7 +40,7 @@ export function drawGrid({
   ctx.translate(-viewport.startX, 0);
 
   ctx.beginPath();
-  ctx.strokeStyle = "hsl(var(--foreground) / 0.28)";
+  ctx.strokeStyle = "rgba(255,255,255,0.20)";
   for (let beat = startBarBeat; beat <= totalBeats + GRID_EPSILON && beat <= viewport.endBeat + beatsPerBar; beat += beatsPerBar) {
     const x = beatToX(beat, pixelsPerBeat);
     ctx.moveTo(x + 0.5, 0);
@@ -57,8 +57,8 @@ export function drawGrid({
     const x = beatToX(beat, pixelsPerBeat);
     const isBeat = Math.abs(beat % 1) < GRID_EPSILON;
     ctx.strokeStyle = isBeat
-      ? "hsl(var(--foreground) / 0.18)"
-      : "hsl(var(--foreground) / 0.1)";
+      ? "rgba(255,255,255,0.115)"
+      : "rgba(255,255,255,0.07)";
     ctx.moveTo(x + 0.5, 0);
     ctx.lineTo(x + 0.5, height);
     ctx.stroke();

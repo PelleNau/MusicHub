@@ -120,8 +120,8 @@ export function WorkflowView({ connection, plugins, inventoryItems, actions }: W
       markDone("import");
       advance("match");
       toast.success(`Parsed ${data.trackCount} tracks`);
-    } catch (e: any) {
-      toast.error(e.message || "Failed to parse project");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed to parse project");
     } finally {
       setParsing(false);
     }
@@ -166,8 +166,8 @@ export function WorkflowView({ connection, plugins, inventoryItems, actions }: W
         // Access the chain result from the hook — we need direct access
         // For now, store the manifest info as a placeholder
         results.push({ trackName: m.trackName, chainResult: undefined });
-      } catch (e: any) {
-        results.push({ trackName: m.trackName, error: e.message });
+      } catch (e: unknown) {
+        results.push({ trackName: m.trackName, error: e instanceof Error ? e.message : "Load failed" });
       }
       setLoadProgress(((i + 1) / manifests.manifests.length) * 100);
       setTrackResults([...results]);
@@ -275,8 +275,8 @@ export function WorkflowView({ connection, plugins, inventoryItems, actions }: W
         }
       }
       markDone("analyze");
-    } catch (e: any) {
-      if (e.name !== "AbortError") {
+    } catch (e: unknown) {
+      if (!(e instanceof Error && e.name === "AbortError")) {
         console.error("Analysis error:", e);
         toast.error("Analysis failed");
       }

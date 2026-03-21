@@ -221,9 +221,14 @@ export function TimelineCanvas({
 
   return (
     <>
-      <div className="flex border-b border-border sticky top-0 z-10 bg-card">
-        {zoomHandle || <div className="w-52 shrink-0 border-r border-border/60 bg-card sticky left-0 z-10" />}
-        <div className="relative h-6 bg-muted/20" style={{ minWidth: totalWidth }}>
+      <div className="sticky top-0 z-10 flex border-b border-white/6 bg-[#1e2025]">
+        {zoomHandle || (
+          <div
+            className="shrink-0 border-r border-white/8 bg-[#1d1f24] sticky left-0 z-10"
+            style={{ width: TRACK_HEADER_WIDTH }}
+          />
+        )}
+        <div className="relative bg-[#1f2127]" style={{ height: RULER_HEIGHT, minWidth: totalWidth }}>
           <canvas ref={rulerBgRef} className="absolute inset-0 pointer-events-none" />
           <canvas ref={rulerContentRef} className="absolute inset-0 pointer-events-none" />
           <canvas ref={rulerOverlayRef} className="absolute inset-0 pointer-events-none" />

@@ -608,8 +608,7 @@ export function DetailPanel({
   const [showAdd, setShowAdd] = useState(false);
   const [showNativeParams, setShowNativeParams] = useState(false);
   const [loadingNativeChain, setLoadingNativeChain] = useState(false);
-
-  if (!track) return null;
+  const trackId = track?.id;
 
   useEffect(() => {
     if (isConnected && nativeChainId)
@@ -617,17 +616,19 @@ export function DetailPanel({
   }, [isConnected, nativeChainId]);
 
   const handleLoadNativeChainClick = useCallback(async () => {
-    if (!onLoadNativeChain || loadingNativeChain) return;
+    if (!trackId || !onLoadNativeChain || loadingNativeChain) return;
     setLoadingNativeChain(true);
     try {
-      const loadedChainId = await onLoadNativeChain(track.id);
+      const loadedChainId = await onLoadNativeChain(trackId);
       if (loadedChainId) {
         setShowNativeParams(true);
       }
     } finally {
       setLoadingNativeChain(false);
     }
-  }, [loadingNativeChain, onLoadNativeChain, track.id]);
+  }, [loadingNativeChain, onLoadNativeChain, trackId]);
+
+  if (!track) return null;
 
   const devices = (track.device_chain || []) as DeviceInstance[];
   const hasNativeBackedDevices = devices.some((device) => Boolean(device.nativePluginId || device.nativePluginPath));

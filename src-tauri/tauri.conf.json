@@ -1,20 +1,20 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "The Flightcase",
-  "identifier": "com.flightcase.desktop",
+  "productName": "MusicHub",
+  "identifier": "com.musichub.desktop",
   "version": "0.1.0",
   "build": {
     "frontendDist": "../dist",
     "devUrl": "http://localhost:5173",
     "beforeDevCommand": "npm run dev",
-    "beforeBuildCommand": "npm run build"
+    "beforeBuildCommand": "VITE_BUILD_TARGET=tauri npm run build"
   },
   "app": {
     "withGlobalTauri": true,
     "windows": [
       {
         "label": "main",
-        "title": "The Flightcase",
+        "title": "MusicHub",
         "width": 1400,
         "height": 900,
         "minWidth": 900,
