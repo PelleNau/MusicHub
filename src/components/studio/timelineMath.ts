@@ -1,5 +1,5 @@
-export const TRACK_HEADER_WIDTH = 208;
-export const RULER_HEIGHT = 24;
+export const TRACK_HEADER_WIDTH = 206;
+export const RULER_HEIGHT = 18;
 export const GRID_EPSILON = 1e-9;
 
 export interface TimelineViewportRange {
@@ -74,7 +74,7 @@ export function generateGridBeats(totalBeats: number, stepBeats: number, startBe
     const beat = index * stepBeats;
     const normalizedBeat =
       Math.abs(beat - Math.round(beat)) < GRID_EPSILON ? Math.round(beat) : beat;
-    beats.push(normalizedBeat);
+    beats.push(Object.is(normalizedBeat, -0) ? 0 : normalizedBeat);
   }
 
   return beats;

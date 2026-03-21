@@ -47,9 +47,9 @@ describe("timelineMath", () => {
         scrollLeft: 100,
         pixelsPerBeat: 24,
       });
-      // contentX = 300 - 50 - 208 + 100 = 142
+      // contentX = 300 - 50 - TRACK_HEADER_WIDTH + 100
       // beat = 142 / 24
-      expect(beat).toBeCloseTo(142 / 24, 10);
+      expect(beat).toBeCloseTo((300 - 50 - TRACK_HEADER_WIDTH + 100) / 24, 10);
     });
   });
 
@@ -144,7 +144,7 @@ describe("timelineMath", () => {
   });
 
   // ── TRACK_HEADER_WIDTH constant ──
-  it("TRACK_HEADER_WIDTH is 208", () => {
-    expect(TRACK_HEADER_WIDTH).toBe(208);
+  it("TRACK_HEADER_WIDTH matches the current arrangement geometry", () => {
+    expect(TRACK_HEADER_WIDTH).toBe(206);
   });
 });

@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2, Sparkles, Upload } from "lucide-react";
 
 interface AiDropZoneProps {
-  onIdentified: (gear: Record<string, any>) => void;
+  onIdentified: (gear: Record<string, unknown>) => void;
 }
 
 export function AiDropZone({ onIdentified }: AiDropZoneProps) {
@@ -22,8 +22,8 @@ export function AiDropZone({ onIdentified }: AiDropZoneProps) {
         if (fnError) throw fnError;
         if (data?.error) throw new Error(data.error);
         if (data?.gear) onIdentified(data.gear);
-      } catch (e: any) {
-        setError(e.message || "Failed to identify gear");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to identify gear");
       } finally {
         setIsLoading(false);
       }

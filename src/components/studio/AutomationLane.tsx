@@ -1,9 +1,10 @@
 import { useCallback, useRef, useMemo, memo } from "react";
 import type { AutomationLaneData, AutomationPoint } from "@/types/studio";
 import { X, ChevronDown } from "lucide-react";
+import { TRACK_HEADER_WIDTH } from "@/components/studio/timelineMath";
 
-const LANE_HEIGHT = 48;
-const HANDLE_R = 3.5;
+const LANE_HEIGHT = 20;
+const HANDLE_R = 2.8;
 
 interface AutomationLaneProps {
   lane: AutomationLaneData;
@@ -12,6 +13,7 @@ interface AutomationLaneProps {
   trackColor: string;
   onChange: (laneId: string, points: AutomationPoint[]) => void;
   onRemove: (laneId: string) => void;
+  captureVariant?: "figma" | "figma-compact" | null;
 }
 
 export const AutomationLane = memo(function AutomationLane({
@@ -21,6 +23,7 @@ export const AutomationLane = memo(function AutomationLane({
   trackColor,
   onChange,
   onRemove,
+  captureVariant = null,
 }: AutomationLaneProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const dragRef = useRef<{
@@ -34,6 +37,7 @@ export const AutomationLane = memo(function AutomationLane({
   const width = totalBeats * pixelsPerBeat;
   const height = LANE_HEIGHT;
   const laneColor = lane.color || trackColor;
+  const compactCapture = captureVariant === "figma" || captureVariant === "figma-compact";
 
   const valueToY = useCallback((v: number) => height - v * height, [height]);
   const yToValue = useCallback((y: number) => Math.max(0, Math.min(1, (height - y) / height)), [height]);
@@ -134,28 +138,33 @@ export const AutomationLane = memo(function AutomationLane({
 
   return (
     <div
-      className="relative flex border-b border-border/40"
+      className="relative flex border-b border-white/6"
       style={{ height: LANE_HEIGHT }}
     >
       {/* Label */}
-      <div className="w-52 shrink-0 bg-card border-r border-border/60 flex items-center px-2 gap-1 sticky left-0 z-10">
-        <ChevronDown className="h-2.5 w-2.5 text-muted-foreground/70" />
-        <span className="text-[9px] font-mono text-muted-foreground truncate flex-1">
-          {lane.label}
-        </span>
-        <button
-          onClick={() => onRemove(lane.id)}
-          className="h-4 w-4 flex items-center justify-center rounded text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
-        >
-          <X className="h-2.5 w-2.5" />
-        </button>
+      <div
+        className="shrink-0 bg-[#1c1e23] border-r border-white/8 flex items-center px-2 gap-1 sticky left-0 z-10"
+        style={{ width: TRACK_HEADER_WIDTH }}
+      >
+        {compactCapture ? null : <ChevronDown className="h-2.5 w-2.5 text-muted-foreground/70" />}
+          <span className={`${compactCapture ? "pl-0.5 text-[8px] text-white/34 tracking-[0.01em]" : "text-[7px] text-white/20 tracking-[0.14em] uppercase"} font-mono truncate flex-1`}>
+            {lane.label}
+          </span>
+        {compactCapture ? null : (
+          <button
+            onClick={() => onRemove(lane.id)}
+            className="h-4 w-4 flex items-center justify-center rounded text-muted-foreground/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
+          >
+            <X className="h-2.5 w-2.5" />
+          </button>
+        )}
       </div>
 
       {/* Automation canvas */}
       <div className="relative flex-1 overflow-hidden" style={{ minWidth: width }}>
         <div
           className="absolute inset-0"
-          style={{ backgroundColor: "hsl(var(--foreground) / 0.02)" }}
+          style={{ backgroundColor: compactCapture ? "rgba(255,255,255,0.004)" : "rgba(255,255,255,0.008)" }}
         />
         {/* Center line */}
         <div
@@ -163,7 +172,8 @@ export const AutomationLane = memo(function AutomationLane({
           style={{
             top: height / 2,
             height: 1,
-            backgroundColor: "hsl(var(--foreground) / 0.06)",
+            backgroundColor: compactCapture ? "rgba(255,255,255,0.055)" : "rgba(255,255,255,0.06)",
+            opacity: compactCapture ? 0.75 : 0.8,
             minWidth: width,
           }}
         />
@@ -176,7 +186,7 @@ export const AutomationLane = memo(function AutomationLane({
         >
           {/* Fill */}
           {fillD && (
-            <path d={fillD} fill={laneColor} fillOpacity={0.06} />
+            <path d={fillD} fill={laneColor} fillOpacity={0.036} />
           )}
           {/* Line */}
           {pathD && (
@@ -184,9 +194,9 @@ export const AutomationLane = memo(function AutomationLane({
               d={pathD}
               fill="none"
               stroke={laneColor}
-              strokeWidth={1.5}
+              strokeWidth={1.3}
               strokeLinejoin="round"
-              opacity={0.6}
+              opacity={0.82}
             />
           )}
           {/* Handles */}
@@ -197,8 +207,8 @@ export const AutomationLane = memo(function AutomationLane({
               cy={valueToY(point.value)}
               r={HANDLE_R}
               fill={laneColor}
-              stroke="hsl(var(--background))"
-              strokeWidth={1}
+              stroke="rgba(255,255,255,0.92)"
+              strokeWidth={0.8}
               className="cursor-grab active:cursor-grabbing"
               onPointerDown={(e) => handlePointerDown(e, point)}
               onPointerMove={handlePointerMove}

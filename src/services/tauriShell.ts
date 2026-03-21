@@ -14,6 +14,7 @@ export interface ShellInfo {
 }
 
 type Unlisten = () => void;
+export type AppScaleCommand = "up" | "down" | "reset";
 
 export function isInTauriShell(): boolean {
   return typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
@@ -67,6 +68,19 @@ class TauriShellBridge {
     const { listen } = await getTauriEvent();
     return listen<string>("sidecar:stderr", (event) => {
       if (typeof event.payload === "string") fn(event.payload);
+    });
+  }
+
+  async onAppScaleCommand(fn: (command: AppScaleCommand) => void): Promise<Unlisten> {
+    const { listen } = await getTauriEvent();
+    return listen<string>("app:interface-scale", (event) => {
+      if (
+        event.payload === "up" ||
+        event.payload === "down" ||
+        event.payload === "reset"
+      ) {
+        fn(event.payload);
+      }
     });
   }
 }

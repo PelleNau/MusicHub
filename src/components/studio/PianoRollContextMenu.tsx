@@ -72,22 +72,22 @@ export function PianoRollContextMenu({
   onInvert,
 }: PianoRollContextMenuProps) {
   return (
-    <ContextMenuContent className="min-w-[220px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
+    <ContextMenuContent className="min-w-[220px]">
       <ContextMenuSub>
-        <ContextMenuSubTrigger className="gap-2 text-xs font-mono">
+        <ContextMenuSubTrigger className="gap-2">
           <Zap className="h-3.5 w-3.5 opacity-70" />
           Transform
         </ContextMenuSubTrigger>
-        <ContextMenuSubContent className="min-w-[200px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
-          <ContextMenuItem onClick={onQuantize} disabled={!hasSelection} className="text-xs font-mono">
+        <ContextMenuSubContent className="min-w-[200px]">
+          <ContextMenuItem onClick={onQuantize} disabled={!hasSelection}>
             Quantize
             <ContextMenuShortcut className="text-[9px]">Q</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem onClick={onHumanize} disabled={!hasSelection} className="text-xs font-mono">
+          <ContextMenuItem onClick={onHumanize} disabled={!hasSelection}>
             Humanize
             <ContextMenuShortcut className="text-[9px]">H</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem onClick={onReverse} disabled={!hasMultipleSelection} className="text-xs font-mono">
+          <ContextMenuItem onClick={onReverse} disabled={!hasMultipleSelection}>
             Reverse Order
           </ContextMenuItem>
           <DisabledMenuItem label="Mirror (Time)" />
@@ -98,12 +98,12 @@ export function PianoRollContextMenu({
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger className="gap-2 text-xs font-mono">
+        <ContextMenuSubTrigger className="gap-2">
           <ArrowUpDown className="h-3.5 w-3.5 opacity-70" />
           Pitch
         </ContextMenuSubTrigger>
-        <ContextMenuSubContent className="min-w-[200px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
-          <ContextMenuItem onClick={onTransposeOpen} disabled={!hasSelection} className="text-xs font-mono">
+        <ContextMenuSubContent className="min-w-[200px]">
+          <ContextMenuItem onClick={onTransposeOpen} disabled={!hasSelection}>
             Transpose
             <ContextMenuShortcut className="text-[9px]">T</ContextMenuShortcut>
           </ContextMenuItem>
@@ -115,13 +115,13 @@ export function PianoRollContextMenu({
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger className="gap-2 text-xs font-mono">
+        <ContextMenuSubTrigger className="gap-2">
           <Clock className="h-3.5 w-3.5 opacity-70" />
           Duration
         </ContextMenuSubTrigger>
-        <ContextMenuSubContent className="min-w-[200px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
+        <ContextMenuSubContent className="min-w-[200px]">
           <DisabledMenuItem label="Quantize Length" />
-          <ContextMenuItem onClick={onLegato} disabled={!hasMultipleSelection} className="text-xs font-mono">
+          <ContextMenuItem onClick={onLegato} disabled={!hasMultipleSelection}>
             Legato (Extend to Next)
           </ContextMenuItem>
           <DisabledMenuItem label="Staccato (50%)" />
@@ -134,11 +134,11 @@ export function PianoRollContextMenu({
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger className="gap-2 text-xs font-mono">
+        <ContextMenuSubTrigger className="gap-2">
           <Gauge className="h-3.5 w-3.5 opacity-70" />
           Velocity
         </ContextMenuSubTrigger>
-        <ContextMenuSubContent className="min-w-[200px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
+        <ContextMenuSubContent className="min-w-[200px]">
           <DisabledMenuItem label="Scale Velocity" />
           <DisabledMenuItem label="Add Velocity" />
           <DisabledMenuItem label="Randomize Velocity" />
@@ -152,11 +152,11 @@ export function PianoRollContextMenu({
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger className="gap-2 text-xs font-mono">
+        <ContextMenuSubTrigger className="gap-2">
           <Sparkles className="h-3.5 w-3.5 opacity-70" />
           Creative
         </ContextMenuSubTrigger>
-        <ContextMenuSubContent className="min-w-[200px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
+        <ContextMenuSubContent className="min-w-[200px]">
           <DisabledMenuItem label="Arpeggiator" shortcut="A" />
           <ContextMenuSeparator />
           <DisabledMenuItem label="Repeat 2x" />
@@ -165,11 +165,11 @@ export function PianoRollContextMenu({
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger className="gap-2 text-xs font-mono">
+        <ContextMenuSubTrigger className="gap-2">
           <Scissors className="h-3.5 w-3.5 opacity-70" />
           Notes
         </ContextMenuSubTrigger>
-        <ContextMenuSubContent className="min-w-[200px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
+        <ContextMenuSubContent className="min-w-[200px]">
           <DisabledMenuItem label="Split at Playhead" />
           <DisabledMenuItem label="Split at Bars" />
           <DisabledMenuItem label="Split at Beats" />
@@ -181,16 +181,16 @@ export function PianoRollContextMenu({
       </ContextMenuSub>
 
       <ContextMenuSub>
-        <ContextMenuSubTrigger className="gap-2 text-xs font-mono">
+        <ContextMenuSubTrigger className="gap-2">
           <CheckSquare className="h-3.5 w-3.5 opacity-70" />
           Selection
         </ContextMenuSubTrigger>
-        <ContextMenuSubContent className="min-w-[200px] rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
-          <ContextMenuItem onClick={onSelectAll} className="text-xs font-mono">
+        <ContextMenuSubContent className="min-w-[200px]">
+          <ContextMenuItem onClick={onSelectAll}>
             Select All
             <ContextMenuShortcut className="text-[9px]">Ctrl+A</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem onClick={onDeselectAll} disabled={!hasSelection} className="text-xs font-mono">
+          <ContextMenuItem onClick={onDeselectAll} disabled={!hasSelection}>
             Deselect All
             <ContextMenuShortcut className="text-[9px]">Esc</ContextMenuShortcut>
           </ContextMenuItem>
@@ -205,17 +205,17 @@ export function PianoRollContextMenu({
 
       <ContextMenuSeparator />
 
-      <ContextMenuItem onClick={onCut} disabled={!hasSelection} className="gap-2 text-xs font-mono">
+      <ContextMenuItem onClick={onCut} disabled={!hasSelection} className="gap-2">
         <Scissors className="h-3.5 w-3.5 opacity-70" />
         Cut
         <ContextMenuShortcut className="text-[9px]">Ctrl+X</ContextMenuShortcut>
       </ContextMenuItem>
-      <ContextMenuItem onClick={onCopy} disabled={!hasSelection} className="gap-2 text-xs font-mono">
+      <ContextMenuItem onClick={onCopy} disabled={!hasSelection} className="gap-2">
         <Copy className="h-3.5 w-3.5 opacity-70" />
         Copy
         <ContextMenuShortcut className="text-[9px]">Ctrl+C</ContextMenuShortcut>
       </ContextMenuItem>
-      <ContextMenuItem onClick={onPaste} disabled={!hasClipboard} className="gap-2 text-xs font-mono">
+      <ContextMenuItem onClick={onPaste} disabled={!hasClipboard} className="gap-2">
         <Clipboard className="h-3.5 w-3.5 opacity-70" />
         Paste
         <ContextMenuShortcut className="text-[9px]">Ctrl+V</ContextMenuShortcut>
@@ -224,7 +224,7 @@ export function PianoRollContextMenu({
 
       <ContextMenuSeparator />
 
-      <ContextMenuItem onClick={onDelete} disabled={!hasSelection} className="gap-2 text-xs font-mono text-destructive focus:text-destructive">
+      <ContextMenuItem onClick={onDelete} disabled={!hasSelection} className="gap-2 text-destructive focus:text-destructive">
         <Trash2 className="h-3.5 w-3.5 opacity-70" />
         Delete
         <ContextMenuShortcut className="text-[9px]">Del</ContextMenuShortcut>

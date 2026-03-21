@@ -5,12 +5,20 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/hooks/useAuth";
 import { Loader2 } from "lucide-react";
-import { Suspense, lazy } from "react";
+import { Suspense, lazy, useEffect } from "react";
 
 import { isInTauriShell } from "@/services/tauriShell";
+import { tauriShell } from "@/services/tauriShell";
 import { FloatingDock } from "@/components/app/FloatingDock";
+import { DesignAppShell } from "@/components/app/DesignAppShell";
 import { CaptureBar } from "@/components/app/CaptureBar";
 import { isCaptureMode, shouldShowCaptureBar } from "@/lib/captureMode";
+import {
+  UI_ZOOM_DEFAULT,
+  UI_ZOOM_STEP,
+  setStoredUiZoom,
+  stepStoredUiZoom,
+} from "@/lib/interfaceScale";
 
 import Auth from "./pages/Auth.tsx";
 import NotFound from "./pages/NotFound.tsx";
@@ -24,6 +32,11 @@ const Inventory = lazy(() => import("./pages/Index.tsx"));
 const Playground = lazy(() => import("./pages/Playground.tsx"));
 const DeepDive = lazy(() => import("./pages/MySpace.tsx"));
 const Lab = lazy(() => import("./pages/Lab.tsx"));
+const DesignStudio = lazy(() => import("./pages/DesignStudio.tsx"));
+const DesignHome = lazy(() => import("./pages/design/DesignHome.tsx"));
+const DesignArrangement = lazy(() => import("./pages/design/DesignArrangement.tsx"));
+const DesignPianoRoll = lazy(() => import("./pages/design/DesignPianoRoll.tsx"));
+const DesignMixer = lazy(() => import("./pages/design/DesignMixer.tsx"));
 const TheoryLab = lazy(() => import("./pages/TheoryLab.tsx"));
 const TheoryLabExplore = lazy(() => import("./pages/TheoryLabExplore.tsx"));
 const TheoryLabTools = lazy(() => import("./pages/TheoryLabTools.tsx"));
@@ -31,6 +44,8 @@ const Studio = lazy(() => import("./pages/Studio.tsx"));
 const Bridge = lazy(() => import("./pages/Bridge.tsx"));
 const CaptureDesignSystemShowcase = lazy(() => import("./pages/CaptureDesignSystemShowcase.tsx"));
 const ImportedComponentsShowcase = lazy(() => import("./pages/ImportedComponentsShowcase.tsx"));
+const LessonPanelThemePreview = lazy(() => import("./pages/LessonPanelThemePreview.tsx"));
+const NeumorphicLibraryPreview = lazy(() => import("./pages/NeumorphicLibraryPreview.tsx"));
 
 const MockAppLayout = lazy(() => import("./pages/mockups/MockAppLayout.tsx"));
 
@@ -46,6 +61,15 @@ const MockAmpBackline = lazy(() => import("./pages/mockups/MockAmpBackline.tsx")
 
 const queryClient = new QueryClient();
 const Router = isInTauriShell() ? HashRouter : BrowserRouter;
+const APP_FLAVOR = import.meta.env.VITE_APP_FLAVOR === "design" ? "design" : "main";
+const TAURI_PREVIEW_ROUTE =
+  APP_FLAVOR === "design"
+    ? "/design-studio"
+    : "/lab/studio?capture=true&captureBar=false&captureScenario=arrangement&mode=standard";
+
+if (isInTauriShell() && !window.location.hash) {
+  window.location.replace(`#${TAURI_PREVIEW_ROUTE}`);
+}
 
 function PageLoader() {
   return (
@@ -60,6 +84,10 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   const captureMode = isCaptureMode();
   const showCaptureBar = shouldShowCaptureBar();
+
+  if (APP_FLAVOR === "design") {
+    return <Suspense fallback={<PageLoader />}>{children}</Suspense>;
+  }
 
   if (!captureMode && loading) return <PageLoader />;
   if (!captureMode && !session) return <Navigate to="/auth" replace />;
@@ -88,10 +116,188 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function DesignLayoutRoute({
+  title,
+  description,
+  children,
+  contentClassName,
+}: {
+  title: string;
+  description?: string;
+  children: React.ReactNode;
+  contentClassName?: string;
+}) {
+  return (
+    <DesignAppShell title={title} description={description} contentClassName={contentClassName}>
+      <Suspense fallback={<PageLoader />}>{children}</Suspense>
+    </DesignAppShell>
+  );
+}
+
+function AppScaleMenuBridge() {
+  useEffect(() => {
+    if (!isInTauriShell()) {
+      return;
+    }
+
+    let unlisten: (() => void) | undefined;
+    let disposed = false;
+
+    tauriShell
+      .onAppScaleCommand((command) => {
+        if (command === "up") {
+          stepStoredUiZoom(UI_ZOOM_STEP);
+          return;
+        }
+
+        if (command === "down") {
+          stepStoredUiZoom(-UI_ZOOM_STEP);
+          return;
+        }
+
+        setStoredUiZoom(UI_ZOOM_DEFAULT);
+      })
+      .then((cleanup) => {
+        if (disposed) {
+          cleanup();
+          return;
+        }
+
+        unlisten = cleanup;
+      })
+      .catch(() => {
+        // Ignore menu bridge failures outside Tauri event contexts.
+      });
+
+    return () => {
+      disposed = true;
+      unlisten?.();
+    };
+  }, []);
+
+  return null;
+}
+
 const App = () => {
+  if (APP_FLAVOR === "design") {
+    return (
+      <QueryClientProvider client={queryClient}>
+        <AppScaleMenuBridge />
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <Router>
+            <Routes>
+              <Route
+                path="/"
+                element={<Navigate to="/design-studio" replace />}
+              />
+              <Route
+                path="/design-studio"
+                element={
+                  <DesignLayoutRoute
+                    title="Design Home"
+                    description="Separate desktop app for design review, UI iteration, and surface alignment."
+                  >
+                    <DesignHome />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route
+                path="/design/arrangement"
+                element={
+                  <DesignLayoutRoute
+                    title="Arrangement Review"
+                    description="Live arrangement capture surface inside the design app."
+                    contentClassName="p-0"
+                  >
+                    <DesignArrangement />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route
+                path="/design/piano-roll"
+                element={
+                  <DesignLayoutRoute
+                    title="Piano Roll Review"
+                    description="Live piano-roll capture surface inside the design app."
+                    contentClassName="p-0"
+                  >
+                    <DesignPianoRoll />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route
+                path="/design/mixer"
+                element={
+                  <DesignLayoutRoute
+                    title="Mixer Review"
+                    description="Live mixer capture surface inside the design app."
+                    contentClassName="p-0"
+                  >
+                    <DesignMixer />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route
+                path="/design/components"
+                element={
+                  <DesignLayoutRoute
+                    title="Imported Components"
+                    description="Bounded Figma components already ported into the runtime."
+                    contentClassName="p-0"
+                  >
+                    <ImportedComponentsShowcase />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route
+                path="/design/library"
+                element={
+                  <DesignLayoutRoute
+                    title="Neumorphic Library"
+                    description="Light and dark design-system study plus mixer-control experiments."
+                    contentClassName="p-0"
+                  >
+                    <NeumorphicLibraryPreview />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route
+                path="/design/lesson-theme"
+                element={
+                  <DesignLayoutRoute
+                    title="Lesson Theme"
+                    description="Comparison between imported lesson styling and tokenized treatment."
+                    contentClassName="p-0"
+                  >
+                    <LessonPanelThemePreview />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route
+                path="/design/system-capture"
+                element={
+                  <DesignLayoutRoute
+                    title="System Capture"
+                    description="Current design-system capture and visual-language experiments."
+                    contentClassName="p-0"
+                  >
+                    <CaptureDesignSystemShowcase />
+                  </DesignLayoutRoute>
+                }
+              />
+              <Route path="*" element={<Navigate to="/design-studio" replace />} />
+            </Routes>
+          </Router>
+        </TooltipProvider>
+      </QueryClientProvider>
+    );
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
+      <AppScaleMenuBridge />
       <TooltipProvider>
         <Toaster />
         <Sonner />
@@ -99,13 +305,21 @@ const App = () => {
           <AuthProvider>
             <Routes>
               <Route path="/auth" element={<PublicRoute><Auth /></PublicRoute>} />
-              <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute>
+                    {APP_FLAVOR === "design" ? <Navigate to="/design-studio" replace /> : <Home />}
+                  </ProtectedRoute>
+                }
+              />
               <Route path="/learn" element={<ProtectedRoute><Learn /></ProtectedRoute>} />
               <Route path="/learn/course/:courseId" element={<ProtectedRoute><CourseDetail /></ProtectedRoute>} />
               <Route path="/learn/course/:courseId/module/:moduleId" element={<ProtectedRoute><LessonDetail /></ProtectedRoute>} />
               <Route path="/learn/course/:courseId/module/:moduleId/studio-entry" element={<ProtectedRoute><StudioLessonEntry /></ProtectedRoute>} />
               <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
               <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />
+              <Route path="/design-studio" element={<ProtectedRoute><DesignStudio /></ProtectedRoute>} />
               <Route path="/lab/deep-dive" element={<ProtectedRoute><DeepDive /></ProtectedRoute>} />
               <Route path="/lab/patch-lab" element={<ProtectedRoute><Playground /></ProtectedRoute>} />
               <Route path="/lab/studio" element={<ProtectedRoute><Studio /></ProtectedRoute>} />
@@ -116,6 +330,8 @@ const App = () => {
               <Route path="/capture/design-system" element={<ProtectedRoute><CaptureDesignSystemShowcase /></ProtectedRoute>} />
               <Route path="/capture/imported-components" element={<ProtectedRoute><ImportedComponentsShowcase /></ProtectedRoute>} />
               <Route path="/preview/imported-components" element={<ProtectedRoute><ImportedComponentsShowcase /></ProtectedRoute>} />
+              <Route path="/preview/lesson-panel-theme" element={<ProtectedRoute><LessonPanelThemePreview /></ProtectedRoute>} />
+              <Route path="/preview/neumorphic-library" element={<ProtectedRoute><NeumorphicLibraryPreview /></ProtectedRoute>} />
               {/* Mockup routes — unified shell layout */}
               <Route path="/mockup" element={<Suspense fallback={<PageLoader />}><MockAppLayout /></Suspense>}>
                 <Route index element={<Navigate to="/" replace />} />

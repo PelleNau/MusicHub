@@ -160,6 +160,15 @@
     @apply bg-background text-foreground;
     font-family: 'Inter', system-ui, sans-serif;
     font-size: var(--app-font-size, 14px);
+    overflow: auto;
+  }
+
+  html, body, #root {
+    min-height: 100%;
+  }
+
+  #root {
+    min-height: 100vh;
   }
 
   h1, h2, h3, h4, h5, h6 {
@@ -250,6 +259,137 @@ body::before {
   to { stroke-dashoffset: 0; opacity: 1; }
 }
 .animate-path-draw { animation: path-draw 0.6s ease-out forwards; }
+
+/* ── Neumorphic design library ── */
+.neu-light {
+  --neu-bg: #edf1f7;
+  --neu-surface: #eef2f8;
+  --neu-surface-strong: #f7f9fc;
+  --neu-text: #6b7897;
+  --neu-text-dim: #9aa6c0;
+  --neu-accent: #ff8a1f;
+  --neu-shadow-dark: rgba(163, 177, 198, 0.58);
+  --neu-shadow-light: rgba(255, 255, 255, 0.96);
+  --neu-inset-dark: rgba(163, 177, 198, 0.32);
+  --neu-inset-light: rgba(255, 255, 255, 0.92);
+  --neu-border: rgba(255, 255, 255, 0.72);
+}
+
+.neu-dark {
+  --neu-bg: #2c3138;
+  --neu-surface: #30363e;
+  --neu-surface-strong: #343a43;
+  --neu-text: #d7dbe6;
+  --neu-text-dim: #8e97ab;
+  --neu-accent: #28ddc4;
+  --neu-shadow-dark: rgba(18, 22, 28, 0.72);
+  --neu-shadow-light: rgba(67, 75, 88, 0.36);
+  --neu-inset-dark: rgba(20, 24, 31, 0.7);
+  --neu-inset-light: rgba(72, 80, 94, 0.25);
+  --neu-border: rgba(255, 255, 255, 0.04);
+}
+
+.neu-root {
+  background: var(--neu-bg);
+  color: var(--neu-text);
+}
+
+.neu-panel {
+  background: var(--neu-surface);
+  border: 1px solid var(--neu-border);
+  box-shadow:
+    14px 14px 30px var(--neu-shadow-dark),
+    -14px -14px 30px var(--neu-shadow-light);
+}
+
+.neu-panel-soft {
+  background: var(--neu-surface);
+  border: 1px solid var(--neu-border);
+  box-shadow:
+    10px 10px 22px var(--neu-shadow-dark),
+    -10px -10px 22px var(--neu-shadow-light);
+}
+
+.neu-panel-inset {
+  background: var(--neu-surface);
+  border: 1px solid var(--neu-border);
+  box-shadow:
+    inset 7px 7px 14px var(--neu-inset-dark),
+    inset -7px -7px 14px var(--neu-inset-light);
+}
+
+.neu-card {
+  @apply neu-panel rounded-[32px];
+}
+
+.neu-tile {
+  @apply neu-panel-soft rounded-[24px];
+}
+
+.neu-pill {
+  @apply neu-panel-soft rounded-full;
+}
+
+.neu-button {
+  @apply neu-pill;
+  color: var(--neu-text);
+  transition: transform 160ms ease, box-shadow 160ms ease, color 160ms ease;
+}
+
+.neu-button:hover {
+  transform: translateY(-1px);
+}
+
+.neu-button:active,
+.neu-button[data-pressed="true"] {
+  box-shadow:
+    inset 6px 6px 12px var(--neu-inset-dark),
+    inset -6px -6px 12px var(--neu-inset-light);
+}
+
+.neu-input {
+  @apply neu-panel-soft rounded-[20px];
+  color: var(--neu-text);
+}
+
+.neu-input::placeholder {
+  color: var(--neu-text-dim);
+}
+
+.neu-slider-track {
+  @apply neu-panel-inset rounded-full;
+}
+
+.neu-slider-fill {
+  background: var(--neu-accent);
+  box-shadow:
+    0 0 10px color-mix(in srgb, var(--neu-accent) 44%, transparent),
+    0 0 22px color-mix(in srgb, var(--neu-accent) 22%, transparent);
+}
+
+.neu-slider-thumb {
+  @apply neu-panel-soft rounded-full;
+}
+
+.neu-toggle-track {
+  @apply neu-panel-inset rounded-full;
+}
+
+.neu-toggle-thumb {
+  @apply neu-panel-soft rounded-full;
+}
+
+.neu-accent {
+  color: var(--neu-accent);
+}
+
+.neu-accent-bg {
+  background: var(--neu-accent);
+}
+
+.neu-accent-soft {
+  background: color-mix(in srgb, var(--neu-accent) 18%, transparent);
+}
 
 /* ── Dawn Lagoon — shimmering ocean blue for mockup pages ── */
 .dawn-lagoon {

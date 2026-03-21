@@ -26,10 +26,10 @@ function LessonStepCard({
 }) {
   return (
     <div className="space-y-2">
-      <h4 className="text-sm text-white">{step.title}</h4>
-      <p className="text-xs leading-relaxed text-white/70">{step.description}</p>
+      <h4 className="font-mono text-sm font-semibold tracking-tight text-foreground">{step.title}</h4>
+      <p className="font-mono text-xs leading-relaxed text-muted-foreground">{step.description}</p>
       {step.action ? (
-        <div className="flex items-center gap-2 text-xs text-[hsl(212_78%_60%)]">
+        <div className="flex items-center gap-2 font-mono text-[11px] uppercase tracking-[0.16em] text-primary">
           <ChevronRight className="h-3 w-3" />
           <span className="capitalize">{step.action}</span>
         </div>
@@ -41,10 +41,10 @@ function LessonStepCard({
 export function LessonPanel({ lesson, onClose }: LessonPanelProps) {
   if (!lesson) {
     return (
-      <div className="flex w-80 flex-col border-l border-[hsl(240_8%_24%)] bg-[hsl(240_10%_14%)]">
+      <div className="flex w-80 flex-col overflow-hidden rounded-[24px] border border-[color:var(--lesson-border)] bg-[var(--lesson-bg)] shadow-[var(--shadow-xl)] backdrop-blur-xl">
         <div className="flex flex-1 flex-col items-center justify-center p-6">
-          <BookOpen className="mb-4 h-12 w-12 text-white/20" />
-          <p className="text-center text-sm text-white/40">No active lesson</p>
+          <BookOpen className="mb-4 h-12 w-12 text-foreground/20" />
+          <p className="text-center font-mono text-sm text-muted-foreground">No active lesson</p>
         </div>
       </div>
     );
@@ -54,20 +54,20 @@ export function LessonPanel({ lesson, onClose }: LessonPanelProps) {
   const progress = ((lesson.currentStep + 1) / lesson.steps.length) * 100;
 
   return (
-    <div className="flex w-80 flex-col border-l border-[hsl(240_8%_24%)] bg-[hsl(240_10%_14%)]">
-      <div className="border-b border-[hsl(240_8%_24%)] p-4">
+    <div className="flex w-80 flex-col overflow-hidden rounded-[24px] border border-[color:var(--lesson-border)] bg-[var(--lesson-bg)] shadow-[var(--shadow-xl)] backdrop-blur-xl">
+      <div className="border-b border-[color:var(--lesson-border)] bg-[color:color-mix(in_srgb,var(--surface-2)_78%,transparent)] p-4">
         <div className="mb-3 flex items-start justify-between">
           <div className="flex-1">
             <div className="mb-1 flex items-center gap-2">
-              <BookOpen className="h-4 w-4 text-[hsl(212_78%_60%)]" />
-              <span className="text-xs text-white/60">Lesson</span>
+              <BookOpen className="h-4 w-4 text-primary" />
+              <span className="font-mono text-[11px] uppercase tracking-[0.18em] text-muted-foreground">Lesson</span>
             </div>
-            <h3 className="text-sm text-white">{lesson.title}</h3>
+            <h3 className="font-mono text-sm font-semibold tracking-tight text-foreground">{lesson.title}</h3>
           </div>
           {onClose ? (
             <button
               onClick={onClose}
-              className="flex h-6 w-6 items-center justify-center rounded text-white/60 transition-colors hover:bg-[hsl(240_10%_18%)] hover:text-white"
+              className="flex h-7 w-7 items-center justify-center rounded-lg border border-transparent text-muted-foreground transition-colors hover:border-[color:var(--lesson-border)] hover:bg-[var(--surface-2)] hover:text-foreground"
             >
               <X className="h-4 w-4" />
             </button>
@@ -75,17 +75,17 @@ export function LessonPanel({ lesson, onClose }: LessonPanelProps) {
         </div>
 
         <div className="space-y-1">
-          <div className="flex items-center justify-between text-xs text-white/60">
+          <div className="flex items-center justify-between font-mono text-[11px] text-muted-foreground">
             <span>Step {lesson.currentStep + 1} of {lesson.steps.length}</span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="h-1.5 overflow-hidden rounded-full bg-[hsl(240_10%_18%)]">
-            <div className="h-full bg-[hsl(212_78%_60%)] transition-all duration-300" style={{ width: `${progress}%` }} />
+          <div className="h-1.5 overflow-hidden rounded-full bg-[var(--surface-3)]">
+            <div className="h-full bg-primary transition-all duration-300" style={{ width: `${progress}%` }} />
           </div>
         </div>
       </div>
 
-      <div className="border-b border-[hsl(240_8%_22%)] bg-[hsla(212,78%,60%,0.08)] p-4">
+      <div className="border-b border-[color:var(--lesson-border)] bg-[var(--lesson-highlight)] p-4">
         <LessonStepCard step={currentStep} />
       </div>
 
@@ -95,12 +95,12 @@ export function LessonPanel({ lesson, onClose }: LessonPanelProps) {
             <div
               key={step.id}
               className={[
-                "rounded p-3 transition-colors",
+                "rounded-xl p-3 transition-colors",
                 index === lesson.currentStep
-                  ? "border border-[hsl(240_8%_22%)] bg-[hsla(212,78%,60%,0.08)]"
+                  ? "border border-[color:var(--lesson-border)] bg-[var(--lesson-highlight)]"
                   : step.completed
-                    ? "bg-[hsl(240_10%_15%)] opacity-60"
-                    : "bg-[hsl(240_10%_15%)]",
+                    ? "bg-[var(--surface-1)] opacity-70"
+                    : "bg-[var(--surface-1)]",
               ].join(" ")}
             >
               <div className="flex items-start gap-2">
@@ -108,18 +108,18 @@ export function LessonPanel({ lesson, onClose }: LessonPanelProps) {
                   className={[
                     "mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full",
                     step.completed
-                      ? "bg-[hsl(140_65%_45%)] text-white"
+                      ? "bg-[hsl(var(--success))] text-[hsl(var(--success-foreground))]"
                       : index === lesson.currentStep
-                        ? "bg-[hsl(212_78%_60%)] text-white"
-                        : "bg-[hsl(240_10%_18%)] text-white/40",
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-[var(--surface-3)] text-muted-foreground",
                   ].join(" ")}
                 >
                   {step.completed ? <Check className="h-3 w-3" /> : <span className="text-xs">{index + 1}</span>}
                 </div>
                 <div className="min-w-0 flex-1">
-                  <div className="mb-1 text-xs text-white/90">{step.title}</div>
+                  <div className="mb-1 font-mono text-xs font-medium text-foreground">{step.title}</div>
                   {index === lesson.currentStep ? (
-                    <div className="line-clamp-2 text-xs text-white/60">{step.description}</div>
+                    <div className="line-clamp-2 font-mono text-xs text-muted-foreground">{step.description}</div>
                   ) : null}
                 </div>
               </div>
@@ -128,9 +128,9 @@ export function LessonPanel({ lesson, onClose }: LessonPanelProps) {
         </div>
       </div>
 
-      <div className="border-t border-[hsl(240_8%_24%)] p-4">
-        <button className="flex w-full items-center justify-center gap-2 rounded bg-[hsl(212_78%_60%)] py-2 text-white transition-colors hover:bg-[hsl(212_78%_64%)]">
-          <span className="text-sm">Continue</span>
+      <div className="border-t border-[color:var(--lesson-border)] bg-[color:color-mix(in_srgb,var(--surface-2)_74%,transparent)] p-4">
+        <button className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary py-2.5 text-primary-foreground shadow-[var(--shadow-sm)] transition-colors hover:brightness-110">
+          <span className="font-mono text-sm font-medium">Continue</span>
           <ChevronRight className="h-4 w-4" />
         </button>
       </div>

@@ -56,7 +56,7 @@ export function FadeCurveMenu({
   return (
     <ContextMenu>
       <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      <ContextMenuContent className="w-64 rounded-lg border-border/90 bg-[hsl(240_10%_16%)] p-1.5 text-foreground shadow-2xl">
+      <ContextMenuContent className="w-64">
         <ContextMenuLabel className="font-mono text-[11px]">
           Fade {fadeType === "in" ? "In" : "Out"} Curve
         </ContextMenuLabel>

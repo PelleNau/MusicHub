@@ -73,13 +73,15 @@ export function StudioBottomWorkspace({
 
       <div className="flex-1 min-h-0 overflow-hidden">
         {collapsedSummaryLabel ? (
-          <div className="flex h-full items-center justify-between border-t border-white/6 bg-[#2c2d33] px-4 text-white/78">
-            <div className="flex items-center gap-3">
-              <div className="h-3 w-3 rounded-full border border-white/18 bg-white/5" />
-              <span className="text-[22px] leading-none">⌄</span>
-              <span className="text-[15px] font-medium">{collapsedSummaryLabel}</span>
+          <div className="flex h-full items-center justify-between border-t border-white/6 bg-[#25272d] px-2 text-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.035),inset_0_-1px_0_rgba(0,0,0,0.18)]">
+            <div className="flex items-center gap-1.5">
+              <span className="text-[9px] leading-none text-white/40">⌄</span>
+              <span className="text-[9px] font-medium tracking-[0.01em] text-white/78">{collapsedSummaryLabel}</span>
             </div>
-            {collapsedSummaryMeta ? <span className="text-[13px] text-white/42">{collapsedSummaryMeta}</span> : null}
+            <div className="flex items-center gap-2">
+              {collapsedSummaryMeta ? <span className="text-[8px] text-white/34">{collapsedSummaryMeta}</span> : null}
+              <span className="text-[9px] leading-none text-white/34">⌃</span>
+            </div>
           </div>
         ) : showMixer ? (
           mixerPanelProps.tracks.length === 0 ? (

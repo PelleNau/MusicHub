@@ -64,7 +64,9 @@ export function useStudioBrowserPanelState({
         const value = Number(stored);
         if (value >= MIN_WIDTH && value <= MAX_WIDTH) return value;
       }
-    } catch {}
+    } catch {
+      // Ignore invalid persisted width and use the default panel size.
+    }
     return DEFAULT_WIDTH;
   });
 

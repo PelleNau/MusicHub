@@ -6,6 +6,7 @@ import {
   GraduationCap,
   Headphones,
   Home,
+  Layers3,
   LogOut,
   Microscope,
   Music,
@@ -73,6 +74,7 @@ const navGroups: Array<{ label: string; items: NavItem[] }> = [
     label: "Explore",
     items: [
       { label: "Lab", path: "/lab", icon: FlaskConical },
+      { label: "DesignStudio", path: "/design-studio", icon: Layers3 },
       { label: "Deep Dive", path: "/lab/deep-dive", icon: Microscope },
       { label: "Flight Case", path: "/inventory", icon: Package },
     ],

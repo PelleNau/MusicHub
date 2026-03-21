@@ -3,6 +3,7 @@ export type CaptureScenarioId =
   | "standard-mode"
   | "focused-mode"
   | "arrangement"
+  | "arrangement-piano-roll"
   | "piano-roll"
   | "mixer"
   | "control-bar"
@@ -23,6 +24,9 @@ export interface CaptureScenario {
   filename: string;
   href: string;
 }
+
+const CAPTURE_ENABLED =
+  import.meta.env.DEV || import.meta.env.VITE_APP_FLAVOR === "design";
 
 const CAPTURE_SCENARIOS: CaptureScenario[] = [
   {
@@ -52,6 +56,13 @@ const CAPTURE_SCENARIOS: CaptureScenario[] = [
     description: "Timeline, tracks, clips, and arrangement toolbar.",
     filename: "04-arrangement.png",
     href: "/lab/studio?capture=true&captureScenario=arrangement&mode=standard&lesson=studio.sketch-capstone",
+  },
+  {
+    id: "arrangement-piano-roll",
+    title: "Arrangement + Piano Roll",
+    description: "Arrangement view with the piano roll open in the bottom workspace.",
+    filename: "04b-arrangement-piano-roll.png",
+    href: "/lab/studio?capture=true&captureScenario=arrangement-piano-roll&mode=standard",
   },
   {
     id: "piano-roll",
@@ -88,11 +99,21 @@ function getSearchParams() {
     return null;
   }
 
-  return new URLSearchParams(window.location.search);
+  if (window.location.search) {
+    return new URLSearchParams(window.location.search);
+  }
+
+  const hash = window.location.hash;
+  const queryIndex = hash.indexOf("?");
+  if (queryIndex === -1) {
+    return new URLSearchParams();
+  }
+
+  return new URLSearchParams(hash.slice(queryIndex));
 }
 
 export function isCaptureMode() {
-  if (!import.meta.env.DEV) {
+  if (!CAPTURE_ENABLED) {
     return false;
   }
 
@@ -105,10 +126,18 @@ export function isCaptureMode() {
 }
 
 export function getCaptureScenario() {
+  if (!CAPTURE_ENABLED) {
+    return null;
+  }
+
   return (getSearchParams()?.get("captureScenario") as CaptureScenarioId | null) ?? null;
 }
 
 export function getCaptureOverlay() {
+  if (!CAPTURE_ENABLED) {
+    return null;
+  }
+
   return (getSearchParams()?.get("captureOverlay") as CaptureOverlayId | null) ?? null;
 }
 

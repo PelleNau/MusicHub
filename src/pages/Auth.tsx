@@ -29,8 +29,8 @@ export default function Auth() {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       }
-    } catch (err: any) {
-      toast.error(err.message || "Authentication failed");
+    } catch (err: unknown) {
+      toast.error(err instanceof Error ? err.message : "Authentication failed");
     } finally {
       setLoading(false);
     }
@@ -44,11 +44,11 @@ export default function Auth() {
           <div className="flex items-center justify-center gap-2">
             <Package className="h-6 w-6 text-primary" />
             <h1 className="text-xl font-mono font-bold tracking-tight text-foreground">
-              THE FLIGHT CASE
+              MUSICHUB
             </h1>
           </div>
           <p className="font-mono text-xs text-muted-foreground">
-            {isSignUp ? "Create your account" : "Sign in to your inventory"}
+            {isSignUp ? "Create your account" : "Sign in to your workspace"}
           </p>
         </div>
 

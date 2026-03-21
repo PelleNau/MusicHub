@@ -177,7 +177,7 @@ interface TrackInfo {
 function extractAllTopLevelElements(xml: string): { tagName: string; xml: string; pos: number }[] {
   const results: { tagName: string; xml: string; pos: number }[] = [];
   // Match any opening tag at the current nesting level
-  const re = /<([A-Za-z][A-Za-z0-9_]*)([\s>\/])/g;
+  const re = /<([A-Za-z][A-Za-z0-9_]*)([\s>/])/g;
   let m: RegExpExecArray | null;
 
   while ((m = re.exec(xml)) !== null) {

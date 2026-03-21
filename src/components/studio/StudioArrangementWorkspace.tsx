@@ -10,6 +10,7 @@ import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/Ti
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
 import { VerticalZoomSlider } from "@/components/studio/VerticalZoomSlider";
 import { TrackLane } from "@/components/studio/TrackLane";
+import { TRACK_HEADER_WIDTH } from "@/components/studio/timelineMath";
 import { Flag, Plus, Undo2, Upload } from "lucide-react";
 
 interface StudioArrangementWorkspaceProps {
@@ -134,7 +135,7 @@ export function StudioArrangementWorkspace({
 }: StudioArrangementWorkspaceProps) {
   return (
     <div
-      className="flex min-h-0 flex-1 overflow-hidden bg-[#17181b]"
+      className="flex min-h-0 flex-1 overflow-hidden bg-[#141518]"
       data-studio-mode={mode}
     >
       {showBrowserPanel ? <BrowserPanel {...browserProps} /> : null}
@@ -163,7 +164,7 @@ export function StudioArrangementWorkspace({
             <div
               ref={timelineRef}
               data-timeline
-              className="relative min-h-0 flex-1 overflow-auto bg-[#17181b]"
+              className="relative min-h-0 flex-1 overflow-auto bg-[#131417]"
               {...timelineContainerProps}
             >
               {arrangementWrapper(
@@ -178,12 +179,17 @@ export function StudioArrangementWorkspace({
                     onSeek={onSeek}
                     beatGetter={playheadBeatGetter}
                     staticBeat={effectiveBeat}
-                    zoomHandle={
+                    zoomHandle={captureVariant ? (
+                      <div
+                        className="sticky left-0 z-10 shrink-0 border-r border-white/8 bg-[#1d1f24]"
+                        style={{ width: TRACK_HEADER_WIDTH }}
+                      />
+                    ) : (
                       <VerticalZoomSlider
                         value={(trackHeight - 32) / (200 - 32)}
                         onChange={(value) => onSetTrackHeight(32 + value * (200 - 32))}
                       />
-                    }
+                    )}
                     rulerOverlayContent={
                       <TimelineMarkerFlags
                         markers={markerModel.sortedMarkers}
@@ -217,10 +223,11 @@ export function StudioArrangementWorkspace({
                         </div>
                       </div>
                     ) : (
-                      displayTracks.map((track) => (
+                      displayTracks.map((track, index) => (
                         <TrackLane
                           key={track.id}
                           track={track}
+                          trackIndex={index + 1}
                           returnTracks={displayReturnTracks}
                           pixelsPerBeat={pixelsPerBeat}
                           totalBeats={totalBeats}

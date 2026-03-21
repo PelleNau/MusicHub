@@ -1,21 +1,5 @@
 import { memo, useMemo } from "react";
 
-/** Pitch-class color palette (chromatic, 12 colors) */
-const NOTE_COLORS: Record<number, string> = {
-  0: "#ff6b6b",   // C
-  1: "#e85d75",   // C#
-  2: "#ffa94d",   // D
-  3: "#f59f00",   // D#
-  4: "#ffd43b",   // E
-  5: "#69db7c",   // F
-  6: "#38d9a9",   // F#
-  7: "#4dabf7",   // G
-  8: "#5c7cfa",   // G#
-  9: "#7950f2",   // A
-  10: "#cc5de8",  // A#
-  11: "#f06595",  // B
-};
-
 interface MiniNote {
   pitch: number;
   start: number;
@@ -27,6 +11,7 @@ interface ClipMidiPreviewProps {
   notes: MiniNote[];
   clipDuration: number;
   isMuted: boolean;
+  color: string;
 }
 
 const MAX_RENDERED_NOTES = 300;
@@ -36,6 +21,7 @@ export const ClipMidiPreview = memo(function ClipMidiPreview({
   notes,
   clipDuration,
   isMuted,
+  color,
 }: ClipMidiPreviewProps) {
   const rects = useMemo(() => {
     if (notes.length === 0) return null;
@@ -57,9 +43,8 @@ export const ClipMidiPreview = memo(function ClipMidiPreview({
       const x = (n.start / clipDuration) * 100;
       const w = Math.max((n.duration / clipDuration) * 100, 0.3);
       const y = ((maxPitch - n.pitch) / pitchRange) * 100;
-      const color = isMuted ? "rgba(255,255,255,0.2)" : NOTE_COLORS[n.pitch % 12];
-      // Velocity → opacity: 0.3 at vel=0, 1.0 at vel=127
-      const opacity = isMuted ? 0.3 : 0.3 + (n.velocity / 127) * 0.7;
+      const fill = isMuted ? "rgba(255,255,255,0.16)" : color;
+      const opacity = isMuted ? 0.24 : 0.28 + (n.velocity / 127) * 0.28;
 
       return (
         <rect
@@ -68,13 +53,13 @@ export const ClipMidiPreview = memo(function ClipMidiPreview({
           y={y}
           width={w}
           height={noteHeight}
-          rx={0.4}
-          fill={color}
+          rx={0.25}
+          fill={fill}
           opacity={opacity}
         />
       );
     });
-  }, [notes, clipDuration, isMuted]);
+  }, [notes, clipDuration, isMuted, color]);
 
   if (!rects) return null;
 

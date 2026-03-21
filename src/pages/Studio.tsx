@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
@@ -35,6 +35,7 @@ export default function Studio() {
   const showCollapsedMixerFooter =
     captureMode && (captureScenario === "standard-mode" || captureScenario === "arrangement");
   const compactTracksCapture = captureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
+  const arrangementWithPianoRollCapture = captureMode && captureScenario === "arrangement-piano-roll";
   const arrangementOnlyCapture = captureMode && captureScenario === "arrangement";
   const cleanCaptureShell = captureMode;
   const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
@@ -42,10 +43,10 @@ export default function Studio() {
     : null;
   const arrangementCaptureVariant = compactTracksCapture
     ? "figma-compact"
-    : captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
+    : captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll" || captureScenario === "arrangement")
       ? "figma"
       : null;
-  const hideGuideForCapture = captureMode && captureScenario === "piano-roll";
+  const hideGuideForCapture = captureMode && (captureScenario === "piano-roll" || captureScenario === "arrangement-piano-roll");
   const pianoRollOverlayMode =
     captureMode && captureScenario === "piano-roll"
       ? captureOverlay === "humanize-dialog"
@@ -77,23 +78,32 @@ export default function Studio() {
     navigateToLab: () => navigate("/lab"),
     preferredMode: settings.studioModePreference,
   });
+  const seededEditorSessionIdsRef = useRef<Set<string>>(new Set());
   const showGuideSidebar = studioModeModel.shell.showGuideSidebar;
-  const showBrowserPanel = captureMode && captureScenario === "piano-roll"
+  const showBrowserPanel = captureMode && (captureScenario === "piano-roll" || captureScenario === "arrangement" || captureScenario === "arrangement-piano-roll")
     ? false
     : studioModeModel.shell.showBrowserPanel;
   const arrangementDefaultSize = arrangementOnlyCapture
-    ? 96
+    ? 97
+    : arrangementWithPianoRollCapture
+      ? 73
     : captureMode && captureScenario === "piano-roll"
     ? 79
     : studioModeModel.shell.arrangementDefaultSize;
   const bottomDefaultSize = arrangementOnlyCapture
-    ? 4
+    ? 3
+    : arrangementWithPianoRollCapture
+      ? 27
     : captureMode && captureScenario === "piano-roll"
     ? 21
     : showCollapsedMixerFooter
       ? 8
       : studioModeModel.shell.bottomDefaultSize;
-  const arrangementTrackHeight = compactTracksCapture ? 40 : presentation.arrangementWorkspaceModel.trackHeight;
+  const arrangementTrackHeight = arrangementOnlyCapture
+    ? 72
+    : compactTracksCapture
+      ? 40
+      : presentation.arrangementWorkspaceModel.trackHeight;
 
   useEffect(() => {
     if (!captureMode) return;
@@ -110,7 +120,7 @@ export default function Studio() {
       return;
     }
 
-    if (captureScenario === "piano-roll") {
+    if (captureScenario === "piano-roll" || captureScenario === "arrangement-piano-roll") {
       if (presentation.bottomWorkspaceModel.showPianoRoll) return;
       const midiTrack = tracks.find((track) => track.type === "midi" && (track.clips ?? []).some((clip) => clip.is_midi));
       const midiClip = midiTrack?.clips?.find((clip) => clip.is_midi);
@@ -126,6 +136,48 @@ export default function Studio() {
     isLoading,
     presentation.arrangementWorkspaceModel.trackLaneProps,
     presentation.bottomWorkspaceModel,
+    routeModel.activeSessionId,
+    tracks,
+  ]);
+
+  useEffect(() => {
+    if (captureMode || isLoading || !routeModel.activeSessionId) {
+      return;
+    }
+
+    if (seededEditorSessionIdsRef.current.has(routeModel.activeSessionId)) {
+      return;
+    }
+
+    if (presentation.bottomWorkspaceModel.showPianoRoll || presentation.bottomWorkspaceModel.showMixer) {
+      seededEditorSessionIdsRef.current.add(routeModel.activeSessionId);
+      return;
+    }
+
+    if (presentation.arrangementWorkspaceModel.selectedClipIds.size > 0) {
+      seededEditorSessionIdsRef.current.add(routeModel.activeSessionId);
+      return;
+    }
+
+    const midiTrack = tracks.find((track) => track.type === "midi" && (track.clips ?? []).some((clip) => clip.is_midi));
+    const midiClip = midiTrack?.clips?.find((clip) => clip.is_midi);
+
+    seededEditorSessionIdsRef.current.add(routeModel.activeSessionId);
+
+    if (!midiTrack || !midiClip) {
+      return;
+    }
+
+    presentation.arrangementWorkspaceModel.trackLaneProps.onClipSelect(midiClip.id, midiTrack.id);
+    commandDispatch.openPanel("pianoRoll");
+  }, [
+    captureMode,
+    commandDispatch,
+    isLoading,
+    presentation.arrangementWorkspaceModel.selectedClipIds,
+    presentation.arrangementWorkspaceModel.trackLaneProps,
+    presentation.bottomWorkspaceModel.showMixer,
+    presentation.bottomWorkspaceModel.showPianoRoll,
     routeModel.activeSessionId,
     tracks,
   ]);
@@ -268,11 +320,13 @@ export default function Studio() {
 
             {(studioModeModel.shell.showBottomWorkspace || arrangementOnlyCapture) ? (
               <>
-                <ResizableHandle
-                  withHandle
-                  hitAreaMargins={{ coarse: 14, fine: 8 }}
-                  className="h-4 border-y border-border/70 bg-card/60"
-                />
+                {arrangementOnlyCapture ? null : (
+                  <ResizableHandle
+                    withHandle
+                    hitAreaMargins={{ coarse: 14, fine: 8 }}
+                    className="h-4 border-y border-border/70 bg-card/60"
+                  />
+                )}
 
                 <ResizablePanel
                   defaultSize={bottomDefaultSize}
@@ -298,7 +352,7 @@ export default function Studio() {
                       pianoRollOverlayMode ? <PianoRollCaptureOverlay mode={pianoRollOverlayMode} /> : undefined
                     }
                     captureVariant={
-                      captureMode && captureScenario === "piano-roll"
+                      captureMode && (captureScenario === "piano-roll" || captureScenario === "arrangement-piano-roll")
                         ? "figma"
                         : captureMode && captureScenario === "mixer"
                           ? "figma-mixer"
@@ -325,19 +379,21 @@ export default function Studio() {
           lessonActive={guideBridge.runtime.state.lessonStatus === "active"}
         />
 
-        <StudioStatusBar
-          trackCount={tracks.length}
-          barCount={Math.ceil(sessionMetrics.totalBeats / sessionMetrics.beatsPerBar)}
-          tempo={sessionMetrics.tempo}
-          activeDivision={grid.activeDivision}
-          tripletMode={grid.tripletMode}
-          snapEnabled={grid.snapEnabled}
-          pixelsPerBeat={grid.pixelsPerBeat}
-          connectionSummary={connectionSummary}
-          onToggleSnap={grid.toggleSnapEnabled}
-          onZoomOut={grid.zoomOut}
-          onZoomIn={grid.zoomIn}
-        />
+        {!cleanCaptureShell ? (
+          <StudioStatusBar
+            trackCount={tracks.length}
+            barCount={Math.ceil(sessionMetrics.totalBeats / sessionMetrics.beatsPerBar)}
+            tempo={sessionMetrics.tempo}
+            activeDivision={grid.activeDivision}
+            tripletMode={grid.tripletMode}
+            snapEnabled={grid.snapEnabled}
+            pixelsPerBeat={grid.pixelsPerBeat}
+            connectionSummary={connectionSummary}
+            onToggleSnap={grid.toggleSnapEnabled}
+            onZoomOut={grid.zoomOut}
+            onZoomIn={grid.zoomIn}
+          />
+        ) : null}
       </div>
     </StudioInfoProvider>
   );

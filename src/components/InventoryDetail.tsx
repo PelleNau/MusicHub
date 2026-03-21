@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useMemo } from "react";
-import { InventoryItem } from "@/types/inventory";
+import { HardwareSpecs, InventoryItem } from "@/types/inventory";
 import { ItemMeta } from "@/lib/itemMeta";
 import {
   Package, Cpu, Music, Zap, Star, X, Plus,
@@ -30,6 +30,10 @@ interface InventoryDetailProps {
   onEdit?: (item: InventoryItem) => void;
   onDelete?: (item: InventoryItem) => void;
 }
+
+type InventorySpecs = HardwareSpecs & {
+  manualUrl?: string;
+};
 
 const ecosystemIcons: Record<string, typeof Package> = {
   Hardware: Cpu, NI: Music, Reason: Zap, Ableton: Music,
@@ -539,7 +543,7 @@ function ResearchTab({ item }: { item: InventoryItem }) {
     const manualHighlights = extract('Manual: ');
     const related = extract('Related: ')?.split(', ').filter(Boolean);
 
-    const specs = item.specs as any;
+    const specs = item.specs as InventorySpecs | undefined;
     const custom = (specs?.custom || []) as { label: string; value: string }[];
 
     return {
@@ -618,8 +622,8 @@ function ResearchTab({ item }: { item: InventoryItem }) {
         } else {
           console.warn('Download failed:', data?.error);
         }
-      } catch (e) {
-        console.warn('Manual download attempt failed:', e);
+    } catch (e) {
+      console.warn('Manual download attempt failed:', e);
       }
     }
 
@@ -687,7 +691,7 @@ function ResearchTab({ item }: { item: InventoryItem }) {
           }
         });
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error("Failed to save research data:", e);
       toast.error("Failed to save research data");
     }
@@ -792,13 +796,13 @@ function ResearchTab({ item }: { item: InventoryItem }) {
       }
 
       setPhase('done');
-    } catch (e: any) {
-      setError(e.message || "Research failed");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Research failed");
       setPhase('error');
     }
   }, [item, saveDistilledData, tryDownloadManual, queryClient]);
 
-  const existingManualUrl = (item.specs as any)?.manualUrl as string | undefined;
+  const existingManualUrl = (item.specs as InventorySpecs | undefined)?.manualUrl;
 
   if (phase === 'idle') {
     return (
@@ -910,10 +914,10 @@ function ResearchTab({ item }: { item: InventoryItem }) {
       )}
 
       {/* Manual download link */}
-      {(manualUrl || (item.specs as any)?.manualUrl) && (
+      {(manualUrl || (item.specs as InventorySpecs | undefined)?.manualUrl) && (
         <DetailCard className="border-primary/20 bg-primary/[0.03]">
           <SectionLabel icon={BookOpen} label="Product Manual" />
-          <a href={manualUrl || (item.specs as any)?.manualUrl} target="_blank" rel="noopener noreferrer"
+          <a href={manualUrl || (item.specs as InventorySpecs | undefined)?.manualUrl} target="_blank" rel="noopener noreferrer"
             className="flex items-center gap-2 font-mono text-xs text-primary hover:text-primary/80 transition-colors">
             <Download className="h-4 w-4" />
             <span>Open / Download Manual (PDF)</span>

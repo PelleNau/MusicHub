@@ -213,8 +213,8 @@ export function ProjectParserPanel({ inventoryItems, onParsed, result, onReset, 
 
         const parsed = data as AbletonParseResult;
         onParsed(parsed, file.name);
-      } catch (e: any) {
-        setError(e.message || "Failed to parse project file");
+      } catch (e: unknown) {
+        setError(e instanceof Error ? e.message : "Failed to parse project file");
       } finally {
         setParsing(false);
       }

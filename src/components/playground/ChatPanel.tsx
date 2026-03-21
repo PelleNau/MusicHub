@@ -132,8 +132,8 @@ export function ChatPanel({ isOpen, onToggle, canvasContext, onBuildChain }: Cha
     try {
       const apiMessages = [...messages.map(m => ({ role: m.role, content: m.content })), userMsg];
       await streamChat({ messages: apiMessages, onDelta: upsert, onDone: () => setIsStreaming(false) });
-    } catch (e: any) {
-      toast.error(e.message || "Failed to get response");
+    } catch (e: unknown) {
+      toast.error(e instanceof Error ? e.message : "Failed to get response");
       setIsStreaming(false);
     }
   }, [messages, isStreaming, canvasContext]);

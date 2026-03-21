@@ -9,9 +9,11 @@ import { studioSessionKeys } from "@/domain/studio/studioSessionQueries";
 import type { Session, SessionClip, SessionTrack } from "@/types/studio";
 
 export const shouldUseDevSessionFixture =
-  import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === "1";
+  import.meta.env.VITE_APP_FLAVOR === "design" ||
+  (import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === "1");
 
 export const DEV_USER_ID = "dev-bypass-user";
+export const DESIGN_FIXTURE_SESSION_ID = "dev-session-1";
 
 type DevSessionStore = {
   sessions: Session[];
@@ -32,7 +34,7 @@ function nextDevId(prefix: string) {
 
 function createInitialDevStore(): DevSessionStore {
   const createdAt = nowIso();
-  const sessionId = "dev-session-1";
+  const sessionId = DESIGN_FIXTURE_SESSION_ID;
   const makeWaveform = (length: number, phase = 0, gain = 0.7) =>
     Array.from({ length }, (_, index) => {
       const carrier = Math.abs(Math.sin((index + phase) / 4.8));
@@ -144,6 +146,7 @@ function createInitialDevStore(): DevSessionStore {
     ],
   );
   const drumLoop = makeAudioClip("dev-clip-drum-loop", drumsId, "Drum Loop", 0, 38, 2, 3, 0.42);
+  const bassGroove = makeAudioClip("dev-clip-bass", bassId, "Bass Groove", 12, 40, 5, 5, 0.34);
   const kickPattern = makeAudioClip("dev-clip-kick", kickId, "Kick Pattern", 18, 40, 3, 6, 0.48);
   const snarePattern = makeAudioClip("dev-clip-snare", snareId, "Snare Pattern", 18, 40, 9, 4, 0.44);
   const hihatPattern = makeAudioClip("dev-clip-hihat", hiHatId, "Hi-Hat Pattern", 18, 40, 1, 9, 0.4);
@@ -257,7 +260,7 @@ function createInitialDevStore(): DevSessionStore {
           sends: [],
           input_from: null,
           created_at: createdAt,
-          clips: [],
+          clips: [bassGroove],
           automation_lanes: [],
         },
         {

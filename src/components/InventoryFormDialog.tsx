@@ -49,7 +49,7 @@ export function InventoryFormDialog({ open, onOpenChange, item, onSave, isSaving
   const set = (field: keyof InventoryItem, value: unknown) =>
     setForm((prev) => ({ ...prev, [field]: value }));
 
-  const handleAiIdentified = useCallback((gear: Record<string, any>) => {
+  const handleAiIdentified = useCallback((gear: Partial<InventoryItem>) => {
     setForm((prev) => ({
       ...prev,
       ecosystem: gear.ecosystem || prev.ecosystem,

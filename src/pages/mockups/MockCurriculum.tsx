@@ -701,7 +701,6 @@ function CourseSnakeSection({
   // Find which row the selected lesson is in (if in this course)
   const selectedRowIdx = useMemo(() => {
     if (selectedIdx == null) return -1;
-    let idx = 0;
     for (let ri = 0; ri < rows.length; ri++) {
       for (const l of rows[ri]) {
         if (l.globalIdx === selectedIdx) return ri;

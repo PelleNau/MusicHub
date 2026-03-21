@@ -1,4 +1,10 @@
 import { useState, useCallback, useEffect } from "react";
+import {
+  APP_SETTINGS_STORAGE_KEY,
+  UI_ZOOM_CHANGED_EVENT,
+  applyUiZoom,
+  normalizeUiZoom,
+} from "@/lib/interfaceScale";
 
 export type Theme = "dark" | "light" | "ocean";
 
@@ -14,7 +20,7 @@ export interface AppSettings {
   studioModePreference: "auto" | "guided" | "standard" | "focused";
 }
 
-const STORAGE_KEY = "app-settings";
+const STORAGE_KEY = APP_SETTINGS_STORAGE_KEY;
 const LEGACY_THEME_KEY = "app-theme";
 
 const DEFAULTS: AppSettings = {
@@ -32,14 +38,20 @@ function loadSettings(): AppSettings {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as Partial<AppSettings>;
-      return { ...DEFAULTS, ...parsed };
+      return {
+        ...DEFAULTS,
+        ...parsed,
+        uiZoom: normalizeUiZoom(parsed.uiZoom),
+      };
     }
     // Migrate legacy theme key
     const legacyTheme = localStorage.getItem(LEGACY_THEME_KEY);
     if (legacyTheme === "light" || legacyTheme === "dark") {
       return { ...DEFAULTS, theme: legacyTheme };
     }
-  } catch {}
+  } catch {
+    // Fall back to defaults when local storage is unavailable or invalid.
+  }
   return { ...DEFAULTS };
 }
 
@@ -48,7 +60,9 @@ function persistSettings(settings: AppSettings) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
     // Keep legacy key in sync for the IIFE in App.tsx
     localStorage.setItem(LEGACY_THEME_KEY, settings.theme);
-  } catch {}
+  } catch {
+    // Ignore storage write failures; settings still apply for the current session.
+  }
 }
 
 function applyTheme(theme: Theme) {
@@ -63,11 +77,6 @@ function applyTheme(theme: Theme) {
   }
 }
 
-function applyZoom(zoom: number) {
-  if (typeof document === "undefined") return;
-  document.documentElement.style.fontSize = `${(zoom / 100) * 16}px`;
-}
-
 function applyFontSize(size: number) {
   if (typeof document === "undefined" || !document.body) return;
   document.body.style.setProperty("--app-font-size", `${size}px`);
@@ -79,10 +88,26 @@ export function useSettings() {
   // Apply all side effects on mount and when settings change
   useEffect(() => {
     applyTheme(settings.theme);
-    applyZoom(settings.uiZoom);
+    applyUiZoom(settings.uiZoom);
     applyFontSize(settings.fontSize);
     persistSettings(settings);
   }, [settings]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const handleZoomChange = (event: Event) => {
+      const zoom = normalizeUiZoom((event as CustomEvent<number>).detail);
+      setSettings((prev) => (prev.uiZoom === zoom ? prev : { ...prev, uiZoom: zoom }));
+    };
+
+    window.addEventListener(UI_ZOOM_CHANGED_EVENT, handleZoomChange as EventListener);
+    return () => {
+      window.removeEventListener(UI_ZOOM_CHANGED_EVENT, handleZoomChange as EventListener);
+    };
+  }, []);
 
   const updateSetting = useCallback(<K extends keyof AppSettings>(key: K, value: AppSettings[K]) => {
     setSettings(prev => ({ ...prev, [key]: value }));
@@ -95,6 +120,6 @@ export function useSettings() {
 export function applyInitialSettings() {
   const s = loadSettings();
   applyTheme(s.theme);
-  applyZoom(s.uiZoom);
+  applyUiZoom(s.uiZoom);
   applyFontSize(s.fontSize);
 }

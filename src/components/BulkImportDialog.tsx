@@ -154,8 +154,8 @@ export function BulkImportDialog({ open, onOpenChange, onImport, existingProduct
       });
       setSelectedIndices(preSelected);
       setWizardStep("review");
-    } catch (e: any) {
-      setError(e.message || "Failed to scan library");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Failed to scan library");
     } finally {
       setIsScanning(false);
     }
