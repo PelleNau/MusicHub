@@ -87,7 +87,6 @@ interface StudioArrangementWorkspaceProps {
     onSplitClip: (clipId: string, beatPosition: number) => void;
     onMuteClip: (clipId: string) => void;
     onSetAsLoop: (clipId: string) => void;
-    splitBeat: number;
   };
   snapBeats: number;
   arrangementWrapper: (children: React.ReactNode) => React.ReactNode;
@@ -265,7 +264,6 @@ export function StudioArrangementWorkspace({
                           onSplitClip={trackLaneProps.onSplitClip}
                           onMuteClip={trackLaneProps.onMuteClip}
                           onSetAsLoop={trackLaneProps.onSetAsLoop}
-                          splitBeat={trackLaneProps.splitBeat}
                           snapBeats={snapBeats}
                           activeDivision={activeDivision}
                           tripletMode={tripletMode}

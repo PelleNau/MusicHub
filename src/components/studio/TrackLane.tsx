@@ -71,7 +71,6 @@ interface TrackLaneProps {
   onSplitClip?: (clipId: string, beatPosition: number) => void;
   onMuteClip?: (clipId: string) => void;
   onSetAsLoop?: (clipId: string) => void;
-  splitBeat?: number;
   snapBeats?: number;
   activeDivision?: GridDivision;
   tripletMode?: boolean;
@@ -120,7 +119,6 @@ export const TrackLane = memo(function TrackLane({
   onSplitClip,
   onMuteClip,
   onSetAsLoop,
-  splitBeat,
   snapBeats = 0.25,
   activeDivision = "1/4",
   tripletMode = false,
@@ -479,7 +477,6 @@ export const TrackLane = memo(function TrackLane({
               onSplit={(clipId, beat) => onSplitClip?.(clipId, beat)}
               onMuteToggle={onMuteClip}
               onSetAsLoop={onSetAsLoop}
-              splitBeat={splitBeat}
             />
           ))}
         </div>

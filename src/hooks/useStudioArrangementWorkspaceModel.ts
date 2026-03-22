@@ -158,7 +158,6 @@ export function useStudioArrangementWorkspaceModel({
       onSplitClip: trackActionsModel.track.onSplitClip,
       onMuteClip: trackActionsModel.track.onMuteClip,
       onSetAsLoop: trackActionsModel.track.onSetAsLoop,
-      splitBeat: effectiveBeat,
     },
     snapBeats: grid.snapBeats,
     markerModel,
