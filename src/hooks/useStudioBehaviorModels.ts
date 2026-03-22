@@ -129,6 +129,7 @@ export function useStudioBehaviorModels({
 
   const trackActionsModel = useStudioTrackActionsModel({
     commandDispatch,
+    allClips,
     trackViewStateById,
     onVolumeChange: continuousEditModel.onVolumeChange,
     onPanChange: continuousEditModel.onPanChange,

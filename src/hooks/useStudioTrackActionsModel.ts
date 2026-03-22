@@ -5,6 +5,7 @@ import type { StudioTrackViewState } from "@/domain/studio/studioViewContracts";
 
 interface UseStudioTrackActionsModelOptions {
   commandDispatch: StudioCommandDispatchResult;
+  allClips: Array<{ id: string; is_muted?: boolean | null }>;
   trackViewStateById: Record<string, StudioTrackViewState>;
   onVolumeChange: (trackId: string, volume: number) => void;
   onPanChange: (trackId: string, pan: number) => void;
@@ -32,6 +33,7 @@ interface UseStudioTrackActionsModelOptions {
 
 export function useStudioTrackActionsModel({
   commandDispatch,
+  allClips,
   trackViewStateById,
   onVolumeChange,
   onPanChange,
@@ -96,8 +98,11 @@ export function useStudioTrackActionsModel({
   );
 
   const muteClip = useCallback(
-    (clipId: string) => commandDispatch.updateClip(clipId, { muted: true }),
-    [commandDispatch],
+    (clipId: string) => {
+      const clip = allClips.find((candidate) => candidate.id === clipId);
+      commandDispatch.updateClip(clipId, { muted: !(clip?.is_muted ?? false) });
+    },
+    [allClips, commandDispatch],
   );
 
   const deleteClip = useCallback(

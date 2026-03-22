@@ -20,6 +20,7 @@ import {
   type AutomationMode,
 } from "./track/TrackControls";
 import { VerticalMeter } from "./NativeMeterBridge";
+import { setSendLevel, toggleSendPreFader } from "@/domain/studio/studioDeviceRouting";
 import {
   ContextMenu, ContextMenuContent, ContextMenuItem,
   ContextMenuSeparator, ContextMenuTrigger, ContextMenuSub,
@@ -312,26 +313,14 @@ const MixerStrip = memo(function MixerStrip({
 
   const handleSendLevel = useCallback(
     (returnId: string, level: number) => {
-      const sends: TrackSend[] = (track.sends || []).map((s) =>
-        s.return_track_id === returnId ? { ...s, level } : s,
-      );
-      if (!sends.find((s) => s.return_track_id === returnId)) {
-        sends.push({ return_track_id: returnId, level });
-      }
-      onSendChange(track.id, sends);
+      onSendChange(track.id, setSendLevel(track.sends, returnId, level));
     },
     [track.id, track.sends, onSendChange],
   );
 
   const handleSendPrePost = useCallback(
     (returnId: string) => {
-      const sends: TrackSend[] = (track.sends || []).map((s) =>
-        s.return_track_id === returnId ? { ...s, pre_fader: !s.pre_fader } : s,
-      );
-      if (!sends.find((s) => s.return_track_id === returnId)) {
-        sends.push({ return_track_id: returnId, level: 0, pre_fader: true });
-      }
-      onSendChange(track.id, sends);
+      onSendChange(track.id, toggleSendPreFader(track.sends, returnId));
     },
     [track.id, track.sends, onSendChange],
   );

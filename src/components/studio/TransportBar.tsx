@@ -19,6 +19,9 @@ interface TransportBarProps {
   currentBeat: number;
   playbackState: StudioPlaybackState;
   loopEnabled?: boolean;
+  canPlay?: boolean;
+  canPause?: boolean;
+  canStop?: boolean;
   connectionState?: ConnectionState;
   isMock?: boolean;
   inShell?: boolean;
@@ -55,6 +58,9 @@ export function TransportBar({
   currentBeat,
   playbackState,
   loopEnabled,
+  canPlay = playbackState !== "playing",
+  canPause = playbackState === "playing",
+  canStop = playbackState !== "stopped" || currentBeat > 0.001,
   connectionState = "disconnected",
   isMock = false,
   inShell = false,
@@ -88,6 +94,7 @@ export function TransportBar({
   const [keyRoot, setKeyRoot] = useState(0);
   const [keyScale, setKeyScale] = useState("major");
   const [zoomLevel, setZoomLevel] = useState(figmaCapture ? 75 : 80);
+  const effectiveZoomLevel = figmaCapture ? Math.min(zoomLevel, 75) : zoomLevel;
 
   return (
     <div
@@ -105,12 +112,13 @@ export function TransportBar({
             action={playbackState === "playing" ? "pause" : "play"}
             active={playbackState === "playing"}
             onClick={playbackState === "playing" ? onPause : onPlay}
+            disabled={playbackState === "playing" ? !canPause : !canPlay}
             size="sm"
           />
         </div>
 
         <div data-guide-anchor="transport.stop" {...hoverProps("stop")}>
-          <TransportButton action="stop" size="sm" onClick={onStop} />
+          <TransportButton action="stop" size="sm" onClick={onStop} disabled={!canStop} />
         </div>
 
         {onRecordToggle ? (
@@ -194,7 +202,7 @@ export function TransportBar({
           <Search className="h-3.5 w-3.5" />
         </button>
         <ZoomControl
-          zoomLevel={zoomLevel}
+          zoomLevel={effectiveZoomLevel}
           onChange={setZoomLevel}
           compact
           className="[&_.bg-border]:bg-white/8 [&_.bg-foreground\\/70]:text-white/70 [&_.bg-foreground\\/90]:text-white/90 [&_.border-\\[var\\(--border\\)\\]]:border-white/8 [&_.bg-\\[var\\(--surface-1\\)\\]]:bg-[#2b2d33] [&_.hover\\:bg-\\[var\\(--surface-2\\)\\]:hover]:bg-white/6 [&_.hover\\:text-foreground:hover]:text-white [&_.hover\\:border-primary:hover]:border-white/18"

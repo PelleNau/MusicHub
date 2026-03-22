@@ -173,9 +173,6 @@ export function useStudioCommandDispatch({
           ack = createAck(command);
           break;
         case "transport.setLoop":
-          if (command.payload.enabled !== loopEnabled) {
-            onToggleLoop();
-          }
           onSetLoop(
             command.payload.enabled,
             command.payload.startBeat ?? loopStart,
@@ -416,7 +413,13 @@ export function useStudioCommandDispatch({
           ack = createAck(command, [command.payload.panel]);
           break;
         case "studio.closePanel":
-          if (command.payload.panel === "mixer") setBottomTab("editor");
+          if (command.payload.panel === "mixer") {
+            setBottomTab("editor");
+          } else if (command.payload.panel === "pianoRoll") {
+            setSelectedClipIds(new Set());
+          } else if (command.payload.panel === "detail") {
+            setSelectedTrackId(null);
+          }
           ack = createAck(command, [command.payload.panel]);
           break;
         case "browser.addDevice":

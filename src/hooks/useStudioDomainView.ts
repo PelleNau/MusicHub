@@ -38,6 +38,9 @@ interface UseStudioDomainViewOptions {
   };
   effectivePlaybackState: StudioPlaybackState;
   effectiveBeat: number;
+  canPlay: boolean;
+  canPause: boolean;
+  canStop: boolean;
   mode: string;
   selectedClip: StudioSessionDomainRuntimeState["selectedClip"];
   selectedTrack: StudioSessionDomainRuntimeState["selectedTrack"];
@@ -59,6 +62,9 @@ export function useStudioDomainView({
   engine,
   effectivePlaybackState,
   effectiveBeat,
+  canPlay,
+  canPause,
+  canStop,
   mode,
   selectedClip,
   selectedTrack,
@@ -111,8 +117,11 @@ export function useStudioDomainView({
       currentBeat: effectiveBeat,
       isBackendDriven: !browserAudioEnabled,
       hostAvailable,
+      canPlay,
+      canPause,
+      canStop,
     }),
-    [browserAudioEnabled, effectiveBeat, effectivePlaybackState, hostAvailable, mode],
+    [browserAudioEnabled, canPause, canPlay, canStop, effectiveBeat, effectivePlaybackState, hostAvailable, mode],
   );
 
   const showPianoRoll = Boolean(selectedClip?.is_midi);

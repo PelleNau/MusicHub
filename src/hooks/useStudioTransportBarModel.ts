@@ -10,6 +10,9 @@ interface UseStudioTransportBarModelOptions {
   timeSignature: string;
   currentBeat: number;
   playbackState: "playing" | "paused" | "stopped";
+  canPlay: boolean;
+  canPause: boolean;
+  canStop: boolean;
   loopEnabled: boolean;
   loopStart: number;
   loopEnd: number;
@@ -25,6 +28,9 @@ export function useStudioTransportBarModel({
   timeSignature,
   currentBeat,
   playbackState,
+  canPlay,
+  canPause,
+  canStop,
   loopEnabled,
   loopStart,
   loopEnd,
@@ -40,6 +46,9 @@ export function useStudioTransportBarModel({
     currentBeat,
     playbackState,
     loopEnabled,
+    canPlay,
+    canPause,
+    canStop,
     connectionState: connectionSummary.connectionState as ConnectionState,
     isMock: connectionSummary.isMock,
     inShell: connectionSummary.inShell,

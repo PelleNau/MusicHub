@@ -14,6 +14,7 @@ interface UseStudioTransportOptions {
   loopEnabled: boolean;
   loopStart: number;
   loopEnd: number;
+  setLoop: (enabled: boolean, start?: number, end?: number) => void;
   setLoopRegion: (start: number, end: number) => void;
   toggleLoop: () => void;
   hostState: HostConnectorState;
@@ -32,6 +33,7 @@ export function useStudioTransport({
   loopEnabled,
   loopStart,
   loopEnd,
+  setLoop,
   setLoopRegion,
   toggleLoop,
   hostState,
@@ -79,6 +81,9 @@ export function useStudioTransport({
 
   const effectiveBeat = isBackendDriven ? getConnectedBeat() : currentBeat;
   const playheadBeatGetter = isBackendDriven ? getConnectedBeat : undefined;
+  const canPlay = effectivePlaybackState !== "playing";
+  const canPause = effectivePlaybackState === "playing";
+  const canStop = effectivePlaybackState !== "stopped" || effectiveBeat > 0.001;
 
   const handlePlay = useCallback(() => {
     if (isBackendDriven) {
@@ -103,16 +108,22 @@ export function useStudioTransport({
     else seekToBeat(beat);
   }, [isBackendDriven, hostActions, seekToBeat]);
 
+  const handleSetLoop = useCallback((enabled: boolean, start: number, end: number) => {
+    if (isBackendDriven) {
+      hostActions.setLoop(enabled, start, end);
+      return;
+    }
+
+    setLoop(enabled, start, end);
+  }, [hostActions, isBackendDriven, setLoop]);
+
   const handleLoopChange = useCallback((start: number, end: number) => {
-    setLoopRegion(start, end);
-    if (isBackendDriven) hostActions.setLoop(loopEnabled, start, end);
-  }, [setLoopRegion, isBackendDriven, hostActions, loopEnabled]);
+    handleSetLoop(loopEnabled, start, end);
+  }, [handleSetLoop, loopEnabled]);
 
   const handleLoopToggle = useCallback(() => {
-    const newEnabled = !loopEnabled;
-    toggleLoop();
-    if (isBackendDriven) hostActions.setLoop(newEnabled, loopStart, loopEnd);
-  }, [toggleLoop, isBackendDriven, hostActions, loopEnabled, loopStart, loopEnd]);
+    handleSetLoop(!loopEnabled, loopStart, loopEnd);
+  }, [handleSetLoop, loopEnabled, loopEnd, loopStart]);
 
   const handleTempoChange = useCallback((tempo: number) => {
     onTempoChangeLocal(tempo);
@@ -126,6 +137,10 @@ export function useStudioTransport({
     effectivePlaybackState,
     effectiveBeat,
     playheadBeatGetter,
+    canPlay,
+    canPause,
+    canStop,
+    handleSetLoop,
     handlePlay,
     handlePause,
     handleStop,

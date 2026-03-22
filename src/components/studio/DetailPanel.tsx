@@ -10,6 +10,13 @@ import { getTrackColor } from "./TrackLane";
 import { NativeParamPanel } from "./NativeParamPanel";
 import type { ChainNode, ChainParamsResponse } from "@/services/pluginHostClient";
 import type { PluginParamChangedEvent } from "@/services/pluginHostSocket";
+import {
+  appendDevice,
+  moveDevice,
+  removeDevice,
+  toggleDeviceEnabled,
+  updateDeviceParams,
+} from "@/domain/studio/studioDeviceRouting";
 
 /* ── Device accent colors (Ableton-style per device type) ── */
 const DEVICE_COLORS: Partial<Record<DeviceType, string>> = {
@@ -644,31 +651,23 @@ export function DetailPanel({
       enabled: true,
       params: defaults,
     };
-    onDeviceChainChange(track.id, [...devices, newDevice]);
+    onDeviceChainChange(track.id, appendDevice(devices, newDevice));
   };
 
   const handleToggle = (idx: number) => {
-    const updated = [...devices];
-    updated[idx] = { ...updated[idx], enabled: !updated[idx].enabled };
-    onDeviceChainChange(track.id, updated);
+    onDeviceChainChange(track.id, toggleDeviceEnabled(devices, devices[idx].id, !devices[idx].enabled));
   };
 
   const handleRemove = (idx: number) => {
-    onDeviceChainChange(track.id, devices.filter((_, i) => i !== idx));
+    onDeviceChainChange(track.id, removeDevice(devices, devices[idx].id));
   };
 
   const handleParamChange = (idx: number, key: string, value: number) => {
-    const updated = [...devices];
-    updated[idx] = { ...updated[idx], params: { ...updated[idx].params, [key]: value } };
-    onDeviceChainChange(track.id, updated);
+    onDeviceChainChange(track.id, updateDeviceParams(devices, devices[idx].id, { [key]: value }));
   };
 
   const handleMoveDevice = (idx: number, direction: -1 | 1) => {
-    const newIdx = idx + direction;
-    if (newIdx < 0 || newIdx >= devices.length) return;
-    const updated = [...devices];
-    [updated[idx], updated[newIdx]] = [updated[newIdx], updated[idx]];
-    onDeviceChainChange(track.id, updated);
+    onDeviceChainChange(track.id, moveDevice(devices, devices[idx].id, direction));
   };
 
   const handleResetDefaults = (idx: number) => {

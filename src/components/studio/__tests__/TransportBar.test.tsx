@@ -67,6 +67,16 @@ describe("TransportBar", () => {
     expect(onStop).toHaveBeenCalled();
   });
 
+  it("disables stop when already stopped at the beginning", () => {
+    render(<TransportBar {...defaultProps} currentBeat={0} playbackState="stopped" />);
+    expect(screen.getByTitle("Stop")).toBeDisabled();
+  });
+
+  it("disables play when canPlay is false", () => {
+    render(<TransportBar {...defaultProps} canPlay={false} />);
+    expect(screen.getByTitle("Play")).toBeDisabled();
+  });
+
   it("renders tempo input with correct value", () => {
     render(<TransportBar {...defaultProps} tempo={140} />);
     const input = screen.getByDisplayValue("140");

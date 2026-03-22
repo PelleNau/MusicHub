@@ -47,6 +47,9 @@ export function useStudioInteractionRuntime({
     engine: runtime.engine,
     effectivePlaybackState: runtime.transport.effectivePlaybackState,
     effectiveBeat: runtime.transport.effectiveBeat,
+    canPlay: runtime.transport.canPlay,
+    canPause: runtime.transport.canPause,
+    canStop: runtime.transport.canStop,
     mode: runtime.transport.mode,
     selectedClip: runtime.sessionDomainModel.selectedClip,
     selectedTrack: runtime.sessionDomainModel.selectedTrack,
@@ -97,25 +100,30 @@ export function useStudioInteractionRuntime({
     onPause: runtime.transport.handlePause,
     onStop: runtime.transport.handleStop,
     onSeek: runtime.transport.handleSeek,
-    onSetLoop: (enabled, start, end) => runtime.transport.handleLoopChange(start, end),
+    onSetLoop: runtime.transport.handleSetLoop,
     onToggleLoop: runtime.transport.handleLoopToggle,
     onSetTempo: runtime.transport.handleTempoChange,
     recording: runtime.hostState.recording,
     onToggleRecord: nativeHostSync.handleRecordToggle,
-    onCreateTrack: (type, _role, _name) => {
+    onCreateTrack: (type, _role, name) => {
       if (type === "return") {
-        runtime.actions.handleAddReturn();
+        runtime.actions.handleAddReturn(name);
         return;
       }
       if (type === "audio" || type === "midi") {
-        runtime.actions.handleAddTrack(type);
+        runtime.actions.handleAddTrack(type, name);
       }
     },
     onUpdateTrack: (trackId, patch) => {
+      const track = runtime.tracks.find((candidate) => candidate.id === trackId);
       if (typeof patch.name === "string") runtime.actions.handleRenameTrack(trackId, patch.name);
       if (typeof patch.color === "number") runtime.actions.handleColorChange(trackId, patch.color);
-      if (typeof patch.muted === "boolean") runtime.actions.handleMuteToggle(trackId);
-      if (typeof patch.solo === "boolean") runtime.actions.handleSoloToggle(trackId);
+      if (typeof patch.muted === "boolean" && Boolean(track?.is_muted) !== patch.muted) {
+        runtime.actions.handleMuteToggle(trackId);
+      }
+      if (typeof patch.solo === "boolean" && Boolean(track?.is_soloed) !== patch.solo) {
+        runtime.actions.handleSoloToggle(trackId);
+      }
       if (typeof patch.armed === "boolean") nativeHostSync.handleNativeArmToggle(trackId, patch.armed);
       if (typeof patch.monitoring === "string") {
         nativeHostSync.handleNativeMonitorToggle(trackId, patch.monitoring !== "off");
@@ -124,9 +132,17 @@ export function useStudioInteractionRuntime({
     onDeleteTrack: runtime.actions.handleDeleteTrack,
     onCreateMidiClip: runtime.actions.handleCreateMidiClip,
     onUpdateClip: (clipId, patch) => {
+      const clip = runtime.sessionDomainModel.trackIndex.clipById[clipId];
+      if (clip && (typeof patch.startBeat === "number" || typeof patch.lengthBeats === "number")) {
+        const nextStart = patch.startBeat ?? clip.start_beats;
+        const nextLength = patch.lengthBeats ?? clip.end_beats - clip.start_beats;
+        runtime.actions.handleClipResize(clipId, nextStart, nextStart + nextLength);
+      }
       if (typeof patch.name === "string") runtime.actions.handleRenameClip(clipId, patch.name);
       if (typeof patch.color === "number") runtime.actions.handleClipColorChange(clipId, patch.color);
-      if (typeof patch.muted === "boolean") runtime.actions.handleMuteClip(clipId);
+      if (typeof patch.muted === "boolean" && Boolean(clip?.is_muted) !== patch.muted) {
+        runtime.actions.handleMuteClip(clipId);
+      }
       if ("midiData" in patch) {
         runtime.updateClip.mutate({ clipId, updates: { midi_data: patch.midiData } });
       }

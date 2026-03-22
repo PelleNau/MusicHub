@@ -164,14 +164,15 @@ export function useStudioTrackActions({
   );
 
   const handleAddTrack = useCallback(
-    async (type: "audio" | "midi" = "audio") => {
+    async (type: "audio" | "midi" = "audio", name?: string) => {
       if (!activeSessionId) return;
       try {
         await addTrack.mutateAsync({
           name:
-            type === "midi"
+            name ||
+            (type === "midi"
               ? `MIDI ${tracks.filter((track) => track.type === "midi").length + 1}`
-              : `Track ${tracks.length + 1}`,
+              : `Track ${tracks.length + 1}`),
           type,
           color: tracks.length % 21,
           sort_order: tracks.length,
@@ -183,12 +184,12 @@ export function useStudioTrackActions({
     [activeSessionId, addTrack, tracks]
   );
 
-  const handleAddReturn = useCallback(async () => {
+  const handleAddReturn = useCallback(async (name?: string) => {
     if (!activeSessionId) return;
     const returnCount = tracks.filter((track) => track.type === "return").length;
     try {
       await addTrack.mutateAsync({
-        name: String.fromCharCode(65 + returnCount),
+        name: name || String.fromCharCode(65 + returnCount),
         type: "return" as ReturnTrackType,
         color: (10 + returnCount) % 21,
         sort_order: 900 + returnCount,

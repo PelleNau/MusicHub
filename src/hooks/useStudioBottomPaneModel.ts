@@ -1,9 +1,9 @@
 import { useCallback } from "react";
 import type { StudioCommandDispatchResult } from "@/hooks/useStudioCommandDispatch";
-import type { StudioPanelSummary } from "@/domain/studio/studioViewContracts";
+import type { StudioPanelState } from "@/domain/studio/studioViewContracts";
 
 interface UseStudioBottomPaneModelOptions {
-  panelState: StudioPanelSummary;
+  panelState: StudioPanelState;
   commandDispatch: StudioCommandDispatchResult;
 }
 
