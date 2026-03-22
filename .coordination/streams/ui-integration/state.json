@@ -1,0 +1,13 @@
+{
+  "stream": "ui-integration",
+  "displayName": "MusicHub UI Integration",
+  "branch": "codex/studio-integration-baseline",
+  "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-integration-baseline",
+  "status": "idle",
+  "activeTaskId": null,
+  "latestInboxMessageId": null,
+  "latestAcknowledgedInboxMessageId": null,
+  "latestOutboxMessageId": null,
+  "latestCompletedTaskId": null,
+  "updatedAt": "2026-03-22T00:00:00.000Z"
+}

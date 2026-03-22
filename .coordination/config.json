@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "chief": {
+    "displayName": "MusicHub Chief",
+    "queueFile": ".coordination/chief/queue.json"
+  },
+  "streams": {
+    "platform": {
+      "displayName": "MusicHub Platform",
+      "branch": null,
+      "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub",
+      "handover": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md"
+    },
+    "persistence": {
+      "displayName": "MusicHub Persistence",
+      "branch": "codex/supabase-persistence",
+      "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/supabase-persistence",
+      "handover": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/supabase-persistence/docs/project/MH-052_Supabase_Persistence_Handover.md"
+    },
+    "plugins": {
+      "displayName": "MusicHub Plugins",
+      "branch": "codex/plugin-integration",
+      "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/plugin-integration",
+      "handover": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/plugin-integration/docs/project/MH-049_Plugin_Integration_Handover.md"
+    },
+    "runtime": {
+      "displayName": "MusicHub Runtime",
+      "branch": "codex/studio-runtime-parity",
+      "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-runtime-parity",
+      "handover": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-runtime-parity/docs/project/MH-048_Studio_Runtime_Parity_Handover.md"
+    },
+    "ui-integration": {
+      "displayName": "MusicHub UI Integration",
+      "branch": "codex/studio-integration-baseline",
+      "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-integration-baseline",
+      "handover": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-integration-baseline/docs/project/MH-051_Studio_Integration_Baseline_Handover.md"
+    },
+    "figmafunktioner": {
+      "displayName": "MusicHub Figmafunktioner",
+      "branch": "codex/figma-function-mapping",
+      "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping",
+      "handover": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/docs/project/MH-047_Figma_Function_Mapping_Handover.md"
+    }
+  }
+}
