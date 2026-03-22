@@ -35,6 +35,7 @@ The source of truth is:
 ```bash
 npm run coord:assign -- --stream runtime --title "Clip context-menu parity"
 npm run coord:watch
+npm run coord:poll:runtime
 npm run coord:next:runtime
 npm run coord:ack -- --stream runtime --summary "Read handover and starting work"
 npm run stream:start:runtime -- --summary "Starting work"
@@ -52,8 +53,12 @@ Use these in the stream threads:
 
 1. Read latest Chief instruction:
    - `npm run coord:next:<stream>`
+   - or poll for a pending one-shot assignment:
+     - `npm run coord:poll:<stream>`
 2. Acknowledge/start:
    - `npm run stream:start:<stream> -- --summary "..."`
+   - or combine poll + immediate acknowledge:
+     - `npm run coord:poll:<stream> -- --ack --summary "..."`
 3. Finish:
    - `npm run stream:done:<stream> -- --summary "..." --file ... --validation "..."`
 
@@ -61,6 +66,7 @@ Example:
 
 ```bash
 npm run coord:next:runtime
+npm run coord:poll:runtime -- --ack --summary "Starting runtime task"
 npm run stream:start:runtime -- --summary "Starting runtime task"
 npm run stream:done:runtime -- --summary "Runtime task completed" --file src/hooks/useStudioClipActions.ts --validation "tsc passed"
 ```
