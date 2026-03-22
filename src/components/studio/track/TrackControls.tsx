@@ -28,7 +28,7 @@ export function TrackToggle({
         e.stopPropagation();
         onClick();
       }}
-      className={`h-[15px] w-[15px] flex items-center justify-center rounded-[3px] text-[7.5px] font-bold leading-none transition-colors border
+      className={`h-[14px] w-[14px] flex items-center justify-center rounded-[2px] text-[7px] font-bold leading-none transition-colors border
         ${active ? `${activeClass} border-transparent` : "border-transparent hover:border-transparent"}`}
       style={!active ? {
         backgroundColor: "hsl(var(--studio-surface))",
@@ -74,7 +74,7 @@ export function VolumeFader({ value, onChange }: { value: number; onChange: (v: 
   return (
     <div
       ref={trackRef}
-      className="relative h-[7px] flex-1 rounded-sm cursor-ew-resize overflow-hidden"
+      className="relative h-[6px] flex-1 rounded-[2px] cursor-ew-resize overflow-hidden"
       style={{
         backgroundColor: "hsl(var(--studio-surface))",
         border: "1px solid hsl(var(--studio-border))",
@@ -83,13 +83,13 @@ export function VolumeFader({ value, onChange }: { value: number; onChange: (v: 
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
-      <div className="absolute inset-y-0 left-0 rounded-sm bg-primary/70" style={{ width: `${pct}%` }} />
+      <div className="absolute inset-y-0 left-0 rounded-[2px] bg-primary/62" style={{ width: `${pct}%` }} />
       <div className="absolute top-0 bottom-0 w-px" style={{ left: "82.5%", backgroundColor: "hsl(var(--studio-text-dim))" }} />
       <div className="absolute top-0 bottom-0 w-px rounded-sm" style={{ left: `${pct}%`, backgroundColor: "hsl(var(--studio-needle))" }} />
       <div
-        className="absolute top-1/2 h-[9px] w-[9px] -translate-y-1/2 rounded-full border border-white/22 shadow-[0_1px_3px_rgba(0,0,0,0.35)]"
+        className="absolute top-1/2 h-[8px] w-[8px] -translate-y-1/2 rounded-full border border-white/18 shadow-[0_1px_2px_rgba(0,0,0,0.32)]"
         style={{
-          left: `calc(${pct}% - 4.5px)`,
+          left: `calc(${pct}% - 4px)`,
           backgroundColor: "hsl(var(--studio-knob-bg))",
         }}
       />
@@ -129,7 +129,7 @@ export function PanControl({ value, onChange }: { value: number; onChange: (v: n
   return (
     <div
       ref={ref}
-      className="relative h-[5px] w-6 rounded-sm cursor-ew-resize overflow-hidden"
+      className="relative h-[4px] w-6 rounded-[2px] cursor-ew-resize overflow-hidden"
       style={{
         backgroundColor: "hsl(var(--studio-surface))",
         border: "1px solid hsl(var(--studio-border))",
@@ -141,7 +141,7 @@ export function PanControl({ value, onChange }: { value: number; onChange: (v: n
     >
       <div className="absolute top-0 bottom-0 left-1/2 w-px" style={{ backgroundColor: "hsl(var(--studio-border))" }} />
       <div
-        className="absolute top-0 bottom-0 bg-accent/60"
+        className="absolute top-0 bottom-0 bg-accent/46"
         style={{
           left: value < 0 ? `${thumbPct}%` : "50%",
           width: `${Math.abs(value) * 50}%`,
@@ -172,7 +172,7 @@ export function LevelMeter({
   const pct = Math.min(100, Math.sqrt(level / 1.25) * 100);
 
   return (
-    <div className="h-[3px] rounded-full overflow-hidden" style={{ backgroundColor: "hsl(var(--studio-surface))" }}>
+    <div className="h-[2px] rounded-full overflow-hidden" style={{ backgroundColor: "hsl(var(--studio-surface))" }}>
       <div
         className="h-full rounded-full transition-all duration-100"
         style={{
@@ -228,32 +228,32 @@ export function SendKnob({
     <div className="flex flex-col items-center gap-[1px]">
       <div
         ref={ref}
-        className="relative h-[18px] w-[18px] rounded-full cursor-ns-resize"
+        className="relative h-[16px] w-[16px] rounded-full cursor-ns-resize"
         style={{ backgroundColor: "hsl(var(--studio-knob-bg))" }}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onDoubleClick={handleDoubleClick}
       >
-        <svg className="absolute inset-0" viewBox="0 0 18 18">
+        <svg className="absolute inset-0" viewBox="0 0 16 16">
           <circle
-            cx="9" cy="9" r="7"
+            cx="8" cy="8" r="6"
             fill="none"
             stroke={color}
-            strokeWidth="2"
-            strokeDasharray={`${value * 27.5} 44`}
+            strokeWidth="1.5"
+            strokeDasharray={`${value * 23.5} 38`}
             strokeDashoffset="0"
             strokeLinecap="round"
-            transform="rotate(-225 9 9)"
-            opacity="0.7"
+            transform="rotate(-225 8 8)"
+            opacity="0.58"
           />
         </svg>
         <div
-          className="absolute top-[2px] left-1/2 w-px h-[6px] origin-bottom"
+          className="absolute top-[2px] left-1/2 w-px h-[5px] origin-bottom"
           style={{ backgroundColor: "hsl(var(--studio-needle))", transform: `translateX(-50%) rotate(${angle}deg)`, transformOrigin: "50% 100%" }}
         />
       </div>
-      <span className="text-[7px] font-mono leading-none truncate max-w-[28px]" style={{ color: "hsl(var(--studio-text-dim))" }}>
+      <span className="text-[6px] font-mono leading-none uppercase truncate max-w-[24px]" style={{ color: "hsl(var(--studio-text-dim))" }}>
         {label}
       </span>
     </div>
