@@ -7,6 +7,17 @@ export interface TheoryStatsRecord {
   last_practice_date: string | null;
 }
 
+function formatTheoryPersistenceError(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
+}
+
+export function reportTheoryPersistenceError(operation: string, error: unknown): void {
+  console.error(
+    `[TheoryPersistence] ${operation} failed: ${formatTheoryPersistenceError(error)}`,
+    error,
+  );
+}
+
 export async function fetchChallengeProgressRecord(
   userId: string,
   moduleKey: string,

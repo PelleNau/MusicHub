@@ -8,7 +8,6 @@ This stream is responsible for:
 - persistence contracts between frontend and backend
 - auth/data access boundaries
 - Studio session save/load persistence semantics
-- desktop/runtime config requirements for Supabase-backed builds
 
 ## Current State
 
@@ -35,7 +34,6 @@ Existing backend/data surface:
   - persistence contracts between app and backend
   - auth/data access boundaries
   - what Studio/session state is persisted versus local-only
-  - the contract for how Supabase config is supplied to desktop builds
 - `Database` does **not** own:
   - Studio runtime interaction behavior
   - plugin-host process lifecycle
@@ -53,6 +51,9 @@ Existing backend/data surface:
   - Studio hook changes that route clip creation back through the session persistence seam
   - a theory persistence adapter in `src/domain/theory/theoryPersistence.ts`
   - focused tests for Studio clip creation flows in `src/hooks/__tests__/useStudioClipActions.test.tsx`
+  - focused theory persistence safety tests in:
+    - `src/hooks/__tests__/useChallengeProgress.test.ts`
+    - `src/hooks/__tests__/useTheoryStats.test.ts`
 
 ## Open Problems
 
@@ -60,8 +61,23 @@ Existing backend/data surface:
 - Persistence logic is more centralized than before, but the broader non-Studio Supabase surface still lacks dedicated adapters for inventory, chat, and enrichment flows.
 - The active Studio persistence path is now enforced for clip creation flows, but the broader app still has many feature-level Supabase call sites.
 - Supabase ownership is broader than Studio sessions, and the branch still needs explicit ownership decisions beyond the current inventory pass.
-- Desktop builds currently depend on Vite-time Supabase env injection, but that provisioning path is not yet documented or automated in this stream.
-- Missing Supabase env should never hard-crash packaged startup; the app should degrade to an explicit setup-required screen until config is supplied.
+
+## Chief Correction Required Before Merge
+
+Completed on 2026-03-22 in this branch:
+
+1. Theory hook error handling is corrected.
+   - `useChallengeProgress.ts` and `useTheoryStats.ts` now resolve loading in all read paths.
+   - Read failures degrade to empty/default local state.
+   - Fire-and-forget theory writes route rejections through handled logging instead of leaking unhandled promise rejections.
+
+2. Platform/startup ownership language is removed from this handover.
+   - Desktop startup guard behavior and packaged-app setup-screen behavior are not Database responsibilities.
+   - This stream remains scoped to schema, functions, contracts, and persistence boundaries.
+
+3. `App.tsx` startup work remains out of scope for this stream.
+   - Do not commit startup guard or setup-screen logic in this branch.
+   - Escalate any such work back to `MusicHub Chief`.
 
 ## Current Persistence Map
 
@@ -101,10 +117,13 @@ Existing backend/data surface:
    - inventory
    - chat
    - image enrichment
-4. Define the desktop build config contract:
-   - where `.env` is expected during local platform builds
-   - whether platform tooling copies, templates, or injects `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`
-   - how packaged builds should behave when config is absent
+
+Immediate pre-merge correction order completed on 2026-03-22:
+
+1. Fix the theory hook error handling regression.
+2. Remove startup/platform ownership from this handover.
+3. Re-run validation.
+4. Only then continue the broader persistence inventory/adapter work.
 
 ## Validation
 
@@ -121,17 +140,6 @@ Minimum checks for this stream:
 ```bash
 /Users/pellenaucler/Documents/CodexProjekt/MusicHub/node_modules/.bin/vitest run src/audio/__tests__/AudioEngine.test.ts src/hooks/__tests__/useProjectHistory.test.ts
 ```
-
-For desktop/platform changes, also verify:
-
-```bash
-/Users/pellenaucler/Documents/CodexProjekt/MusicHub/node_modules/.bin/tsc --noEmit -p /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/supabase-persistence/tsconfig.json
-```
-
-Then confirm one of:
-
-- packaged app starts with configured Supabase env embedded, or
-- packaged app renders the setup-required screen without crashing when env is absent
 
 ## Do Not Touch
 
