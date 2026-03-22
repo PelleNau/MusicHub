@@ -112,6 +112,7 @@ export function useStudioKeyboardShortcuts({
         target instanceof HTMLInputElement ||
         target instanceof HTMLTextAreaElement ||
         target?.isContentEditable;
+      const insidePianoRoll = Boolean(target?.closest("[data-piano-roll-root='true']"));
 
       if (event.key === " " && !event.repeat && !isTyping) {
         event.preventDefault();
@@ -170,7 +171,7 @@ export function useStudioKeyboardShortcuts({
         return;
       }
 
-      if ((event.key === "Delete" || event.key === "Backspace") && !isTyping) {
+      if ((event.key === "Delete" || event.key === "Backspace") && !isTyping && !insidePianoRoll && !showPianoRollRef.current) {
         const ids = selectedClipIdsRef.current;
         if (ids.size > 0) {
           event.preventDefault();

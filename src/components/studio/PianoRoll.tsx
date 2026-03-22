@@ -9,8 +9,8 @@ import {
 } from "@/components/ui/context-menu";
 import type { SessionClip } from "@/types/studio";
 import {
-  quantizeNotes, swingQuantize, legatoNotes, strumNotes, flamNotes,
-  reverseNotes, invertNotes, humanizeNotes, noteColor,
+  quantizeNotes, swingQuantize, legatoNotes, flamNotes,
+  reverseNotes, invertNotes,
   type NoteColorMode, type MidiNote,
 } from "@/components/studio/PianoRollTransforms";
 import {
@@ -20,8 +20,6 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Slider } from "@/components/ui/slider";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
 import { CCLane, type CCPoint } from "@/components/studio/CCLane";
 import { ChordPalette, type ChordType } from "@/components/studio/ChordPalette";
 import { ChordDetector } from "@/components/studio/ChordDetector";
@@ -29,6 +27,16 @@ import { PianoRollMinimap } from "@/components/studio/PianoRollMinimap";
 import { StepSequencer } from "@/components/studio/StepSequencer";
 import { PianoRollContextMenu } from "@/components/studio/PianoRollContextMenu";
 import { PianoRollToolbar } from "@/components/studio/PianoRollToolbar";
+import { QuantizeDialog } from "@/components/studio/QuantizeDialog";
+import { HumanizeDialog } from "@/components/studio/HumanizeDialog";
+import { TransposeDialog } from "@/components/studio/TransposeDialog";
+import { StrummingDialog } from "@/components/studio/StrummingDialog";
+import { ChordToolsDialog } from "@/components/studio/ChordToolsDialog";
+import { ArpeggiatorDialog } from "@/components/studio/ArpeggiatorDialog";
+import { LengthOperationsMenu } from "@/components/studio/LengthOperationsMenu";
+import { NoteOperationsMenu } from "@/components/studio/NoteOperationsMenu";
+import { SelectionToolsMenu } from "@/components/studio/SelectionToolsMenu";
+import { VelocityOperationsMenu } from "@/components/studio/VelocityOperationsMenu";
 import { extractMidiNotesFromData } from "@/domain/studio/studioMidiCommandProtocol";
 
 // Refactored sub-components
@@ -46,6 +54,7 @@ import { PianoRollNotes } from "@/components/studio/pianoroll/PianoRollNotes";
 import { PianoRollVelocityLane } from "@/components/studio/pianoroll/PianoRollVelocityLane";
 import { usePianoRollToolbar } from "@/components/studio/pianoroll/usePianoRollToolbar";
 import { usePianoRollInteractions } from "@/components/studio/pianoroll/usePianoRollInteractions";
+import { usePianoRollOperationCoordinator } from "@/components/studio/pianoroll/usePianoRollOperationCoordinator";
 
 export type { MidiNote } from "@/components/studio/PianoRollTransforms";
 
@@ -114,6 +123,18 @@ export function PianoRoll({
   const { notes, visiblePitches, scaleIntervals, clipDuration, displayClipDuration, pitchToRow } = ix;
   const { pxPerBeat, keyHeight, tool, splitMode, noteColorMode } = toolbar;
   const compactCapture = captureVariant === "figma";
+  const operations = usePianoRollOperationCoordinator({
+    clip,
+    notes,
+    selectedIds: ix.selectedIds,
+    setSelectedIds: ix.setSelectedIds,
+    beatsPerBar,
+    snapBeats: toolbar.snapBeats,
+    currentBeat: globalBeat,
+    transposeOpen: toolbar.showTranspose,
+    setTransposeOpen: toolbar.setShowTranspose,
+    onNotesChange,
+  });
 
   const gridHeight = visiblePitches.length * keyHeight;
   const displayTotalWidth = displayClipDuration * pxPerBeat;
@@ -147,7 +168,7 @@ export function PianoRoll({
   // Step sequencer view
   if (toolbar.viewMode === "stepseq") {
     return (
-      <div ref={ix.containerRef} className="h-full flex flex-col focus:outline-none" tabIndex={0}>
+      <div ref={ix.containerRef} className="h-full flex flex-col focus:outline-none" tabIndex={0} data-piano-roll-root="true">
         <div className="flex items-center gap-1 px-3 py-1 border-b shrink-0" style={{ borderColor: "hsl(var(--border))" }}>
           <span className="text-[10px] font-mono font-semibold text-foreground/80 mr-1 truncate max-w-[120px]">{clip.name}</span>
           <div className="w-px h-3 bg-border mx-1" />
@@ -163,7 +184,7 @@ export function PianoRoll({
   }
 
   return (
-    <div ref={ix.containerRef} className="h-full flex flex-col focus:outline-none bg-card" tabIndex={0} onWheel={handleWheel}>
+    <div ref={ix.containerRef} className="h-full flex flex-col focus:outline-none bg-card" tabIndex={0} data-piano-roll-root="true" onWheel={handleWheel}>
       {/* Multi-clip tabs */}
       {allClips && allClips.length > 1 && (
         <div className="flex items-center gap-0.5 px-3 py-0.5 border-b shrink-0" style={{ borderColor: "hsl(var(--foreground) / 0.06)", backgroundColor: "hsl(var(--muted) / 0.55)" }}>
@@ -265,11 +286,11 @@ export function PianoRoll({
             <button className="h-5 px-1.5 flex items-center gap-0.5 rounded-[3px] text-[8px] font-mono text-foreground/55 hover:text-foreground/80 hover:bg-foreground/[0.08] transition-colors">Transform <ChevronDown className="h-2 w-2" /></button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="min-w-[160px]">
-            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={() => toolbar.setShowTranspose(true)}>
-              <ArrowUpDown className="h-3 w-3 mr-2" /> Transpose… <span className="ml-auto text-foreground/50 text-[9px]">T</span>
+            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={operations.openTranspose}>
+              Transpose… <span className="ml-auto text-foreground/50 text-[9px]">T</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={() => ix.applyTransform((n, ids) => quantizeNotes(n, ids, toolbar.snapBeats, toolbar.quantizeStrength / 100))}>
+            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={operations.openQuantize}>
               Quantize <span className="ml-auto text-foreground/50 text-[9px]">⌘U</span>
             </DropdownMenuItem>
             <DropdownMenuSub>
@@ -279,18 +300,30 @@ export function PianoRoll({
                 <Slider value={[toolbar.quantizeStrength]} onValueChange={([v]) => toolbar.setQuantizeStrength(v)} min={10} max={100} step={5} />
               </DropdownMenuSubContent>
             </DropdownMenuSub>
-            {toolbar.swingAmount > 0 && <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={() => ix.applyTransform((n, ids) => swingQuantize(n, ids, toolbar.snapBeats, toolbar.swingAmount))}>Swing Quantize</DropdownMenuItem>}
+            {toolbar.swingAmount > 0 && <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={() => operations.applyDirectTransform((n, ids) => swingQuantize(n, ids, toolbar.snapBeats, toolbar.swingAmount))}>Swing Quantize</DropdownMenuItem>}
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={() => ix.applyTransform(legatoNotes)}>Legato</DropdownMenuItem>
-            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={() => ix.applyTransform(strumNotes)}>Strum</DropdownMenuItem>
-            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={() => ix.applyTransform(flamNotes)}>Flam</DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={() => operations.applyDirectTransform(legatoNotes)}>Legato</DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={operations.openStrumming}>Strum…</DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={() => operations.applyDirectTransform(flamNotes)}>Flam</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={() => ix.applyTransform(reverseNotes)}>Reverse</DropdownMenuItem>
-            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={() => ix.applyTransform(invertNotes)}>Invert</DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={() => operations.applyDirectTransform(reverseNotes)}>Reverse</DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={() => operations.applyDirectTransform(invertNotes)}>Invert</DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={() => ix.applyTransform(humanizeNotes)}>Humanize <span className="ml-auto text-foreground/50 text-[9px]">H</span></DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size === 0} onClick={operations.openHumanize}>Humanize… <span className="ml-auto text-foreground/50 text-[9px]">H</span></DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size < 3} onClick={operations.openChordTools}>Chord Tools…</DropdownMenuItem>
+            <DropdownMenuItem disabled={ix.selectedIds.size < 2} onClick={operations.openArpeggiator}>Arpeggiator…</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+
+        <SelectionToolsMenu notes={notes} onSelect={operations.selectNotes} />
+        <LengthOperationsMenu notes={notes} selectedNoteIds={ix.selectedIds} onApplyOperation={operations.replaceNotes} />
+        <VelocityOperationsMenu notes={notes} selectedNoteIds={ix.selectedIds} onApplyOperation={operations.replaceNotes} />
+        <NoteOperationsMenu
+          notes={notes}
+          selectedNoteIds={ix.selectedIds}
+          playheadPosition={operations.playheadPosition}
+          onApplyOperation={operations.applyNoteOperation}
+        />
 
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -423,6 +456,7 @@ export function PianoRoll({
             </div>
               </ContextMenuTrigger>
               <PianoRollContextMenu
+                hasNotes={notes.length > 0}
                 hasSelection={ix.selectedIds.size > 0}
                 hasMultipleSelection={ix.selectedIds.size > 1}
                 hasClipboard={ix.hasClipboard}
@@ -432,12 +466,54 @@ export function PianoRoll({
                 onCopy={ix.copySelected}
                 onPaste={ix.pasteNotes}
                 onDelete={ix.deleteSelected}
-                onQuantize={() => ix.applyTransform((n, ids) => quantizeNotes(n, ids, toolbar.snapBeats, toolbar.quantizeStrength / 100))}
-                onHumanize={() => ix.applyTransform(humanizeNotes)}
-                onTransposeOpen={() => toolbar.setShowTranspose(true)}
-                onLegato={() => ix.applyTransform(legatoNotes)}
-                onReverse={() => ix.applyTransform(reverseNotes)}
-                onInvert={() => ix.applyTransform(invertNotes)}
+                onQuantize={operations.openQuantize}
+                onHumanize={operations.openHumanize}
+                onTransposeOpen={operations.openTranspose}
+                onStrummingOpen={operations.openStrumming}
+                onChordToolsOpen={operations.openChordTools}
+                onArpeggiatorOpen={operations.openArpeggiator}
+                onLegato={() => operations.applyDirectTransform(legatoNotes)}
+                onReverse={() => operations.applyDirectTransform(reverseNotes)}
+                onInvert={() => operations.applyDirectTransform(invertNotes)}
+                onSetLengthSixteenth={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, duration: 0.25 })))}
+                onSetLengthEighth={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, duration: 0.5 })))}
+                onSetLengthQuarter={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, duration: 1 })))}
+                onStaccatoHalf={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, duration: Math.max(0.0625, note.duration * 0.5) })))}
+                onDoubleLength={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, duration: note.duration * 2 })))}
+                onHalfLength={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, duration: Math.max(0.0625, note.duration * 0.5) })))}
+                onVelocityAdd={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, velocity: Math.max(1, Math.min(127, Math.round(note.velocity + 10))) })))}
+                onVelocityRandomize={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, velocity: Math.max(1, Math.min(127, Math.round(note.velocity + (Math.random() - 0.5) * 30))) })))}
+                onVelocityRampUp={() => {
+                  const targets = ix.selectedIds.size > 0 ? notes.filter((note) => ix.selectedIds.has(note.id)) : notes;
+                  const targetIds = new Set(targets.map((note) => note.id));
+                  let index = 0;
+                  operations.replaceNotes(notes.map((note) => {
+                    if (!targetIds.has(note.id)) return note;
+                    const next = { ...note, velocity: Math.max(1, Math.min(127, Math.round(60 + (index / Math.max(1, targets.length - 1)) * 50))) };
+                    index += 1;
+                    return next;
+                  }));
+                }}
+                onVelocityRampDown={() => {
+                  const targets = ix.selectedIds.size > 0 ? notes.filter((note) => ix.selectedIds.has(note.id)) : notes;
+                  const targetIds = new Set(targets.map((note) => note.id));
+                  let index = 0;
+                  operations.replaceNotes(notes.map((note) => {
+                    if (!targetIds.has(note.id)) return note;
+                    const next = { ...note, velocity: Math.max(1, Math.min(127, Math.round(110 - (index / Math.max(1, targets.length - 1)) * 50))) };
+                    index += 1;
+                    return next;
+                  }));
+                }}
+                onVelocityCompress={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, velocity: Math.max(1, Math.min(127, Math.round(note.velocity * 0.5))) })))}
+                onVelocityExpand={() => operations.replaceNotes(notes.map((note) => (ix.selectedIds.size > 0 && !ix.selectedIds.has(note.id) ? note : { ...note, velocity: Math.max(1, Math.min(127, Math.round(note.velocity * 1.5))) })))}
+                onSplitAtPlayhead={() => operations.applyNoteOperation("splitAtPlayhead")}
+                onSplitAtBars={() => operations.applyNoteOperation("splitAtBar")}
+                onSplitAtBeats={() => operations.applyNoteOperation("splitAtBeat")}
+                onJoinConsecutive={() => operations.applyNoteOperation("joinConsecutive")}
+                onRemoveShortNotes={() => operations.applyNoteOperation("removeShort")}
+                onRepeat2x={() => operations.applyNoteOperation("repeat2x")}
+                onRepeat4x={() => operations.applyNoteOperation("repeat4x")}
               />
             </ContextMenu>
           </div>
@@ -468,26 +544,46 @@ export function PianoRoll({
         )}
       </div>
 
-      {/* Transpose dialog */}
-      <Dialog open={toolbar.showTranspose} onOpenChange={toolbar.setShowTranspose}>
-        <DialogContent className="max-w-[280px]">
-          <DialogHeader><DialogTitle className="text-sm">Transpose</DialogTitle></DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-foreground/60"><span>Semitones</span><span className="font-mono">{toolbar.transposeSemitones > 0 ? "+" : ""}{toolbar.transposeSemitones}</span></div>
-              <Slider value={[toolbar.transposeSemitones]} onValueChange={([v]) => toolbar.setTransposeSemitones(v)} min={-12} max={12} step={1} />
-            </div>
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-xs text-foreground/60"><span>Octaves</span><span className="font-mono">{toolbar.transposeOctaves > 0 ? "+" : ""}{toolbar.transposeOctaves}</span></div>
-              <Slider value={[toolbar.transposeOctaves]} onValueChange={([v]) => toolbar.setTransposeOctaves(v)} min={-3} max={3} step={1} />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="ghost" size="sm" onClick={() => toolbar.setShowTranspose(false)}>Cancel</Button>
-            <Button size="sm" onClick={() => { ix.handleTranspose(toolbar.transposeSemitones, toolbar.transposeOctaves); toolbar.setTransposeSemitones(0); toolbar.setTransposeOctaves(0); toolbar.setShowTranspose(false); }}>Apply</Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <QuantizeDialog
+        open={operations.quantizeOpen}
+        initialOptions={{
+          division: Math.round(4 / toolbar.snapBeats),
+          strength: toolbar.quantizeStrength,
+          quantizeStart: true,
+          quantizeEnd: false,
+        }}
+        onApply={operations.applyQuantize}
+        onClose={operations.closeQuantize}
+      />
+      <HumanizeDialog
+        open={operations.humanizeOpen}
+        noteCount={operations.targetNotes.length}
+        onApply={operations.applyHumanize}
+        onClose={operations.closeHumanize}
+      />
+      <TransposeDialog
+        open={operations.transposeOpen}
+        notes={operations.targetNotes}
+        onApply={operations.applyTranspose}
+        onClose={() => operations.setTransposeOpen(false)}
+      />
+      <StrummingDialog
+        open={operations.strummingOpen}
+        notes={operations.targetNotes}
+        onApply={operations.applyStrumming}
+        onClose={operations.closeStrumming}
+      />
+      <ChordToolsDialog
+        open={operations.chordToolsOpen}
+        notes={operations.targetNotes}
+        onApply={operations.applyChordTools}
+        onClose={operations.closeChordTools}
+      />
+      <ArpeggiatorDialog
+        open={operations.arpeggiatorOpen}
+        onApply={operations.applyArpeggiator}
+        onClose={operations.closeArpeggiator}
+      />
     </div>
   );
 }

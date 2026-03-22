@@ -50,6 +50,22 @@ function noteName(pitch: number) {
   return NOTE_NAMES[((pitch % 12) + 12) % 12];
 }
 
+function formatOrdinal(value: number) {
+  const mod100 = value % 100;
+  if (mod100 >= 11 && mod100 <= 13) return `${value}th`;
+
+  switch (value % 10) {
+    case 1:
+      return `${value}st`;
+    case 2:
+      return `${value}nd`;
+    case 3:
+      return `${value}rd`;
+    default:
+      return `${value}th`;
+  }
+}
+
 function detectChordType(pitches: number[]): { type: ChordType; inversion: number } | null {
   const unique = Array.from(new Set(pitches.map((pitch) => ((pitch % 12) + 12) % 12)));
   if (unique.length < 3) return null;
@@ -203,7 +219,7 @@ export function ChordToolsDialog({ open, notes, onApply, onClose }: ChordToolsDi
                           <span className="text-xs text-muted-foreground">{chord.notes.length} notes</span>
                         </div>
                         {chord.inversion > 0 ? (
-                          <span className="text-xs text-amber-400">{chord.inversion} inversion</span>
+                          <span className="text-xs text-amber-400">{formatOrdinal(chord.inversion)} inversion</span>
                         ) : null}
                       </div>
                       <div className="flex flex-wrap gap-1">
@@ -262,7 +278,7 @@ export function ChordToolsDialog({ open, notes, onApply, onClose }: ChordToolsDi
                             : "bg-[var(--surface-3)] text-foreground hover:bg-[color:color-mix(in_srgb,var(--surface-3)_80%,white_4%)]"
                         }`}
                       >
-                        {step}st
+                        {formatOrdinal(step)}
                       </button>
                     ))}
                   </div>

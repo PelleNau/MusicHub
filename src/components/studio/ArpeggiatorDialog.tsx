@@ -15,8 +15,11 @@ export type ArpeggiatorPattern =
   | "random"
   | "asPlayed";
 
+export type ArpeggiatorScope = "perChord" | "wholeSelection";
+
 export interface ArpeggiatorOptions {
   pattern: ArpeggiatorPattern;
+  scope: ArpeggiatorScope;
   rate: number;
   octaves: number;
   velocity: number;
@@ -30,12 +33,12 @@ interface ArpeggiatorDialogProps {
 }
 
 const PRESETS: Record<string, ArpeggiatorOptions> = {
-  classic16th: { pattern: "up", rate: 0.25, octaves: 1, velocity: 80, gate: 80 },
-  rolling8th: { pattern: "upDown", rate: 0.5, octaves: 2, velocity: 90, gate: 72 },
-  cascading: { pattern: "down", rate: 0.25, octaves: 3, velocity: 76, gate: 68 },
-  staccato: { pattern: "up", rate: 0.25, octaves: 1, velocity: 96, gate: 42 },
-  ambient: { pattern: "random", rate: 1, octaves: 2, velocity: 64, gate: 96 },
-  triplet: { pattern: "upDownInclusive", rate: 1 / 3, octaves: 1, velocity: 84, gate: 78 },
+  classic16th: { pattern: "up", scope: "perChord", rate: 0.25, octaves: 1, velocity: 80, gate: 80 },
+  rolling8th: { pattern: "upDown", scope: "perChord", rate: 0.5, octaves: 2, velocity: 90, gate: 72 },
+  cascading: { pattern: "down", scope: "perChord", rate: 0.25, octaves: 3, velocity: 76, gate: 68 },
+  staccato: { pattern: "up", scope: "perChord", rate: 0.25, octaves: 1, velocity: 96, gate: 42 },
+  ambient: { pattern: "random", scope: "wholeSelection", rate: 1, octaves: 2, velocity: 64, gate: 96 },
+  triplet: { pattern: "upDownInclusive", scope: "perChord", rate: 1 / 3, octaves: 1, velocity: 84, gate: 78 },
 };
 
 function getPatternName(pattern: ArpeggiatorPattern) {
@@ -62,25 +65,31 @@ function getRateName(rate: number) {
   return `${rate}`;
 }
 
+function getScopeName(scope: ArpeggiatorScope) {
+  return scope === "perChord" ? "Each Chord (Progression)" : "Whole Selection (Pooled)";
+}
+
 export function ArpeggiatorDialog({
   open,
   onApply,
   onClose,
 }: ArpeggiatorDialogProps) {
   const [pattern, setPattern] = useState<ArpeggiatorPattern>("up");
+  const [scope, setScope] = useState<ArpeggiatorScope>("perChord");
   const [rate, setRate] = useState(0.25);
   const [octaves, setOctaves] = useState(1);
   const [velocity, setVelocity] = useState(80);
   const [gate, setGate] = useState(80);
 
   const handleApply = () => {
-    onApply({ pattern, rate, octaves, velocity, gate });
+    onApply({ pattern, scope, rate, octaves, velocity, gate });
     onClose();
   };
 
   const applyPreset = (name: keyof typeof PRESETS) => {
     const preset = PRESETS[name];
     setPattern(preset.pattern);
+    setScope(preset.scope);
     setRate(preset.rate);
     setOctaves(preset.octaves);
     setVelocity(preset.velocity);
@@ -122,6 +131,31 @@ export function ArpeggiatorDialog({
                 </button>
               ))}
             </div>
+          </div>
+
+          <div>
+            <label className="mb-2 block text-xs font-medium text-muted-foreground">Apply To</label>
+            <div className="grid grid-cols-2 gap-2">
+              {(["perChord", "wholeSelection"] as ArpeggiatorScope[]).map((value) => (
+                <button
+                  key={value}
+                  type="button"
+                  onClick={() => setScope(value)}
+                  className={`rounded px-3 py-2 text-xs font-medium transition-colors ${
+                    scope === value
+                      ? "bg-primary text-primary-foreground"
+                      : "bg-[var(--surface-3)] text-foreground hover:bg-[color:color-mix(in_srgb,var(--surface-3)_80%,white_4%)]"
+                  }`}
+                >
+                  {getScopeName(value)}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-xs text-muted-foreground">
+              {scope === "perChord"
+                ? "Arpeggiates each chord onset separately. Best for chord progressions."
+                : "Treats all selected notes as one shared pitch pool across the entire selection."}
+            </p>
           </div>
 
           <div>
@@ -197,6 +231,7 @@ export function ArpeggiatorDialog({
           <div className="rounded border border-blue-500/20 bg-blue-500/10 px-3 py-3">
             <p className="mb-2 text-xs font-semibold text-blue-400">Preview</p>
             <div className="space-y-1 text-xs text-blue-300">
+              <div>Apply To: <span className="ml-2 font-mono">{getScopeName(scope)}</span></div>
               <div>Pattern: <span className="ml-2 font-mono">{getPatternName(pattern)}</span></div>
               <div>Rate: <span className="ml-2 font-mono">{getRateName(rate)} notes</span></div>
               <div>Span: <span className="ml-2 font-mono">{octaves} octave{octaves !== 1 ? "s" : ""}</span></div>
