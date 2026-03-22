@@ -112,7 +112,9 @@ export function useStudioKeyboardShortcuts({
         target instanceof HTMLInputElement ||
         target instanceof HTMLTextAreaElement ||
         target?.isContentEditable;
-      const insidePianoRoll = Boolean(target?.closest("[data-piano-roll-root='true']"));
+      const insidePianoRoll = target instanceof Element
+        ? Boolean(target.closest("[data-piano-roll-root='true']"))
+        : false;
 
       if (event.key === " " && !event.repeat && !isTyping) {
         event.preventDefault();

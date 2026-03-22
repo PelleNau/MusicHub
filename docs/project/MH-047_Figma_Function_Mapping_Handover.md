@@ -26,6 +26,10 @@ Wire imported Figma piano-roll and adjacent frontend functions into the real `Mu
   - arpeggiator pitch ordering now distinguishes sorted patterns from `asPlayed`
   - arpeggiator generation now guarantees enough steps to emit the selected pitch cycle at least once
   - chord-tools apply now preserves a useful post-apply selection, prioritizing generated notes when new notes are created
+- Validation on the rebased branch currently passes:
+  - `node_modules/.bin/tsc --noEmit -p tsconfig.json`
+  - `npm run build`
+  - `npm run test`
 
 ## Protocol Commands
 
@@ -45,21 +49,24 @@ Wire imported Figma piano-roll and adjacent frontend functions into the real `Mu
 - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/src/components/studio/pianoroll/usePianoRollOperationCoordinator.ts`
 - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/docs/project/MH-047_Figma_Frontend_Function_Mapping.md`
 
-## Open Problems
+## Code Blockers
 
-- `ChordToolsDialog` is wired, but it still operates as a direct note replacement utility. It needs a semantics pass to confirm the generated/inverted result is the right live-editor behavior and selection outcome.
-- `ArpeggiatorDialog` is wired, and the obvious sequencing bugs are fixed, but the generated pattern behavior is still pragmatic rather than validated against a product spec.
-- `NoteOperationsMenu` actions are functional, but some menu labels from the Figma import may not exactly match current editor expectations.
-- Clip-context-menu parity is no longer a broad open item. The live menu has been intentionally narrowed to runtime-owned clip actions only. Imported pointer/automation/fade affordances remain out of scope unless new schema/runtime work is introduced:
-  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/src/components/studio/track/ClipContextMenu.tsx`
+- None currently known.
+
+## Remaining Feel-Level Gaps
+
+- `ChordToolsDialog` still behaves as a pragmatic direct note replacement utility. The live semantics are usable, but the generated/inverted selection outcome could still be tuned if product wants a stricter editor model.
+- `ArpeggiatorDialog` is wired and sequencing is stable, but the pattern feel, preset naming, and phrase-length behavior still need product review.
+- `NoteOperationsMenu` is functional, but the menu labels and density are still based on the imported Figma structure rather than a final editorial pass.
+- `ClipContextMenu` is intentionally limited to runtime-owned clip actions only. Pointer, automation, and fade affordances remain out of scope unless a separate runtime owner appears.
 
 ## Next Exact Steps
 
-- `todo` Finish the remaining piano-roll semantics pass:
+- `todo` Tidy the remaining piano-roll feel pass:
   - inspect `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/src/components/studio/pianoroll/usePianoRollOperationCoordinator.ts`
-  - validate `ChordToolsDialog` apply semantics and post-apply selection behavior
-  - validate arpeggiator output length/rhythm against the intended product behavior
-  - decide whether `ChordToolsDialog` should keep direct note replacement or route through narrower command helpers
+  - validate `ChordToolsDialog` selection behavior against the desired editor feel
+  - refine arpeggiator output length/rhythm only if product wants a stricter musical spec
+  - review `NoteOperationsMenu` wording and density for final polish
 - `todo` Preserve the explicit clip-menu boundary:
   - keep `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/src/components/studio/track/ClipContextMenu.tsx` limited to runtime-owned clip actions
   - do not reintroduce pointer/automation/fade options there without a real runtime owner
@@ -70,13 +77,10 @@ Wire imported Figma piano-roll and adjacent frontend functions into the real `Mu
 
 ## Validation
 
-- Typecheck passed using the main checkout toolchain:
-  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/node_modules/.bin/tsc --noEmit -p /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/tsconfig.json`
-- This worktree does not currently have its own `node_modules`, so direct local `npx tsc` and eslint resolution are not reliable here.
-- `npm run build` is not reliable in this worktree as-is because local `vite` package resolution is missing without a local install.
+- Typecheck, build, and test all passed in the current worktree.
 
 ## Do Not Touch
 
 - Do not create a new command bus or export-style `src/app/...` integration layer.
 - Do not move persistent note mutations out of the existing piano-roll/runtime seams.
-- Do not merge this branch until piano-roll semantics and clip-context-menu parity are reviewed.
+- Merge-ready after the feel-level follow-ups above, with no known code blockers.

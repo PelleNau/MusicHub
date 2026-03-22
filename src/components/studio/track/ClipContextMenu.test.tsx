@@ -57,8 +57,8 @@ describe("ClipContextMenu", () => {
 
     expect(await screen.findByText("Duplicate")).toBeInTheDocument();
     expect(screen.getByText("Linked Duplicate")).toBeInTheDocument();
-    expect(screen.getByText("Split")).toBeInTheDocument();
-    expect(screen.getByText("Set as Loop")).toBeInTheDocument();
+    expect(screen.getByText("Split at Playhead")).toBeInTheDocument();
+    expect(screen.getByText("Loop to Selection")).toBeInTheDocument();
     expect(screen.getByText("Mute")).toBeInTheDocument();
     expect(screen.getByText("Rename")).toBeInTheDocument();
     expect(screen.getByText("Delete")).toBeInTheDocument();
