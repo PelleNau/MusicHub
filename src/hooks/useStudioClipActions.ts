@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   extractMidiNotesFromData,
   withMidiNotesInData,
@@ -11,6 +12,7 @@ import {
   removeSessionClipFromCache,
   updateSessionClipInCache,
 } from "@/domain/studio/studioSessionCache";
+import { invalidateSessionTracks } from "@/domain/studio/studioSessionQueries";
 import type {
   ClipCreatePayload,
   ClipUpdatePayload,
@@ -122,12 +124,14 @@ export function useStudioClipActions({
           : { notes: [] },
         alias_of: aliasOf,
       };
-      await createClip.mutateAsync(insertPayload);
+      const { error } = await supabase.from("session_clips").insert([insertPayload]);
+      if (error) throw error;
+      await invalidateSessionTracks(queryClient, activeSessionId);
       toast.success("Linked duplicate created");
     } catch {
       toast.error("Failed to create linked duplicate");
     }
-  }, [activeSessionId, createClip, trackIndex]);
+  }, [activeSessionId, queryClient, trackIndex]);
 
   const handleDeleteClip = useCallback((clipId: string) => {
     const clip = trackIndex.clipById[clipId];
@@ -159,12 +163,14 @@ export function useStudioClipActions({
         audio_url: clip.audio_url,
         waveform_peaks: clip.waveform_peaks,
       };
-      await createClip.mutateAsync(insertPayload);
+      const { error } = await supabase.from("session_clips").insert([insertPayload]);
+      if (error) throw error;
+      await invalidateSessionTracks(queryClient, activeSessionId);
       toast.success("Clip duplicated");
     } catch {
       toast.error("Failed to duplicate clip");
     }
-  }, [activeSessionId, createClip, trackIndex]);
+  }, [activeSessionId, queryClient, trackIndex]);
 
   const handleRenameClip = useCallback((clipId: string, name: string) => {
     const clip = trackIndex.clipById[clipId];
@@ -244,12 +250,15 @@ export function useStudioClipActions({
         ...(clip.audio_url ? { audio_url: clip.audio_url } : {}),
         ...(rightPeaks ? { waveform_peaks: rightPeaks } : {}),
       };
-      await createClip.mutateAsync(insertPayload);
+      const { error } = await supabase.from("session_clips").insert([insertPayload]);
+      if (error) throw error;
+
+      await invalidateSessionTracks(queryClient, activeSessionId);
       toast.success("Clip split");
     } catch {
       toast.error("Failed to split clip");
     }
-  }, [activeSessionId, createClip, trackIndex, updateClip]);
+  }, [activeSessionId, queryClient, trackIndex, updateClip]);
 
   const handleMuteClip = useCallback((clipId: string) => {
     const clip = trackIndex.clipById[clipId];
