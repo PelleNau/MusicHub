@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "coord:assign": "node scripts/chief-assign.mjs",
+    "coord:watch": "node scripts/coord-watch.mjs",
     "coord:next": "node scripts/coord-next.mjs",
     "coord:next:platform": "node scripts/coord-next.mjs --stream platform",
     "coord:next:persistence": "node scripts/coord-next.mjs --stream persistence",
