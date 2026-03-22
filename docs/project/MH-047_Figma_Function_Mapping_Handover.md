@@ -10,6 +10,10 @@ Wire imported Figma piano-roll and adjacent frontend functions into the real `Mu
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping`
 - Branch:
   - `codex/figma-function-mapping`
+- Authority:
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
+- Execution protocol:
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MH-053_Execution_Protocol.md`
 - Mapping doc exists:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping/docs/project/MH-047_Figma_Frontend_Function_Mapping.md`
 - Piano-roll runtime coordinator is implemented:
@@ -22,6 +26,18 @@ Wire imported Figma piano-roll and adjacent frontend functions into the real `Mu
   - arpeggiator pitch ordering now distinguishes sorted patterns from `asPlayed`
   - arpeggiator generation now guarantees enough steps to emit the selected pitch cycle at least once
   - chord-tools apply now preserves a useful post-apply selection, prioritizing generated notes when new notes are created
+
+## Protocol Commands
+
+- Acknowledge latest Chief assignment:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:ack:figmafunktioner -- --summary "Read latest Chief assignment and starting Figmafunktioner work."`
+- Report progress:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:report:figmafunktioner -- --status in_progress --summary "Figmafunktioner work in progress."`
+- Report completion:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:report:figmafunktioner -- --status completed --summary "Figmafunktioner task completed."`
+- Chief verification:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:check-in:figmafunktioner`
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:check-out:figmafunktioner`
 
 ## Files Changed
 
