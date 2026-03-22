@@ -34,6 +34,7 @@ The source of truth is:
 
 ```bash
 npm run coord:assign -- --stream runtime --title "Clip context-menu parity"
+npm run coord:watch
 npm run coord:next:runtime
 npm run coord:ack -- --stream runtime --summary "Read handover and starting work"
 npm run stream:start:runtime -- --summary "Starting work"
@@ -63,6 +64,19 @@ npm run coord:next:runtime
 npm run stream:start:runtime -- --summary "Starting runtime task"
 npm run stream:done:runtime -- --summary "Runtime task completed" --file src/hooks/useStudioClipActions.ts --validation "tsc passed"
 ```
+
+## Chief Watch
+
+Use this in the Chief thread:
+
+- `npm run coord:watch`
+
+It prints a live summary of:
+- unacknowledged streams
+- in-progress streams
+- completed streams ready for review
+- blocked streams
+- idle streams
 
 ## CI
 
