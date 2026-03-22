@@ -184,7 +184,11 @@ export function useStudioKeyboardShortcuts({
         const ids = selectedClipIdsRef.current;
         event.preventDefault();
         if (ids.size > 0) {
-          for (const id of ids) commandsRef.current.updateClip(id, { muted: true });
+          const allClips = tracksRef.current.flatMap((track) => track.clips || []);
+          const selectedClips = allClips.filter((clip) => ids.has(clip.id));
+          const nextMuted = selectedClips.some((clip) => !clip.is_muted);
+
+          for (const id of ids) commandsRef.current.updateClip(id, { muted: nextMuted });
         } else {
           markerCommandsRef.current?.addMarkerAtCurrentBeat();
         }

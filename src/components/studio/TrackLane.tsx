@@ -10,6 +10,7 @@ import { volumeToDb, panToDisplay } from "./track/trackHelpers";
 import { TRACK_HEADER_WIDTH } from "./timelineMath";
 import { ClipBlock } from "./track/ClipBlock";
 import { AutomationLane, AUTOMATION_LANE_HEIGHT } from "./AutomationLane";
+import { setSendLevel } from "@/domain/studio/studioDeviceRouting";
 import {
   TrackToggle,
   VolumeFader,
@@ -70,6 +71,7 @@ interface TrackLaneProps {
   onSplitClip?: (clipId: string, beatPosition: number) => void;
   onMuteClip?: (clipId: string) => void;
   onSetAsLoop?: (clipId: string) => void;
+  splitBeat?: number;
   snapBeats?: number;
   activeDivision?: GridDivision;
   tripletMode?: boolean;
@@ -118,6 +120,7 @@ export const TrackLane = memo(function TrackLane({
   onSplitClip,
   onMuteClip,
   onSetAsLoop,
+  splitBeat,
   snapBeats = 0.25,
   activeDivision = "1/4",
   tripletMode = false,
@@ -190,14 +193,7 @@ export const TrackLane = memo(function TrackLane({
             : "Track";
 
   const handleSendLevel = useCallback((returnTrackId: string, level: number) => {
-    const updated = [...sends];
-    const idx = updated.findIndex((s) => s.return_track_id === returnTrackId);
-    if (idx >= 0) {
-      updated[idx] = { ...updated[idx], level };
-    } else {
-      updated.push({ return_track_id: returnTrackId, level });
-    }
-    onSendChange(track.id, updated);
+    onSendChange(track.id, setSendLevel(sends, returnTrackId, level));
   }, [sends, onSendChange, track.id]);
 
   const getSendLevel = useCallback((returnTrackId: string) => {
@@ -483,6 +479,7 @@ export const TrackLane = memo(function TrackLane({
               onSplit={(clipId, beat) => onSplitClip?.(clipId, beat)}
               onMuteToggle={onMuteClip}
               onSetAsLoop={onSetAsLoop}
+              splitBeat={splitBeat}
             />
           ))}
         </div>

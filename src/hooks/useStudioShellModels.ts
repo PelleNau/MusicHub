@@ -42,6 +42,9 @@ interface UseStudioShellModelsOptions {
   transportSummary: {
     currentBeat: number;
     playbackState: "playing" | "paused" | "stopped";
+    canPlay: boolean;
+    canPause: boolean;
+    canStop: boolean;
   };
   loopEnabled: boolean;
   loopStart: number;
@@ -160,6 +163,9 @@ export function useStudioShellModels({
     timeSignature: sessionMetrics.timeSignature,
     currentBeat: transportSummary.currentBeat,
     playbackState: transportSummary.playbackState,
+    canPlay: transportSummary.canPlay,
+    canPause: transportSummary.canPause,
+    canStop: transportSummary.canStop,
     loopEnabled,
     loopStart,
     loopEnd,

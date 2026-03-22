@@ -56,6 +56,7 @@ export function useStudioRuntimeCore({
     loopEnabled: audioRuntime.loopEnabled,
     loopStart: audioRuntime.loopStart,
     loopEnd: audioRuntime.loopEnd,
+    setLoop: audioRuntime.setLoop,
     setLoopRegion: audioRuntime.setLoopRegion,
     toggleLoop: audioRuntime.toggleLoop,
     hostState,

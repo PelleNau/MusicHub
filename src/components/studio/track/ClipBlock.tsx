@@ -6,6 +6,7 @@ import { ClipMidiPreview } from "./ClipMidiPreview";
 import { ClipContextMenu } from "./ClipContextMenu";
 import { getBarOffsetBeats, isBarDownbeat, GRID_EPSILON, beatToContentX, generateGridBeats } from "@/components/studio/timelineMath";
 import { extractMidiNotesFromData } from "@/domain/studio/studioMidiCommandProtocol";
+import { resolveClipSplitBeat } from "@/domain/studio/studioClipEditing";
 import type { SessionClip } from "@/types/studio";
 
 interface MiniNote {
@@ -35,6 +36,7 @@ interface ClipBlockProps {
   onSplit?: (clipId: string, beatPosition: number) => void;
   onMuteToggle?: (clipId: string) => void;
   onSetAsLoop?: (clipId: string) => void;
+  splitBeat?: number;
 }
 
 function parseHslColor(color: string) {
@@ -74,6 +76,7 @@ export function ClipBlock({
   onSplit,
   onMuteToggle,
   onSetAsLoop,
+  splitBeat,
 }: ClipBlockProps) {
   const left = beatToContentX(clip.start_beats, pixelsPerBeat);
   const width = beatToContentX(clip.end_beats - clip.start_beats, pixelsPerBeat);
@@ -257,13 +260,9 @@ export function ClipBlock({
   // Split handler
   const handleSplitFromMenu = useCallback(() => {
     if (!onSplit) return;
-    const mid = (clip.start_beats + clip.end_beats) / 2;
-    let snapped = snapBeats > 0 ? snapToGrid(mid, snapBeats) : mid;
-    if (snapped <= clip.start_beats || snapped >= clip.end_beats) {
-      snapped = mid;
-    }
+    const snapped = resolveClipSplitBeat(clip.start_beats, clip.end_beats, splitBeat, snapBeats);
     onSplit(clip.id, snapped);
-  }, [clip.id, clip.start_beats, clip.end_beats, snapBeats, onSplit]);
+  }, [clip.end_beats, clip.id, clip.start_beats, onSplit, snapBeats, splitBeat]);
 
   const showName = width >= 40;
 

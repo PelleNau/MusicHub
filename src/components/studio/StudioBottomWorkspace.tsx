@@ -7,8 +7,8 @@ import { cn } from "@/lib/utils";
 interface StudioBottomWorkspaceProps {
   mode: "guided" | "standard" | "focused";
   showTabs: boolean;
-  bottomTab: "mixer" | "detail";
-  setBottomTab: (tab: "mixer" | "detail") => void;
+  bottomTab: "editor" | "mixer";
+  setBottomTab: (tab: "editor" | "mixer") => void;
   showPianoRoll: boolean;
   showMixer: boolean;
   showDetail: boolean;

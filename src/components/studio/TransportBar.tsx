@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { Search, Undo2, Redo2, Wifi, SunMedium } from "lucide-react";
 import type { ConnectionState } from "@/services/hostConnector";
 import type { MeterLevel } from "@/services/pluginHostSocket";
@@ -19,16 +18,25 @@ interface TransportBarProps {
   currentBeat: number;
   playbackState: StudioPlaybackState;
   loopEnabled?: boolean;
+  canPlay?: boolean;
+  canPause?: boolean;
+  canStop?: boolean;
   connectionState?: ConnectionState;
   isMock?: boolean;
   inShell?: boolean;
   sidecarStatus?: SidecarStatus | null;
   masterMeter?: MeterLevel | null;
   syncStatus?: SyncStatus;
+  keyRoot: number;
+  keyScale: string;
+  zoomLevel: number;
   onPlay: () => void;
   onPause: () => void;
   onStop: () => void;
   onTempoChange: (tempo: number) => void;
+  onKeyRootChange: (root: number) => void;
+  onKeyScaleChange: (scale: string) => void;
+  onZoomLevelChange: (zoomLevel: number) => void;
   onLoopToggle?: () => void;
   onUndo?: () => void;
   onRedo?: () => void;
@@ -55,16 +63,25 @@ export function TransportBar({
   currentBeat,
   playbackState,
   loopEnabled,
+  canPlay = playbackState !== "playing",
+  canPause = playbackState === "playing",
+  canStop = playbackState !== "stopped" || currentBeat > 0.001,
   connectionState = "disconnected",
   isMock = false,
   inShell = false,
   sidecarStatus = null,
   masterMeter,
   syncStatus,
+  keyRoot,
+  keyScale,
+  zoomLevel,
   onPlay,
   onPause,
   onStop,
   onTempoChange,
+  onKeyRootChange,
+  onKeyScaleChange,
+  onZoomLevelChange,
   onLoopToggle,
   onUndo,
   onRedo,
@@ -85,9 +102,7 @@ export function TransportBar({
   });
 
   const figmaCapture = captureVariant === "figma";
-  const [keyRoot, setKeyRoot] = useState(0);
-  const [keyScale, setKeyScale] = useState("major");
-  const [zoomLevel, setZoomLevel] = useState(figmaCapture ? 75 : 80);
+  const effectiveZoomLevel = figmaCapture ? Math.min(zoomLevel, 75) : zoomLevel;
 
   return (
     <div
@@ -105,12 +120,13 @@ export function TransportBar({
             action={playbackState === "playing" ? "pause" : "play"}
             active={playbackState === "playing"}
             onClick={playbackState === "playing" ? onPause : onPlay}
+            disabled={playbackState === "playing" ? !canPause : !canPlay}
             size="sm"
           />
         </div>
 
         <div data-guide-anchor="transport.stop" {...hoverProps("stop")}>
-          <TransportButton action="stop" size="sm" onClick={onStop} />
+          <TransportButton action="stop" size="sm" onClick={onStop} disabled={!canStop} />
         </div>
 
         {onRecordToggle ? (
@@ -182,8 +198,8 @@ export function TransportBar({
         <KeySelector
           root={keyRoot}
           scale={keyScale}
-          onChangeRoot={setKeyRoot}
-          onChangeScale={setKeyScale}
+          onChangeRoot={onKeyRootChange}
+          onChangeScale={onKeyScaleChange}
           compact
           className={`${figmaCapture ? "[&_select]:h-7 [&_select]:rounded-[5px] [&_select]:px-2.5 [&_select]:text-[10px]" : "[&_select]:h-8 [&_select]:rounded-md [&_select]:px-3"} [&_select]:border-white/8 [&_select]:bg-[#2b2d33] [&_select]:text-white/82 [&_select]:outline-none [&_select]:focus:ring-0`}
         />
@@ -194,8 +210,8 @@ export function TransportBar({
           <Search className="h-3.5 w-3.5" />
         </button>
         <ZoomControl
-          zoomLevel={zoomLevel}
-          onChange={setZoomLevel}
+          zoomLevel={effectiveZoomLevel}
+          onChange={onZoomLevelChange}
           compact
           className="[&_.bg-border]:bg-white/8 [&_.bg-foreground\\/70]:text-white/70 [&_.bg-foreground\\/90]:text-white/90 [&_.border-\\[var\\(--border\\)\\]]:border-white/8 [&_.bg-\\[var\\(--surface-1\\)\\]]:bg-[#2b2d33] [&_.hover\\:bg-\\[var\\(--surface-2\\)\\]:hover]:bg-white/6 [&_.hover\\:text-foreground:hover]:text-white [&_.hover\\:border-primary:hover]:border-white/18"
         />

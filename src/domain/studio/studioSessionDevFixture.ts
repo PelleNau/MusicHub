@@ -8,9 +8,22 @@ import type {
 import { studioSessionKeys } from "@/domain/studio/studioSessionQueries";
 import type { Session, SessionClip, SessionTrack } from "@/types/studio";
 
-export const shouldUseDevSessionFixture =
-  import.meta.env.VITE_APP_FLAVOR === "design" ||
-  (import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === "1");
+export function shouldUseDevSessionFixture() {
+  if (import.meta.env.DEV && import.meta.env.VITE_BYPASS_AUTH === "1") {
+    return true;
+  }
+
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  const search = window.location.search || window.location.hash.split("?")[1];
+  if (!search) {
+    return false;
+  }
+
+  return new URLSearchParams(search).get("fixture") === "1";
+}
 
 export const DEV_USER_ID = "dev-bypass-user";
 export const DESIGN_FIXTURE_SESSION_ID = "dev-session-1";

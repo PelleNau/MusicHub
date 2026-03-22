@@ -74,4 +74,50 @@ describe("useStudioCommandDispatch", () => {
       monitoring: "in",
     });
   });
+
+  it("passes transport.setLoop through onSetLoop without issuing a separate toggle", () => {
+    const options = createBaseOptions();
+
+    const { result } = renderHook(() =>
+      useStudioCommandDispatch(options),
+    );
+
+    act(() => {
+      result.current.setLoop(true, 2, 8);
+    });
+
+    expect(options.onSetLoop).toHaveBeenCalledWith(true, 2, 8);
+    expect(options.onToggleLoop).not.toHaveBeenCalled();
+  });
+
+  it("clears clip selection when closing the piano roll panel", () => {
+    const options = createBaseOptions();
+
+    const { result } = renderHook(() =>
+      useStudioCommandDispatch({
+        ...options,
+        selectedClipIds: new Set(["clip-a"]),
+      }),
+    );
+
+    act(() => {
+      result.current.closePanel("pianoRoll");
+    });
+
+    expect(options.setSelectedClipIds).toHaveBeenCalledWith(new Set());
+  });
+
+  it("clears the selected track when closing the detail panel", () => {
+    const options = createBaseOptions();
+
+    const { result } = renderHook(() =>
+      useStudioCommandDispatch(options),
+    );
+
+    act(() => {
+      result.current.closePanel("detail");
+    });
+
+    expect(options.setSelectedTrackId).toHaveBeenCalledWith(null);
+  });
 });

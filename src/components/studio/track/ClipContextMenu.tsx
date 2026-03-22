@@ -9,10 +9,8 @@ import {
   ContextMenuSubTrigger,
   ContextMenuSubContent,
 } from "@/components/ui/context-menu";
-import { Check, Copy, Eraser, Eye, EyeOff, Grab, Link2, MousePointer, Palette, Plus, Repeat, Scissors, Trash2, Type, Volume2, VolumeX } from "lucide-react";
+import { Copy, Link2, Palette, Repeat, Scissors, Trash2, Type, Volume2, VolumeX } from "lucide-react";
 import { TRACK_COLORS } from "./trackColors";
-
-type PointerMode = "draw" | "select" | "erase";
 
 interface ClipContextMenuProps {
   children: React.ReactNode;
@@ -28,14 +26,6 @@ interface ClipContextMenuProps {
   onSplit?: (clipId: string) => void;
   onMuteToggle?: (clipId: string) => void;
   onSetAsLoop?: (clipId: string) => void;
-  hasAutomation?: boolean;
-  pointerMode?: PointerMode;
-  onPointerModeChange?: (clipId: string, mode: PointerMode) => void;
-  onShowAutomation?: (clipId: string) => void;
-  onHideAutomation?: (clipId: string) => void;
-  onAddAutomation?: (clipId: string) => void;
-  onAddFadeIn?: (clipId: string) => void;
-  onAddFadeOut?: (clipId: string) => void;
 }
 
 export function ClipContextMenu({
@@ -52,14 +42,6 @@ export function ClipContextMenu({
   onSplit,
   onMuteToggle,
   onSetAsLoop,
-  hasAutomation = false,
-  pointerMode = "select",
-  onPointerModeChange,
-  onShowAutomation,
-  onHideAutomation,
-  onAddAutomation,
-  onAddFadeIn,
-  onAddFadeOut,
 }: ClipContextMenuProps) {
   const [isRenaming, setIsRenaming] = useState(false);
   const [renameValue, setRenameValue] = useState(clipName);
@@ -123,31 +105,14 @@ export function ClipContextMenu({
           className="gap-2"
           onClick={() => onSplit?.(clipId)}
         >
-          <Scissors className="h-3 w-3" /> Split
+          <Scissors className="h-3 w-3" /> Split at Playhead
         </ContextMenuItem>
         {onSetAsLoop && (
           <ContextMenuItem
             className="gap-2"
             onClick={() => onSetAsLoop(clipId)}
           >
-            <Repeat className="h-3 w-3" /> Set as Loop
-          </ContextMenuItem>
-        )}
-        {(onAddFadeIn || onAddFadeOut) && <ContextMenuSeparator />}
-        {onAddFadeIn && (
-          <ContextMenuItem
-            className="gap-2"
-            onClick={() => onAddFadeIn(clipId)}
-          >
-            <Grab className="h-3 w-3" /> Add Fade In
-          </ContextMenuItem>
-        )}
-        {onAddFadeOut && (
-          <ContextMenuItem
-            className="gap-2"
-            onClick={() => onAddFadeOut(clipId)}
-          >
-            <Grab className="h-3 w-3" /> Add Fade Out
+            <Repeat className="h-3 w-3" /> Loop to Selection
           </ContextMenuItem>
         )}
         <ContextMenuSeparator />
@@ -182,60 +147,6 @@ export function ClipContextMenu({
             ))}
           </ContextMenuSubContent>
         </ContextMenuSub>
-        {(onPointerModeChange || onShowAutomation || onHideAutomation || onAddAutomation) && (
-          <ContextMenuSub>
-            <ContextMenuSubTrigger className="gap-2">
-              <MousePointer className="h-3 w-3" /> Pointer Options
-            </ContextMenuSubTrigger>
-            <ContextMenuSubContent className="min-w-[190px]">
-              {onPointerModeChange && (
-                <>
-                  {[
-                    { mode: "draw" as const, label: "Draw Mode", icon: Type },
-                    { mode: "select" as const, label: "Select Mode", icon: MousePointer },
-                    { mode: "erase" as const, label: "Erase Mode", icon: Eraser },
-                  ].map(({ mode, label, icon: Icon }) => (
-                    <ContextMenuItem
-                      key={mode}
-                      className="flex items-center justify-between gap-2"
-                      onClick={() => onPointerModeChange(clipId, mode)}
-                    >
-                      <span className="flex items-center gap-2">
-                        <Icon className="h-3 w-3" />
-                        {label}
-                      </span>
-                      {pointerMode === mode ? <Check className="h-3 w-3 text-primary" /> : null}
-                    </ContextMenuItem>
-                  ))}
-                </>
-              )}
-              {hasAutomation ? (
-                <>
-                  {onPointerModeChange && <ContextMenuSeparator />}
-                  {onShowAutomation && (
-                    <ContextMenuItem className="gap-2" onClick={() => onShowAutomation(clipId)}>
-                      <Eye className="h-3 w-3" /> Show Automation
-                    </ContextMenuItem>
-                  )}
-                  {onHideAutomation && (
-                    <ContextMenuItem className="gap-2" onClick={() => onHideAutomation(clipId)}>
-                      <EyeOff className="h-3 w-3" /> Hide Automation
-                    </ContextMenuItem>
-                  )}
-                </>
-              ) : (
-                onAddAutomation && (
-                  <>
-                    {onPointerModeChange && <ContextMenuSeparator />}
-                    <ContextMenuItem className="gap-2" onClick={() => onAddAutomation(clipId)}>
-                      <Plus className="h-3 w-3" /> Add Automation
-                    </ContextMenuItem>
-                  </>
-                )
-              )}
-            </ContextMenuSubContent>
-          </ContextMenuSub>
-        )}
         <ContextMenuSeparator />
         <ContextMenuItem
           className="gap-2 text-destructive focus:text-destructive"

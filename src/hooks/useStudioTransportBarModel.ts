@@ -1,3 +1,4 @@
+import { useState } from "react";
 import type { StudioConnectionSummary } from "@/domain/studio/studioViewContracts";
 import type { MeterLevel } from "@/services/pluginHostSocket";
 import type { ConnectionState } from "@/services/hostConnector";
@@ -10,6 +11,9 @@ interface UseStudioTransportBarModelOptions {
   timeSignature: string;
   currentBeat: number;
   playbackState: "playing" | "paused" | "stopped";
+  canPlay: boolean;
+  canPause: boolean;
+  canStop: boolean;
   loopEnabled: boolean;
   loopStart: number;
   loopEnd: number;
@@ -25,6 +29,9 @@ export function useStudioTransportBarModel({
   timeSignature,
   currentBeat,
   playbackState,
+  canPlay,
+  canPause,
+  canStop,
   loopEnabled,
   loopStart,
   loopEnd,
@@ -34,18 +41,28 @@ export function useStudioTransportBarModel({
   history,
   connectionActionsModel,
 }: UseStudioTransportBarModelOptions) {
+  const [keyRoot, setKeyRoot] = useState(0);
+  const [keyScale, setKeyScale] = useState("major");
+  const [zoomLevel, setZoomLevel] = useState(80);
+
   return {
     tempo,
     timeSignature,
     currentBeat,
     playbackState,
     loopEnabled,
+    canPlay,
+    canPause,
+    canStop,
     connectionState: connectionSummary.connectionState as ConnectionState,
     isMock: connectionSummary.isMock,
     inShell: connectionSummary.inShell,
     sidecarStatus: connectionSummary.sidecarStatus,
     masterMeter,
     syncStatus: connectionSummary.syncStatus,
+    keyRoot,
+    keyScale,
+    zoomLevel,
     onPlay: commandDispatch.play,
     onPause: commandDispatch.pause,
     onStop: commandDispatch.stop,
@@ -60,5 +77,8 @@ export function useStudioTransportBarModel({
     onRestartShellHost: connectionActionsModel.onRestartShellHost,
     recording: connectionSummary.recording,
     onRecordToggle: connectionSummary.canUseNativeControls ? commandDispatch.toggleRecord : undefined,
+    onKeyRootChange: setKeyRoot,
+    onKeyScaleChange: setKeyScale,
+    onZoomLevelChange: setZoomLevel,
   };
 }

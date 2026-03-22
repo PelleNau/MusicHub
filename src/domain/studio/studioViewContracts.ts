@@ -14,6 +14,9 @@ export interface StudioTransportSummary {
   currentBeat: number;
   isBackendDriven: boolean;
   hostAvailable: boolean;
+  canPlay: boolean;
+  canPause: boolean;
+  canStop: boolean;
 }
 
 export interface StudioConnectionSummary {
