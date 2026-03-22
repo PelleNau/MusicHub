@@ -19,6 +19,18 @@ This stream is responsible for:
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 
+## Protocol Commands
+
+- Acknowledge latest Chief assignment:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:ack:persistence -- --summary "Read latest Chief assignment and starting Persistence work."`
+- Report progress:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:report:persistence -- --status in_progress --summary "Persistence work in progress."`
+- Report completion:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:report:persistence -- --status completed --summary "Persistence task completed."`
+- Chief verification:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:check-in:persistence`
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:check-out:persistence`
+
 Existing backend/data surface:
 - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/supabase`
 - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/integrations/supabase`
