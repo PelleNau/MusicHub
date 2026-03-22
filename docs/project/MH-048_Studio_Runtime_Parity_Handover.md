@@ -12,6 +12,8 @@ Bring the real `MusicHub` Studio shell to parity with the approved frontend base
   - `codex/studio-runtime-parity`
 - Base commit:
   - `36b7bb5`
+- Authority:
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 - This stream starts from the cleaned checkpoint branch, not the older stale worktrees.
 - Source of truth:
   - real `MusicHub` Studio runtime
@@ -23,6 +25,24 @@ Bring the real `MusicHub` Studio shell to parity with the approved frontend base
 - live `Studio` runtime only
 - no design-app shell work
 - no new Figma imports unless they directly unblock runtime parity
+
+## Ownership Boundary
+
+- `Runtime` owns:
+  - Studio behavior and state wiring in the real app
+  - transport ownership in frontend runtime seams
+  - clip action ownership in frontend runtime seams
+  - device/send UI ownership once plugin and data contracts already exist
+  - integration of approved UI into the live Studio shell
+- `Runtime` does **not** own:
+  - plugin-host lifecycle, sidecars, sockets, or plugin discovery
+  - Supabase schema, migrations, functions, or persistence contracts
+- `Plugins` owns:
+  - host process startup
+  - plugin discovery and plugin transport
+- `Database` owns:
+  - persisted session/data contracts
+  - Supabase-backed save/load behavior
 
 ## Priority Areas
 
@@ -117,3 +137,5 @@ Bring the real `MusicHub` Studio shell to parity with the approved frontend base
 - do not recreate export-style `src/app/...` services
 - do not add a second command bus
 - do not use the design app as the runtime source of truth
+- do not take ownership of plugin-host startup, port management, or plugin discovery
+- do not take ownership of Supabase schema, functions, or migration logic
