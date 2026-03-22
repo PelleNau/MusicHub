@@ -14,6 +14,8 @@ Bring the real `MusicHub` Studio shell to parity with the approved frontend base
   - `36b7bb5`
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
+- Execution protocol:
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MH-053_Execution_Protocol.md`
 - This stream starts from the cleaned checkpoint branch, not the older stale worktrees.
 - Source of truth:
   - real `MusicHub` Studio runtime
@@ -110,6 +112,18 @@ Bring the real `MusicHub` Studio shell to parity with the approved frontend base
 
 ## Next Exact Steps
 
+- `done` implement clip-context-menu parity in the real Studio runtime
+  - runtime-owned actions now live:
+    - duplicate
+    - linked duplicate
+    - split
+    - rename
+    - recolor
+    - mute
+    - loop/set-loop
+  - non-owned clip-menu items are intentionally deferred or removed:
+    - automation visibility/add
+    - fade add
 - `todo` audit live clip-menu actions against `useStudioClipActions`
   - inspect `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-runtime-parity/src/components/studio/track/ClipContextMenu.tsx`
   - inspect `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-runtime-parity/src/hooks/useStudioClipActions.ts`
