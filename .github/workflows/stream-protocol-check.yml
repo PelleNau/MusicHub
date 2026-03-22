@@ -28,3 +28,6 @@ jobs:
 
       - name: Check stream reporting
         run: node scripts/stream-check-out.mjs
+
+      - name: Check stream ownership
+        run: node scripts/check-ownership.mjs

@@ -34,11 +34,34 @@ The source of truth is:
 
 ```bash
 npm run coord:assign -- --stream runtime --title "Clip context-menu parity"
+npm run coord:next:runtime
 npm run coord:ack -- --stream runtime --summary "Read handover and starting work"
+npm run stream:start:runtime -- --summary "Starting work"
 npm run coord:report -- --stream runtime --status completed --summary "Task complete"
+npm run stream:done:runtime -- --summary "Task complete"
 npm run coord:check-in -- --stream runtime
 npm run coord:check-out -- --stream runtime
+npm run check:ownership:runtime
 npm run check:streams
+```
+
+## Faster Stream Pickup
+
+Use these in the stream threads:
+
+1. Read latest Chief instruction:
+   - `npm run coord:next:<stream>`
+2. Acknowledge/start:
+   - `npm run stream:start:<stream> -- --summary "..."`
+3. Finish:
+   - `npm run stream:done:<stream> -- --summary "..." --file ... --validation "..."`
+
+Example:
+
+```bash
+npm run coord:next:runtime
+npm run stream:start:runtime -- --summary "Starting runtime task"
+npm run stream:done:runtime -- --summary "Runtime task completed" --file src/hooks/useStudioClipActions.ts --validation "tsc passed"
 ```
 
 ## CI
@@ -49,6 +72,7 @@ Workflow:
 Checks:
 - `stream-check-in`
 - `stream-check-out`
+- `check-ownership`
 
 ## Managed Streams
 
@@ -66,3 +90,4 @@ This system is intended to make the following mandatory:
 - Streams must acknowledge latest instructions before work begins
 - Streams must report back before the branch is considered review-ready
 - Branches cannot rely on memory or UI-only thread state
+- Branches cannot silently absorb files outside their ownership boundary
