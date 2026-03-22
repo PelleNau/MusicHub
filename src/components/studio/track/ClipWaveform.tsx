@@ -22,25 +22,21 @@ export function ClipWaveform({ peaks, color, width, height }: {
 
     const mid = height / 2;
     const step = width / peaks.length;
+    const topScale = mid - 1;
+    const bottomScale = mid + 1;
 
-    ctx.beginPath();
-    ctx.moveTo(0, mid);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1;
+    ctx.globalAlpha = 0.95;
 
     for (let i = 0; i < peaks.length; i++) {
-      const amp = Math.abs(peaks[i]) * mid;
-      ctx.lineTo(i * step, mid - amp);
+      const amp = Math.abs(peaks[i]) * (height * 0.42);
+      const x = i * step;
+      ctx.beginPath();
+      ctx.moveTo(x, topScale - amp);
+      ctx.lineTo(x, bottomScale + amp);
+      ctx.stroke();
     }
-
-    ctx.lineTo(width, mid);
-
-    for (let i = peaks.length - 1; i >= 0; i--) {
-      const amp = Math.abs(peaks[i]) * mid;
-      ctx.lineTo(i * step, mid + amp);
-    }
-
-    ctx.closePath();
-    ctx.fillStyle = color;
-    ctx.fill();
   }, [peaks, color, width, height]);
 
   if (!peaks || !peaks.length) return null;

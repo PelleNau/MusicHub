@@ -16,7 +16,7 @@ interface ClipMidiPreviewProps {
 
 const MAX_RENDERED_NOTES = 300;
 
-/** SVG-based MIDI note preview with pitch-class coloring and velocity opacity */
+/** SVG-based MIDI preview with a single restrained tint. */
 export const ClipMidiPreview = memo(function ClipMidiPreview({
   notes,
   clipDuration,
@@ -43,8 +43,8 @@ export const ClipMidiPreview = memo(function ClipMidiPreview({
       const x = (n.start / clipDuration) * 100;
       const w = Math.max((n.duration / clipDuration) * 100, 0.3);
       const y = ((maxPitch - n.pitch) / pitchRange) * 100;
-      const fill = isMuted ? "rgba(255,255,255,0.16)" : color;
-      const opacity = isMuted ? 0.24 : 0.28 + (n.velocity / 127) * 0.28;
+      const fill = isMuted ? "rgba(255,255,255,0.12)" : color;
+      const opacity = isMuted ? 0.18 : 0.18 + (n.velocity / 127) * 0.18;
 
       return (
         <rect
@@ -53,7 +53,7 @@ export const ClipMidiPreview = memo(function ClipMidiPreview({
           y={y}
           width={w}
           height={noteHeight}
-          rx={0.25}
+          rx={0}
           fill={fill}
           opacity={opacity}
         />
@@ -68,7 +68,7 @@ export const ClipMidiPreview = memo(function ClipMidiPreview({
       className="absolute inset-0 pointer-events-none"
       viewBox="0 0 100 100"
       preserveAspectRatio="none"
-      style={{ top: 12, bottom: 0, height: "calc(100% - 12px)" }}
+      style={{ top: 10, bottom: 0, height: "calc(100% - 10px)" }}
     >
       {rects}
     </svg>

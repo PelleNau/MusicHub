@@ -81,11 +81,11 @@ export function ClipBlock({
   const isMuted = clip.is_muted === true;
   const baseColor = useMemo(() => parseHslColor(color), [color]);
   const clipChrome = useMemo(() => {
-    const accent = { ...baseColor, s: Math.max(baseColor.s - 8, 26), l: Math.min(baseColor.l + 4, 58) };
-    const body = { ...baseColor, s: Math.max(baseColor.s - 34, 18), l: 31 };
-    const bodySelected = { ...baseColor, s: Math.max(baseColor.s - 18, 26), l: 35 };
-    const title = { ...baseColor, s: Math.max(baseColor.s - 22, 20), l: 24 };
-    const border = { ...baseColor, s: Math.max(baseColor.s - 24, 18), l: 44 };
+    const accent = { ...baseColor, s: Math.max(baseColor.s - 18, 20), l: Math.min(baseColor.l + 1, 54) };
+    const body = { ...baseColor, s: Math.max(baseColor.s - 44, 10), l: 26 };
+    const bodySelected = { ...baseColor, s: Math.max(baseColor.s - 34, 14), l: 29 };
+    const title = { ...baseColor, s: Math.max(baseColor.s - 38, 12), l: 21 };
+    const border = { ...baseColor, s: Math.max(baseColor.s - 36, 12), l: 34 };
 
     return {
       accent,
@@ -93,8 +93,8 @@ export function ClipBlock({
       bodySelected,
       title,
       border,
-      waveform: hsla(accent, isMuted ? 0.18 : 0.48),
-      midi: hsla(accent, 1),
+      waveform: hsla({ ...accent, l: Math.min(accent.l + 18, 72), s: Math.max(accent.s - 12, 12) }, isMuted ? 0.12 : 0.34),
+      midi: hsla({ ...accent, l: Math.min(accent.l + 10, 64), s: Math.max(accent.s - 8, 16) }, 1),
     };
   }, [baseColor, isMuted]);
   const peaks = clip.waveform_peaks as number[] | null;
@@ -270,7 +270,7 @@ export function ClipBlock({
   const clipElement = (
     <div
       className={`absolute top-[1px] bottom-[1px] overflow-hidden rounded-[3px] group cursor-grab active:cursor-grabbing transition-[box-shadow,opacity] ${
-        isSelected ? "ring-1 ring-white/70" : ""
+        isSelected ? "ring-1 ring-white/45" : ""
       }`}
       style={{
         left,
@@ -278,7 +278,7 @@ export function ClipBlock({
         backgroundColor: hsla(isSelected ? clipChrome.bodySelected : clipChrome.body),
         opacity: isMuted ? 0.52 : 1,
         boxShadow: isSelected
-          ? `inset 0 0 0 1px rgba(255,255,255,0.26), 0 0 0 1px rgba(255,255,255,0.08)`
+          ? `inset 0 0 0 1px rgba(255,255,255,0.16), 0 0 0 1px rgba(255,255,255,0.05)`
           : `inset 0 0 0 1px ${hsla(clipChrome.border, 0.38)}`,
         touchAction: "none",
       }}
@@ -288,8 +288,8 @@ export function ClipBlock({
       onDoubleClick={(e) => { e.stopPropagation(); onDoubleClick?.(); }}
     >
       <div
-        className="absolute inset-y-0 left-0 w-[3px] z-[2]"
-        style={{ backgroundColor: hsla(clipChrome.accent, isMuted ? 0.34 : 0.92) }}
+        className="absolute inset-y-0 left-0 w-[2px] z-[2]"
+        style={{ backgroundColor: hsla(clipChrome.accent, isMuted ? 0.22 : 0.78) }}
       />
 
       <div className="absolute inset-0 pointer-events-none z-[1]">
@@ -325,7 +325,7 @@ export function ClipBlock({
       {/* Left resize handle */}
       <div
         data-resize="left"
-        className="absolute left-0 top-0 bottom-0 w-[7px] cursor-col-resize z-20 bg-transparent transition-all before:absolute before:inset-y-1 before:left-[1px] before:w-[1px] before:rounded-full before:bg-white/0 hover:before:bg-white/30"
+        className="absolute left-0 top-0 bottom-0 w-[6px] cursor-col-resize z-20 bg-transparent transition-all before:absolute before:inset-y-1 before:left-[1px] before:w-[1px] before:rounded-full before:bg-white/0 hover:before:bg-white/16"
         style={{ touchAction: "none" }}
         onPointerDown={handleResizeLStart}
         onPointerMove={handleResizeLMove}
@@ -334,7 +334,7 @@ export function ClipBlock({
       {/* Right resize handle */}
       <div
         data-resize="right"
-        className="absolute right-0 top-0 bottom-0 w-[7px] cursor-col-resize z-20 bg-transparent transition-all before:absolute before:inset-y-1 before:right-[1px] before:w-[1px] before:rounded-full before:bg-white/0 hover:before:bg-white/30"
+        className="absolute right-0 top-0 bottom-0 w-[6px] cursor-col-resize z-20 bg-transparent transition-all before:absolute before:inset-y-1 before:right-[1px] before:w-[1px] before:rounded-full before:bg-white/0 hover:before:bg-white/16"
         style={{ touchAction: "none" }}
         onPointerDown={handleResizeStart}
         onPointerMove={handleResizeMove}
@@ -358,12 +358,12 @@ export function ClipBlock({
         />
       )}
       <div
-        className="absolute inset-x-0 top-0 flex h-[11px] items-center px-1.5"
-        style={{ backgroundColor: hsla(clipChrome.title, 0.94) }}
+        className="absolute inset-x-0 top-0 flex h-[10px] items-center px-1.5"
+        style={{ backgroundColor: hsla(clipChrome.title, 0.98) }}
       >
         {isMuted && <VolumeXIcon className="h-2 w-2 text-white/50 mr-0.5 shrink-0" />}
         {showName && (
-          <span className={`text-[7.5px] font-medium tracking-[0.01em] truncate leading-none ${isMuted ? "text-white/34 line-through" : "text-white/84"}`}>
+          <span className={`text-[7px] font-medium tracking-[0.01em] truncate leading-none ${isMuted ? "text-white/32 line-through" : "text-white/78"}`}>
             {clip.name}
           </span>
         )}
