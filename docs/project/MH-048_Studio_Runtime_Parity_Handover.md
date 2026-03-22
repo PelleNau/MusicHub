@@ -22,6 +22,18 @@ Bring the real `MusicHub` Studio shell to parity with the approved frontend base
   - not `MusicHub Design`
   - not the imported-components showcase
 
+## Protocol Commands
+
+- Acknowledge latest Chief assignment:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:ack:runtime -- --summary "Read latest Chief assignment and starting Runtime work."`
+- Report progress:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:report:runtime -- --status in_progress --summary "Runtime work in progress."`
+- Report completion:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:report:runtime -- --status completed --summary "Runtime task completed."`
+- Chief verification:
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:check-in:runtime`
+  - `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run coord:check-out:runtime`
+
 ## Scope
 
 - live `Studio` runtime only
