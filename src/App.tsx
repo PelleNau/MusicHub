@@ -62,9 +62,12 @@ const MockAmpBackline = lazy(() => import("./pages/mockups/MockAmpBackline.tsx")
 const queryClient = new QueryClient();
 const Router = isInTauriShell() ? HashRouter : BrowserRouter;
 const APP_FLAVOR = import.meta.env.VITE_APP_FLAVOR === "design" ? "design" : "main";
-const TAURI_PREVIEW_ROUTE = "/design-studio";
+const TAURI_PREVIEW_ROUTE =
+  APP_FLAVOR === "design"
+    ? "/design-studio"
+    : "/lab/studio?capture=true&captureBar=false&captureScenario=arrangement&mode=standard";
 
-if (APP_FLAVOR === "design" && isInTauriShell() && !window.location.hash) {
+if (isInTauriShell() && !window.location.hash) {
   window.location.replace(`#${TAURI_PREVIEW_ROUTE}`);
 }
 

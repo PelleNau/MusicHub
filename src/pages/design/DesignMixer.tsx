@@ -3,7 +3,7 @@ import { Navigate, useLocation } from "react-router-dom";
 import Studio from "@/pages/Studio";
 import { DESIGN_FIXTURE_SESSION_ID } from "@/domain/studio/studioSessionDevFixture";
 
-const MIXER_SEARCH = `?id=${DESIGN_FIXTURE_SESSION_ID}&capture=true&captureBar=false&captureScenario=mixer&mode=standard&fixture=1`;
+const MIXER_SEARCH = `?id=${DESIGN_FIXTURE_SESSION_ID}&capture=true&captureBar=false&captureScenario=mixer&mode=standard`;
 
 export default function DesignMixer() {
   const location = useLocation();

@@ -21,10 +21,9 @@ import { createStudioSessionSource } from "@/domain/studio/studioSessionSource";
 export function useSession(sessionId: string | null): StudioSessionPersistenceState {
   const queryClient = useQueryClient();
   const { session: authSession } = useAuth();
-  const useDevFixture = shouldUseDevSessionFixture();
-  const userId = useDevFixture ? DEV_USER_ID : authSession?.user?.id;
+  const userId = shouldUseDevSessionFixture ? DEV_USER_ID : authSession?.user?.id;
   const sessionSource = createStudioSessionSource({
-    mode: useDevFixture ? "dev" : "live",
+    mode: shouldUseDevSessionFixture ? "dev" : "live",
     userId: userId ?? DEV_USER_ID,
     sessionId,
   });
@@ -46,7 +45,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
       return sessionSource.createSession(params);
     },
     onSuccess: (created?: Session) => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, created?.id);
         return;
       }
@@ -59,7 +58,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
       await sessionSource.updateSession(updates);
     },
     onSuccess: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
@@ -70,7 +69,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
   const addTrack = useMutation({
     mutationFn: async (track: TrackCreatePayload) => sessionSource.addTrack(track),
     onSuccess: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
@@ -84,7 +83,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
     },
     // Skip refetch on success — optimistic updates in useStudioActions already applied
     onError: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
@@ -95,7 +94,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
   const deleteTrack = useMutation({
     mutationFn: async (trackId: string) => sessionSource.deleteTrack(trackId),
     onSuccess: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
@@ -106,14 +105,14 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
   const createClip = useMutation({
     mutationFn: async (clip: ClipCreatePayload) => sessionSource.createClip(clip),
     onSuccess: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
       invalidateSessionTracks(queryClient, sessionId);
     },
     onError: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
@@ -127,7 +126,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
     },
     // Skip refetch on success — optimistic updates already applied
     onError: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
@@ -138,7 +137,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
   const deleteClip = useMutation({
     mutationFn: async (clipId: string) => sessionSource.deleteClip(clipId),
     onSuccess: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, sessionId);
         return;
       }
@@ -149,7 +148,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
   const deleteSession = useMutation({
     mutationFn: async (id: string) => sessionSource.deleteSession(id),
     onSuccess: () => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient);
         return;
       }
@@ -162,7 +161,7 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
       await sessionSource.renameSession(id, name);
     },
     onSuccess: (_, variables) => {
-      if (useDevFixture) {
+      if (shouldUseDevSessionFixture) {
         syncDevQueries(queryClient, variables.id);
         return;
       }
@@ -189,17 +188,16 @@ export function useSession(sessionId: string | null): StudioSessionPersistenceSt
 
 export function useSessions() {
   const { session: authSession } = useAuth();
-  const useDevFixture = shouldUseDevSessionFixture();
-  const userId = useDevFixture ? DEV_USER_ID : authSession?.user?.id;
+  const userId = shouldUseDevSessionFixture ? DEV_USER_ID : authSession?.user?.id;
   const sessionSource = createStudioSessionSource({
-    mode: useDevFixture ? "dev" : "live",
+    mode: shouldUseDevSessionFixture ? "dev" : "live",
     userId: userId ?? DEV_USER_ID,
     sessionId: null,
   });
 
   return useQuery({
     queryKey: studioSessionKeys.sessions(),
-    enabled: useDevFixture || !!userId,
+    enabled: shouldUseDevSessionFixture || !!userId,
     queryFn: async () => sessionSource.fetchSessions(),
   });
 }

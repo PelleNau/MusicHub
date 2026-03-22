@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Search, Undo2, Redo2, Wifi, SunMedium } from "lucide-react";
 import type { ConnectionState } from "@/services/hostConnector";
 import type { MeterLevel } from "@/services/pluginHostSocket";
@@ -27,16 +28,10 @@ interface TransportBarProps {
   sidecarStatus?: SidecarStatus | null;
   masterMeter?: MeterLevel | null;
   syncStatus?: SyncStatus;
-  keyRoot: number;
-  keyScale: string;
-  zoomLevel: number;
   onPlay: () => void;
   onPause: () => void;
   onStop: () => void;
   onTempoChange: (tempo: number) => void;
-  onKeyRootChange: (root: number) => void;
-  onKeyScaleChange: (scale: string) => void;
-  onZoomLevelChange: (zoomLevel: number) => void;
   onLoopToggle?: () => void;
   onUndo?: () => void;
   onRedo?: () => void;
@@ -72,16 +67,10 @@ export function TransportBar({
   sidecarStatus = null,
   masterMeter,
   syncStatus,
-  keyRoot,
-  keyScale,
-  zoomLevel,
   onPlay,
   onPause,
   onStop,
   onTempoChange,
-  onKeyRootChange,
-  onKeyScaleChange,
-  onZoomLevelChange,
   onLoopToggle,
   onUndo,
   onRedo,
@@ -102,6 +91,9 @@ export function TransportBar({
   });
 
   const figmaCapture = captureVariant === "figma";
+  const [keyRoot, setKeyRoot] = useState(0);
+  const [keyScale, setKeyScale] = useState("major");
+  const [zoomLevel, setZoomLevel] = useState(figmaCapture ? 75 : 80);
   const effectiveZoomLevel = figmaCapture ? Math.min(zoomLevel, 75) : zoomLevel;
 
   return (
@@ -198,8 +190,8 @@ export function TransportBar({
         <KeySelector
           root={keyRoot}
           scale={keyScale}
-          onChangeRoot={onKeyRootChange}
-          onChangeScale={onKeyScaleChange}
+          onChangeRoot={setKeyRoot}
+          onChangeScale={setKeyScale}
           compact
           className={`${figmaCapture ? "[&_select]:h-7 [&_select]:rounded-[5px] [&_select]:px-2.5 [&_select]:text-[10px]" : "[&_select]:h-8 [&_select]:rounded-md [&_select]:px-3"} [&_select]:border-white/8 [&_select]:bg-[#2b2d33] [&_select]:text-white/82 [&_select]:outline-none [&_select]:focus:ring-0`}
         />
@@ -211,7 +203,7 @@ export function TransportBar({
         </button>
         <ZoomControl
           zoomLevel={effectiveZoomLevel}
-          onChange={onZoomLevelChange}
+          onChange={setZoomLevel}
           compact
           className="[&_.bg-border]:bg-white/8 [&_.bg-foreground\\/70]:text-white/70 [&_.bg-foreground\\/90]:text-white/90 [&_.border-\\[var\\(--border\\)\\]]:border-white/8 [&_.bg-\\[var\\(--surface-1\\)\\]]:bg-[#2b2d33] [&_.hover\\:bg-\\[var\\(--surface-2\\)\\]:hover]:bg-white/6 [&_.hover\\:text-foreground:hover]:text-white [&_.hover\\:border-primary:hover]:border-white/18"
         />
