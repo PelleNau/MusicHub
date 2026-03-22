@@ -18,6 +18,8 @@ This stream is responsible for:
 - Working tree: active local implementation edits in progress
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
+- Execution protocol:
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MH-053_Execution_Protocol.md`
 
 ## Protocol Commands
 
