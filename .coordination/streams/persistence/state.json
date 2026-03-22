@@ -1,0 +1,13 @@
+{
+  "stream": "persistence",
+  "displayName": "MusicHub Persistence",
+  "branch": "codex/supabase-persistence",
+  "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/supabase-persistence",
+  "status": "idle",
+  "activeTaskId": null,
+  "latestInboxMessageId": null,
+  "latestAcknowledgedInboxMessageId": null,
+  "latestOutboxMessageId": null,
+  "latestCompletedTaskId": null,
+  "updatedAt": "2026-03-22T00:00:00.000Z"
+}
