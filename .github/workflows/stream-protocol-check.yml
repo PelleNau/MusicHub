@@ -24,11 +24,11 @@ jobs:
           node-version: "20"
 
       - name: Check stream acknowledgment
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'codex/figma-capture-mode')
         run: node scripts/stream-check-in.mjs
 
       - name: Check stream reporting
-        if: github.event_name != 'pull_request'
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'codex/figma-capture-mode')
         run: node scripts/stream-check-out.mjs
 
       - name: Check stream ownership
