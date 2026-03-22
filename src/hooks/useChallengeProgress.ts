@@ -1,6 +1,10 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  deleteChallengeProgressRecord,
+  fetchChallengeProgressRecord,
+  upsertChallengeProgressRecord,
+} from "@/domain/theory/theoryPersistence";
 
 export function useChallengeProgress(moduleKey: string) {
   const { user } = useAuth();
@@ -12,16 +16,10 @@ export function useChallengeProgress(moduleKey: string) {
     if (!user) { setLoading(false); return; }
     let cancelled = false;
 
-    supabase
-      .from("challenge_progress")
-      .select("completed_indices")
-      .eq("user_id", user.id)
-      .eq("module_key", moduleKey)
-      .maybeSingle()
-      .then(({ data }) => {
+    fetchChallengeProgressRecord(user.id, moduleKey).then((completedIndices) => {
         if (cancelled) return;
-        if (data?.completed_indices) {
-          setCompletedSet(new Set(data.completed_indices as number[]));
+        if (completedIndices) {
+          setCompletedSet(new Set(completedIndices));
         }
         setLoading(false);
       });
@@ -37,13 +35,7 @@ export function useChallengeProgress(moduleKey: string) {
         // Fire-and-forget upsert
         if (user) {
           const arr = Array.from(next);
-          supabase
-            .from("challenge_progress")
-            .upsert(
-              { user_id: user.id, module_key: moduleKey, completed_indices: arr, updated_at: new Date().toISOString() },
-              { onConflict: "user_id,module_key" }
-            )
-            .then(() => {});
+          upsertChallengeProgressRecord(user.id, moduleKey, arr).then(() => {});
         }
         return next;
       });
@@ -54,11 +46,7 @@ export function useChallengeProgress(moduleKey: string) {
   const resetProgress = useCallback(async () => {
     setCompletedSet(new Set());
     if (user) {
-      await supabase
-        .from("challenge_progress")
-        .delete()
-        .eq("user_id", user.id)
-        .eq("module_key", moduleKey);
+      await deleteChallengeProgressRecord(user.id, moduleKey);
     }
   }, [user, moduleKey]);
 

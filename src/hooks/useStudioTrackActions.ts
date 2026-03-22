@@ -21,6 +21,7 @@ import { invalidateSessionTracks } from "@/domain/studio/studioSessionQueries";
 import type { StudioSessionDomainRuntimeState } from "@/types/musicHubStudioRuntime";
 import type {
   AddTrackMutation,
+  CreateClipMutation,
   ClipCreatePayload,
   ClipUpdatePayload,
   TrackUpdatePayload,
@@ -117,6 +118,7 @@ interface UseStudioTrackActionsOptions {
   tracks: SessionTrack[];
   sessionDomainModel: StudioSessionDomainRuntimeState;
   addTrack: AddTrackMutation;
+  createClip: CreateClipMutation;
   updateTrack: UpdateTrackMutation;
   deleteTrack: { mutate: (trackId: string) => void };
   updateClip: UpdateClipMutation;
@@ -131,6 +133,7 @@ export function useStudioTrackActions({
   tracks,
   sessionDomainModel,
   addTrack,
+  createClip,
   updateTrack,
   deleteTrack,
   updateClip,
@@ -587,10 +590,7 @@ export function useStudioTrackActions({
           audio_url: urlData.publicUrl,
           waveform_peaks: peaks,
         };
-        const { error } = await supabase.from("session_clips").insert([insertPayload]);
-        if (error) throw error;
-
-        await invalidateSessionTracks(queryClient, activeSessionId);
+        await createClip.mutateAsync(insertPayload);
         toast.success("Audio added");
         audioContext.close();
       } catch {
@@ -599,7 +599,7 @@ export function useStudioTrackActions({
 
       if (fileInputRef.current) fileInputRef.current.value = "";
     },
-    [activeSessionId, addTrack, authUserId, queryClient, sessionMetrics.tempo, tracks.length]
+    [activeSessionId, addTrack, authUserId, createClip, queryClient, sessionMetrics.tempo, tracks.length]
   );
 
   const handleAutomationAdd = useCallback(

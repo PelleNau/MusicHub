@@ -8,13 +8,17 @@ This stream is responsible for:
 - persistence contracts between frontend and backend
 - auth/data access boundaries
 - Studio session save/load persistence semantics
+- desktop/runtime config requirements for Supabase-backed builds
 
 ## Current State
 
 - Branch: `codex/supabase-persistence`
 - Worktree: `/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/supabase-persistence`
 - Base commit: `6d2c6d1` (`origin/main` as of 2026-03-22)
-- Working tree: one untracked planning file in this path
+- Current branch head: `ffb8000` (`Add Supabase persistence handover`)
+- Working tree: active local implementation edits in progress
+- Authority:
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 
 Existing backend/data surface:
 - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/supabase`
@@ -31,6 +35,7 @@ Existing backend/data surface:
   - persistence contracts between app and backend
   - auth/data access boundaries
   - what Studio/session state is persisted versus local-only
+  - the contract for how Supabase config is supplied to desktop builds
 - `Database` does **not** own:
   - Studio runtime interaction behavior
   - plugin-host process lifecycle
@@ -42,14 +47,21 @@ Existing backend/data surface:
 
 ## Files Changed
 
-- This branch currently contains only this planning file.
+- This stream now includes:
+  - this handover/planning file
+  - a Supabase inventory doc in `docs/project/MH-053_Supabase_Persistence_Inventory.md`
+  - Studio hook changes that route clip creation back through the session persistence seam
+  - a theory persistence adapter in `src/domain/theory/theoryPersistence.ts`
+  - focused tests for Studio clip creation flows in `src/hooks/__tests__/useStudioClipActions.test.tsx`
 
 ## Open Problems
 
-- This branch is now rebased to current `origin/main`, but it still does not own any implementation changes.
-- Persistence logic is still split between the domain adapter layer and direct hook-level Supabase writes.
-- The active Studio persistence path is partly centralized in `src/domain/studio/studioSessionPersistence.ts`, but not yet fully enforced as the only write boundary.
-- Supabase ownership is still broader than Studio sessions and needs an explicit inventory before schema/function work begins.
+- The branch has begun implementation work, but it still needs commit-level consolidation and validation before it is a stable checkpoint.
+- Persistence logic is more centralized than before, but the broader non-Studio Supabase surface still lacks dedicated adapters for inventory, chat, and enrichment flows.
+- The active Studio persistence path is now enforced for clip creation flows, but the broader app still has many feature-level Supabase call sites.
+- Supabase ownership is broader than Studio sessions, and the branch still needs explicit ownership decisions beyond the current inventory pass.
+- Desktop builds currently depend on Vite-time Supabase env injection, but that provisioning path is not yet documented or automated in this stream.
+- Missing Supabase env should never hard-crash packaged startup; the app should degrade to an explicit setup-required screen until config is supplied.
 
 ## Current Persistence Map
 
@@ -57,9 +69,10 @@ Existing backend/data surface:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/domain/studio/studioSessionPersistence.ts`
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/domain/studio/studioSessionSource.ts`
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/hooks/useSession.ts`
-- There are still direct clip insert paths outside the persistence adapter in:
-  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/hooks/useStudioClipActions.ts`
-  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/hooks/useStudioTrackActions.ts`
+- Theory progress/state persistence is now centered in:
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/domain/theory/theoryPersistence.ts`
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/hooks/useChallengeProgress.ts`
+  - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/hooks/useTheoryStats.ts`
 - Existing Studio session schema currently includes:
   - `session_clips` in `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/supabase/migrations/20260311191407_54806401-2410-4601-97d1-b6363b762f8d.sql`
   - `alias_of` migration in `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/supabase/migrations/20260311224836_8d82b3b4-b904-498e-806d-dad1bfd9bcdf.sql`
@@ -71,7 +84,7 @@ Existing backend/data surface:
 ## Execution Plan
 
 1. Finish the inventory doc for all active Supabase tables, edge functions, buckets, and app call sites.
-2. Audit every Studio session mutation path and remove direct hook-level writes that bypass `studioSessionPersistence.ts`.
+2. Continue moving non-Studio direct Supabase reads/writes behind feature-level adapters where the surface is stable enough.
 3. Define the persistence contract by category:
    - persisted cross-device state
    - persisted project/session state
@@ -82,17 +95,16 @@ Existing backend/data surface:
 
 ## First Implementation Targets
 
-1. Create a persistence inventory document under `docs/project/` covering:
-   - tables and migrations
-   - buckets and storage paths
-   - edge functions
-   - frontend call sites
-2. Refactor direct `session_clips` inserts in:
-   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/hooks/useStudioClipActions.ts`
-   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/src/hooks/useStudioTrackActions.ts`
-   so those writes route through the adapter layer instead of duplicating Supabase payload assembly.
-3. Review row-level security and ownership assumptions for session-linked tables before adding new write paths.
-4. Add or update tests around the adapter boundary before changing any schema.
+1. Commit the current inventory and adapter work as the new persistence baseline for this stream.
+2. Review row-level security and ownership assumptions for session-linked and theory-linked tables before adding new write paths.
+3. Decide the next non-Studio adapter target:
+   - inventory
+   - chat
+   - image enrichment
+4. Define the desktop build config contract:
+   - where `.env` is expected during local platform builds
+   - whether platform tooling copies, templates, or injects `VITE_SUPABASE_URL` and `VITE_SUPABASE_PUBLISHABLE_KEY`
+   - how packaged builds should behave when config is absent
 
 ## Validation
 
@@ -109,6 +121,17 @@ Minimum checks for this stream:
 ```bash
 /Users/pellenaucler/Documents/CodexProjekt/MusicHub/node_modules/.bin/vitest run src/audio/__tests__/AudioEngine.test.ts src/hooks/__tests__/useProjectHistory.test.ts
 ```
+
+For desktop/platform changes, also verify:
+
+```bash
+/Users/pellenaucler/Documents/CodexProjekt/MusicHub/node_modules/.bin/tsc --noEmit -p /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/supabase-persistence/tsconfig.json
+```
+
+Then confirm one of:
+
+- packaged app starts with configured Supabase env embedded, or
+- packaged app renders the setup-required screen without crashing when env is absent
 
 ## Do Not Touch
 

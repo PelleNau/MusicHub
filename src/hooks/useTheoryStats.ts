@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  fetchTheoryStatsRecord,
+  upsertTheoryStatsRecord,
+} from "@/domain/theory/theoryPersistence";
 
 export const XP_FIRST_TRY = 10;
 export const XP_RETRY = 5;
@@ -44,12 +47,7 @@ export function useTheoryStats() {
     if (!user) { setLoading(false); return; }
     let cancelled = false;
 
-    supabase
-      .from("user_theory_stats")
-      .select("*")
-      .eq("user_id", user.id)
-      .maybeSingle()
-      .then(({ data }) => {
+    fetchTheoryStatsRecord(user.id).then((data) => {
         if (cancelled) return;
         if (data) {
           setXp(data.xp);
@@ -66,13 +64,7 @@ export function useTheoryStats() {
   const persist = useCallback(
     (updates: { xp: number; current_streak: number; longest_streak: number; last_practice_date: string | null }) => {
       if (!user) return;
-      supabase
-        .from("user_theory_stats")
-        .upsert(
-          { user_id: user.id, ...updates, updated_at: new Date().toISOString() },
-          { onConflict: "user_id" }
-        )
-        .then(() => {});
+      upsertTheoryStatsRecord(user.id, updates).then(() => {});
     },
     [user]
   );

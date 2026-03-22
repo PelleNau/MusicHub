@@ -96,6 +96,7 @@ export function useStudioActions({
     tracks,
     sessionDomainModel,
     addTrack,
+    createClip,
     updateTrack,
     deleteTrack,
     updateClip,
