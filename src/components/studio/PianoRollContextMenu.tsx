@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/context-menu";
 
 interface PianoRollContextMenuProps {
+  hasNotes: boolean;
   hasSelection: boolean;
   hasMultipleSelection: boolean;
   hasClipboard: boolean;
@@ -34,27 +35,35 @@ interface PianoRollContextMenuProps {
   onQuantize: () => void;
   onHumanize: () => void;
   onTransposeOpen: () => void;
+  onStrummingOpen: () => void;
+  onChordToolsOpen: () => void;
+  onArpeggiatorOpen: () => void;
   onLegato: () => void;
   onReverse: () => void;
   onInvert: () => void;
-}
-
-function DisabledMenuItem({
-  label,
-  shortcut,
-}: {
-  label: string;
-  shortcut?: string;
-}) {
-  return (
-    <ContextMenuItem disabled className="text-xs font-mono">
-      {label}
-      {shortcut ? <ContextMenuShortcut className="text-[9px]">{shortcut}</ContextMenuShortcut> : null}
-    </ContextMenuItem>
-  );
+  onSetLengthSixteenth: () => void;
+  onSetLengthEighth: () => void;
+  onSetLengthQuarter: () => void;
+  onStaccatoHalf: () => void;
+  onDoubleLength: () => void;
+  onHalfLength: () => void;
+  onVelocityAdd: () => void;
+  onVelocityRandomize: () => void;
+  onVelocityRampUp: () => void;
+  onVelocityRampDown: () => void;
+  onVelocityCompress: () => void;
+  onVelocityExpand: () => void;
+  onSplitAtPlayhead: () => void;
+  onSplitAtBars: () => void;
+  onSplitAtBeats: () => void;
+  onJoinConsecutive: () => void;
+  onRemoveShortNotes: () => void;
+  onRepeat2x: () => void;
+  onRepeat4x: () => void;
 }
 
 export function PianoRollContextMenu({
+  hasNotes,
   hasSelection,
   hasMultipleSelection,
   hasClipboard,
@@ -67,33 +76,89 @@ export function PianoRollContextMenu({
   onQuantize,
   onHumanize,
   onTransposeOpen,
+  onStrummingOpen,
+  onChordToolsOpen,
+  onArpeggiatorOpen,
   onLegato,
   onReverse,
   onInvert,
+  onSetLengthSixteenth,
+  onSetLengthEighth,
+  onSetLengthQuarter,
+  onStaccatoHalf,
+  onDoubleLength,
+  onHalfLength,
+  onVelocityAdd,
+  onVelocityRandomize,
+  onVelocityRampUp,
+  onVelocityRampDown,
+  onVelocityCompress,
+  onVelocityExpand,
+  onSplitAtPlayhead,
+  onSplitAtBars,
+  onSplitAtBeats,
+  onJoinConsecutive,
+  onRemoveShortNotes,
+  onRepeat2x,
+  onRepeat4x,
 }: PianoRollContextMenuProps) {
   return (
     <ContextMenuContent className="min-w-[220px]">
+      <ContextMenuItem onClick={onQuantize} disabled={!hasNotes} className="gap-2">
+        <Zap className="h-3.5 w-3.5 opacity-70" />
+        Quantize
+        <ContextMenuShortcut className="text-[9px]">Q</ContextMenuShortcut>
+      </ContextMenuItem>
+      <ContextMenuItem onClick={onHumanize} disabled={!hasNotes} className="gap-2">
+        <Zap className="h-3.5 w-3.5 opacity-70" />
+        Humanize
+        <ContextMenuShortcut className="text-[9px]">H</ContextMenuShortcut>
+      </ContextMenuItem>
+      <ContextMenuItem onClick={onTransposeOpen} disabled={!hasNotes} className="gap-2">
+        <ArrowUpDown className="h-3.5 w-3.5 opacity-70" />
+        Transpose
+        <ContextMenuShortcut className="text-[9px]">T</ContextMenuShortcut>
+      </ContextMenuItem>
+      <ContextMenuItem onClick={onArpeggiatorOpen} disabled={!hasMultipleSelection} className="gap-2">
+        <Sparkles className="h-3.5 w-3.5 opacity-70" />
+        Arpeggiator
+        <ContextMenuShortcut className="text-[9px]">A</ContextMenuShortcut>
+      </ContextMenuItem>
+      <ContextMenuItem onClick={onSplitAtPlayhead} disabled={!hasNotes} className="gap-2">
+        <Scissors className="h-3.5 w-3.5 opacity-70" />
+        Split at Playhead
+      </ContextMenuItem>
+
+      <ContextMenuSeparator />
+
       <ContextMenuSub>
         <ContextMenuSubTrigger className="gap-2">
           <Zap className="h-3.5 w-3.5 opacity-70" />
           Transform
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className="min-w-[200px]">
-          <ContextMenuItem onClick={onQuantize} disabled={!hasSelection}>
+          <ContextMenuItem onClick={onQuantize} disabled={!hasNotes}>
             Quantize
             <ContextMenuShortcut className="text-[9px]">Q</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem onClick={onHumanize} disabled={!hasSelection}>
+          <ContextMenuItem onClick={onHumanize} disabled={!hasNotes}>
             Humanize
             <ContextMenuShortcut className="text-[9px]">H</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuItem onClick={onReverse} disabled={!hasMultipleSelection}>
+          <ContextMenuItem onClick={onReverse} disabled={!hasNotes}>
             Reverse Order
           </ContextMenuItem>
-          <DisabledMenuItem label="Mirror (Time)" />
-          <DisabledMenuItem label="Mirror (Pitch)" />
+          <ContextMenuItem onClick={onReverse} disabled={!hasNotes}>
+            Mirror (Time)
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onInvert} disabled={!hasNotes}>
+            Mirror (Pitch)
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Strumming" shortcut="S" />
+          <ContextMenuItem onClick={onStrummingOpen} disabled={!hasMultipleSelection}>
+            Strumming
+            <ContextMenuShortcut className="text-[9px]">S</ContextMenuShortcut>
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
 
@@ -103,14 +168,18 @@ export function PianoRollContextMenu({
           Pitch
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className="min-w-[200px]">
-          <ContextMenuItem onClick={onTransposeOpen} disabled={!hasSelection}>
+          <ContextMenuItem onClick={onTransposeOpen} disabled={!hasNotes}>
             Transpose
             <ContextMenuShortcut className="text-[9px]">T</ContextMenuShortcut>
           </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Chord Tools" shortcut="C" />
-          <DisabledMenuItem label="Detect Chords" />
-          <DisabledMenuItem label="Invert Chord" />
+          <ContextMenuItem onClick={onChordToolsOpen} disabled={!hasMultipleSelection}>
+            Chord Tools
+            <ContextMenuShortcut className="text-[9px]">C</ContextMenuShortcut>
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onInvert} disabled={!hasMultipleSelection}>
+            Invert Chord / Notes
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
 
@@ -120,16 +189,28 @@ export function PianoRollContextMenu({
           Duration
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className="min-w-[200px]">
-          <DisabledMenuItem label="Quantize Length" />
+          <ContextMenuItem onClick={onSetLengthSixteenth} disabled={!hasNotes}>
+            Quantize Length to 1/16
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onSetLengthEighth} disabled={!hasNotes}>
+            Quantize Length to 1/8
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onSetLengthQuarter} disabled={!hasNotes}>
+            Quantize Length to 1/4
+          </ContextMenuItem>
           <ContextMenuItem onClick={onLegato} disabled={!hasMultipleSelection}>
             Legato (Extend to Next)
           </ContextMenuItem>
-          <DisabledMenuItem label="Staccato (50%)" />
+          <ContextMenuItem onClick={onStaccatoHalf} disabled={!hasNotes}>
+            Staccato (50%)
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Double Length" />
-          <DisabledMenuItem label="Half Length" />
-          <ContextMenuSeparator />
-          <DisabledMenuItem label="Scale Length" />
+          <ContextMenuItem onClick={onDoubleLength} disabled={!hasNotes}>
+            Double Length
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onHalfLength} disabled={!hasNotes}>
+            Half Length
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
 
@@ -139,15 +220,26 @@ export function PianoRollContextMenu({
           Velocity
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className="min-w-[200px]">
-          <DisabledMenuItem label="Scale Velocity" />
-          <DisabledMenuItem label="Add Velocity" />
-          <DisabledMenuItem label="Randomize Velocity" />
+          <ContextMenuItem onClick={onVelocityAdd} disabled={!hasNotes}>
+            Add Velocity (+10)
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onVelocityRandomize} disabled={!hasNotes}>
+            Randomize Velocity
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Ramp Up" />
-          <DisabledMenuItem label="Ramp Down" />
+          <ContextMenuItem onClick={onVelocityRampUp} disabled={!hasMultipleSelection}>
+            Ramp Up
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onVelocityRampDown} disabled={!hasMultipleSelection}>
+            Ramp Down
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Compress Velocity" />
-          <DisabledMenuItem label="Expand Velocity" />
+          <ContextMenuItem onClick={onVelocityCompress} disabled={!hasNotes}>
+            Compress Velocity
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onVelocityExpand} disabled={!hasNotes}>
+            Expand Velocity
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
 
@@ -157,10 +249,17 @@ export function PianoRollContextMenu({
           Creative
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className="min-w-[200px]">
-          <DisabledMenuItem label="Arpeggiator" shortcut="A" />
+          <ContextMenuItem onClick={onArpeggiatorOpen} disabled={!hasMultipleSelection}>
+            Arpeggiator
+            <ContextMenuShortcut className="text-[9px]">A</ContextMenuShortcut>
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Repeat 2x" />
-          <DisabledMenuItem label="Repeat 4x" />
+          <ContextMenuItem onClick={onRepeat2x} disabled={!hasNotes}>
+            Repeat 2x
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onRepeat4x} disabled={!hasNotes}>
+            Repeat 4x
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
 
@@ -170,13 +269,23 @@ export function PianoRollContextMenu({
           Notes
         </ContextMenuSubTrigger>
         <ContextMenuSubContent className="min-w-[200px]">
-          <DisabledMenuItem label="Split at Playhead" />
-          <DisabledMenuItem label="Split at Bars" />
-          <DisabledMenuItem label="Split at Beats" />
+          <ContextMenuItem onClick={onSplitAtPlayhead} disabled={!hasNotes}>
+            Split at Playhead
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onSplitAtBars} disabled={!hasNotes}>
+            Split at Bars
+          </ContextMenuItem>
+          <ContextMenuItem onClick={onSplitAtBeats} disabled={!hasNotes}>
+            Split at Beats
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Join Consecutive" />
+          <ContextMenuItem onClick={onJoinConsecutive} disabled={!hasMultipleSelection}>
+            Join Consecutive
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <DisabledMenuItem label="Remove Short Notes" />
+          <ContextMenuItem onClick={onRemoveShortNotes} disabled={!hasNotes}>
+            Remove Short Notes
+          </ContextMenuItem>
         </ContextMenuSubContent>
       </ContextMenuSub>
 
@@ -194,12 +303,6 @@ export function PianoRollContextMenu({
             Deselect All
             <ContextMenuShortcut className="text-[9px]">Esc</ContextMenuShortcut>
           </ContextMenuItem>
-          <ContextMenuSeparator />
-          <DisabledMenuItem label="Select by Velocity" />
-          <DisabledMenuItem label="Select by Pitch" />
-          <DisabledMenuItem label="Select by Duration" />
-          <ContextMenuSeparator />
-          <DisabledMenuItem label="Invert Selection" />
         </ContextMenuSubContent>
       </ContextMenuSub>
 
@@ -220,7 +323,6 @@ export function PianoRollContextMenu({
         Paste
         <ContextMenuShortcut className="text-[9px]">Ctrl+V</ContextMenuShortcut>
       </ContextMenuItem>
-      <DisabledMenuItem label="Duplicate" shortcut="Ctrl+D" />
 
       <ContextMenuSeparator />
 
