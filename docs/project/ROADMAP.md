@@ -4,18 +4,22 @@
 
 This roadmap defines the delivery sequence for the current product release, not just the architecture program.
 
-Current release target:
+Published release:
 
 - `R1 Studio Baseline`
+
+Active next release target:
+
+- `R2 Studio Replacement`
 
 ## Release Strategy
 
 The roadmap is now release-driven:
 
-1. approve the Studio baseline under the normalized `R1` contract
-2. publish and synchronize the approved baseline branches
-3. run a bounded stabilization window against the shipped baseline
-4. only then open the next release train
+1. publish the approved `R1` Studio baseline
+2. use `R1` as the stable behavioral baseline
+3. replace the remaining old-shell product surfaces in `R2`
+4. preserve `R1`-validated runtime behavior while upgrading the product routes
 
 ## R1 — Studio Baseline
 
@@ -166,7 +170,34 @@ Publish the approved baseline and keep it stable while it is synchronized, tagge
 - no speculative cleanup
 - no plugin-host expansion unless a shipped baseline defect proves dependency
 
-## Post-R1 Candidates
+## R2 — Studio Replacement
+
+### Goal
+
+Replace the remaining old Studio shell assumptions on `/studio` and `/studio/workspace` with the newer integrated Studio interface, without regressing the `R1`-validated runtime/editor contract.
+
+### In Scope
+
+- product-route shell replacement on `/studio` and `/studio/workspace`
+- newer arrangement, piano-roll, and mixer presentation as the primary product interface
+- preservation of `R1` transport, arrangement interaction, piano-roll interaction, mixer baseline, browser baseline, and automation baseline behavior
+- removal of route-level dependence on legacy shell composition where it is no longer required
+
+### Out Of Scope
+
+- plugin-host expansion unless explicitly promoted
+- broad learning-surface redesign
+- speculative backend architecture work unrelated to the replacement pass
+- non-product preview/import/reference surfaces except where they must be harvested into the real routes
+
+### Planned Phases
+
+1. replacement architecture and route contract
+2. product-shell replacement on real routes
+3. runtime-preserving integration of arrangement/piano-roll/mixer surfaces
+4. replacement validation against the `R1` baseline contract plus `R2` visual/interface goals
+
+## Post-R2 Candidates
 
 These are not in the current release path by default:
 
@@ -174,7 +205,3 @@ These are not in the current release path by default:
 - deeper routing/device-chain completeness
 - backend/native maturity work beyond Studio baseline validation
 - broader product-surface expansion outside the Studio release path
-
-Default next release candidate after stabilization:
-
-- `R2 Studio Expansion`

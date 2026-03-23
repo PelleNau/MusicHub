@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-`R1 Approved / Release Publishing`
+`R2 Studio Replacement Program`
 
 ## Program Baseline
 
@@ -13,9 +13,13 @@ The project is now operating under a release-program structure:
 - execution layer
   - stream branches, ownership rules, `.coordination` control plane, CI gates
 
-Active release:
+Published release:
 
 - `R1 Studio Baseline`
+
+Active next release:
+
+- `R2 Studio Replacement`
 
 Authoritative validation branch:
 
@@ -52,10 +56,10 @@ Machine-readable release registry:
 
 ## Current Reality
 
-- `R1 Studio Baseline` is approved under `MH-060`
-- the integration trunk and validation branch are aligned at the approved baseline head
-- the next operational phase is release publishing plus a bounded stabilization window
-- no new feature work is accepted on the baseline during stabilization
+- `R1 Studio Baseline` is approved and treated as the published baseline
+- the integration trunk and validation branch are aligned at the approved `R1` head
+- the next active program is `R2 Studio Replacement`
+- `R2` exists to replace the remaining old-shell assumptions on `/studio` and `/studio/workspace` with the newer integrated Studio interface while preserving `R1`-validated runtime behavior
 
 ## Current Release State
 
@@ -65,28 +69,36 @@ Machine-readable release registry:
   - `docs/project/MH-063_R1_Studio_Baseline_Defect_Ledger.md`
   - `docs/project/MH-064_R1_Studio_Baseline_Burndown.md`
   - `docs/project/MH-070_R1_Validation_Mapping_Register.md`
-- release/stabilization operating plan:
+- published release closeout:
   - `docs/project/MH-071_R1_Release_Closure_And_Stabilization_Plan.md`
   - `docs/project/MH-072_R1_Stabilization_Defect_Ledger.md`
   - `docs/project/MH-073_R1_Stabilization_Validation_Log.md`
 
+## Active Program Backbone
+
+The active next-release program is governed by:
+
+- `docs/project/MH-074_R2_Studio_Replacement_Program_Charter.md`
+- `docs/project/MH-075_R2_Studio_Replacement_Workstream_Definitions.md`
+- `docs/project/MH-076_R2_Studio_Replacement_Backlog.md`
+- `.coordination/releases/r2-studio-replacement.json`
+
 ## Current Execution Rule
 
-No stabilization or release-quality work is accepted unless:
+No `R2` implementation work is accepted unless:
 
 1. the requirement exists in `MH-066` and `MH-057`
 2. the mapped validation exists in `MH-058` and `MH-070`
 3. any active contradiction is decisioned in `MH-067`
-4. the defect exists in `MH-072` for post-approval issues, or in `MH-063` if it reopens an approved `R1` defect
+4. the work item exists in the active `R2` backlog
 5. the work is assigned to one owning stream only
-6. the repaired requirement is revalidated before closure
+6. `R1`-validated runtime behavior is preserved or an explicit migration decision is recorded
 
 ## Next Milestone
 
-The next milestone is reached when:
+`R2 Studio Replacement` reaches the next milestone when:
 
-- remote `main`, `codex/figma-capture-mode`, and `codex/studio-integration-baseline` are synchronized
-- release tag `r1-studio-baseline` exists
-- the stabilization regression pack passes
-- `MH-071`, `MH-072`, and `MH-073` are current
-- the next release target is chosen and documented
+- the replacement architecture is approved
+- the product-route shell replacement scope is frozen
+- the first implementation wave is assigned
+- the baseline preservation rules for `R1` behavior are explicit
