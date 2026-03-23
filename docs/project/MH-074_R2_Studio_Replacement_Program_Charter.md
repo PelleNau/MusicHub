@@ -54,14 +54,18 @@ That means:
 
 Current phase:
 
-- `R2 replacement planning and scope freeze`
+- `R2 route contract locked, replacement implementation ready`
 
 Objectives:
 
-- define the exact route replacement contract
-- define what legacy shell behavior is being removed
-- define what `R1` behavior is preserved
-- break `R2` into implementation waves that can be assigned cleanly
+- complete the route replacement contract
+- move shell replacement into executable waves
+- preserve the `R1` runtime contract during replacement
+- replace the remaining legacy product-shell authority on `/studio` and `/studio/workspace`
+
+Route contract:
+
+- `docs/project/MH-077_R2_Studio_Route_Replacement_Contract.md`
 
 ## Approval Authority
 

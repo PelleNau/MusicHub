@@ -3,13 +3,14 @@
   "name": "R2 Studio Replacement",
   "status": "active",
   "objective": "Replace the remaining old Studio shell on /studio and /studio/workspace with the newer integrated Studio interface while preserving R1-validated runtime behavior.",
-  "currentPhase": "replacement-planning-and-scope-freeze",
+  "currentPhase": "route-contract-approved-and-shell-replacement-ready",
   "integrationTrunk": "codex/figma-capture-mode",
   "validationBranch": "codex/studio-integration-baseline",
   "programDocs": {
     "programCharter": "docs/project/MH-074_R2_Studio_Replacement_Program_Charter.md",
     "workstreamDefinitions": "docs/project/MH-075_R2_Studio_Replacement_Workstream_Definitions.md",
-    "backlog": "docs/project/MH-076_R2_Studio_Replacement_Backlog.md"
+    "backlog": "docs/project/MH-076_R2_Studio_Replacement_Backlog.md",
+    "routeReplacementContract": "docs/project/MH-077_R2_Studio_Route_Replacement_Contract.md"
   },
   "scope": {
     "include": [

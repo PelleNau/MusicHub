@@ -81,6 +81,7 @@ The active next-release program is governed by:
 - `docs/project/MH-074_R2_Studio_Replacement_Program_Charter.md`
 - `docs/project/MH-075_R2_Studio_Replacement_Workstream_Definitions.md`
 - `docs/project/MH-076_R2_Studio_Replacement_Backlog.md`
+- `docs/project/MH-077_R2_Studio_Route_Replacement_Contract.md`
 - `.coordination/releases/r2-studio-replacement.json`
 
 ## Current Execution Rule
@@ -98,7 +99,7 @@ No `R2` implementation work is accepted unless:
 
 `R2 Studio Replacement` reaches the next milestone when:
 
-- the replacement architecture is approved
-- the product-route shell replacement scope is frozen
-- the first implementation wave is assigned
-- the baseline preservation rules for `R1` behavior are explicit
+- the route replacement contract is approved
+- the first shell replacement wave is assigned under `MH-077`
+- the baseline preservation rules for `R1` behavior remain explicit
+- product-route implementation starts on `/studio` and `/studio/workspace`

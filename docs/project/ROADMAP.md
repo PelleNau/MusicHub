@@ -192,10 +192,15 @@ Replace the remaining old Studio shell assumptions on `/studio` and `/studio/wor
 
 ### Planned Phases
 
-1. replacement architecture and route contract
+1. route contract and replacement architecture
 2. product-shell replacement on real routes
 3. runtime-preserving integration of arrangement/piano-roll/mixer surfaces
 4. replacement validation against the `R1` baseline contract plus `R2` visual/interface goals
+
+Current `R2` state:
+
+- route contract complete in `MH-077`
+- next executable phase is product-shell replacement on `/studio` and `/studio/workspace`
 
 ## Post-R2 Candidates
 
