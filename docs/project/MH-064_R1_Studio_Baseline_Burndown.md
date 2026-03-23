@@ -3,7 +3,7 @@
 ## Release Status
 
 - Release: `R1 Studio Baseline`
-- Current phase: `Baseline Breadth Validation`
+- Current phase: `Baseline Breadth Repair and Validation`
 - Validation branch: `codex/studio-integration-baseline`
 - Integration trunk: `codex/figma-capture-mode`
 
@@ -14,8 +14,8 @@
 | Scope gate (`MH-055`, `MH-056`) | Complete | R1 scope and QC charter are in place and now govern execution. |
 | Normalization gate (`MH-065`-`MH-070`) | Complete | Canonical spec, contradiction ledger, and mapping matrices are established and active. |
 | Validation gate (`MH-057`, `MH-058`) | Active | Validation is now running against the normalized R1 contract. |
-| Repair gate (`MH-063`) | Active | Waves 1, 2, and 3 are accepted; Wave 4 breadth validation opened new mapped defects for mixer, browser, automation, and editing breadth. |
-| Exit gate (`MH-060`) | Active | Core repair waves are complete, but breadth-validation defects now block exit. |
+| Repair gate (`MH-063`) | Active | Waves 1, 2, and 3 are accepted; Wave 5 partially closed the editing breadth defects and left mixer, browser, and automation breadth still open. |
+| Exit gate (`MH-060`) | Active | Core repair waves are complete, but three breadth defects still block exit. |
 
 ## Defect Counts
 
@@ -23,7 +23,7 @@
 | --- | --- |
 | Blocker | 0 |
 | Critical | 0 |
-| Major | 5 |
+| Major | 3 |
 | Minor | 0 |
 | Polish | 0 |
 
@@ -37,7 +37,7 @@
 | Piano roll | Repair Accepted | Viewport range and extend/editing range defects are fixed at the product route level. |
 | Mixer | Failing | Wave 4 validation found the mixer baseline and core controls still failing R1 acceptance. |
 | Browser | Failing | Wave 4 validation found the browser baseline still failing on the product workspace route. |
-| Editing and shortcuts | Failing | Core Wave 2 interactions are accepted, but Wave 4 found tool-language and shortcut breadth gaps. |
+| Editing and shortcuts | Repair Accepted | Wave 5 restored editor presence and baseline editing shortcuts on the product routes. |
 | Visual parity | Repair Accepted | Arrangement visual parity defects are accepted; full cross-domain visual audit remains. |
 
 ## Current Execution Batch
@@ -60,8 +60,10 @@
    - `DEF-R1-012`
    - `DEF-R1-013`
    - `DEF-R1-014`
-5. Next wave:
+5. Wave 5 accepted repairs:
+   - `DEF-R1-013`
+   - `DEF-R1-014`
+6. Next wave:
    - mixer baseline breadth repair
    - browser baseline repair
    - automation baseline repair
-   - editing/shortcut breadth repair

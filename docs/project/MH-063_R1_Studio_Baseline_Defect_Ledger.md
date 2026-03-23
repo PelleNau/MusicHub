@@ -27,8 +27,8 @@ Every active release defect must map to:
 | DEF-R1-010 | `MIX-001`, `MIX-002` | `ST-040`, `ST-041` | Major | baseline breadth | `/studio`, `/studio/workspace` | `ui-integration` | Open | Mixer baseline surface and core controls are not yet validated as a coherent product surface on the Studio routes. |
 | DEF-R1-011 | `BRW-001` | `ST-050` | Major | baseline breadth | `/studio/workspace` | `ui-integration` | Open | Browser/library baseline is not yet coherent or reliably present on the product workspace route. |
 | DEF-R1-012 | `AUT-001` | `ST-060` | Major | baseline breadth | `/studio/workspace` | `runtime` | Open | Automation baseline presence and approved lane behavior are not product-routable on the Studio workspace route. |
-| DEF-R1-013 | `EDT-001` | `ST-070` | Major | editing contract | `/studio`, `/studio/workspace` | `runtime` | Open | Tool language and edit affordances are not yet surfaced as the approved product interaction contract on the Studio routes. |
-| DEF-R1-014 | `EDT-002` | `ST-071` | Major | editing contract | `/studio`, `/studio/workspace` | `runtime` | Open | Core editing shortcuts remain only partially wired on the product routes. |
+| DEF-R1-013 | `EDT-001` | `ST-070` | Major | editing contract | `/studio`, `/studio/workspace` | `runtime` | Closed | Product routes now restore the expected editor presence and tool/edit affordance contract needed for baseline editing. |
+| DEF-R1-014 | `EDT-002` | `ST-071` | Major | editing contract | `/studio`, `/studio/workspace` | `runtime` | Closed | Core baseline editing shortcuts are now wired on the product routes for duplicate and escape-driven selection clearing. |
 
 ## Recording Rules
 
