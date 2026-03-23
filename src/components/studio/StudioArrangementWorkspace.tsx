@@ -1,5 +1,7 @@
+import { useMemo, useState } from "react";
 import type { GridDivision } from "@/hooks/useTimelineGrid";
 import type { StudioMarkerModelResult } from "@/hooks/useStudioMarkerModel";
+import { getAutomatableParams } from "@/types/studio";
 import type { AutomationPoint, SessionTrack } from "@/types/studio";
 import type { MeterLevel } from "@/services/pluginHostSocket";
 import { BrowserPanel } from "@/components/studio/BrowserPanel";
@@ -8,6 +10,7 @@ import { LoopRegion } from "@/components/studio/LoopRegion";
 import { StudioArrangementToolbar } from "@/components/studio/StudioArrangementToolbar";
 import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/TimelineMarkerOverlay";
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
+import { TrackContextMenu } from "@/components/studio/TrackContextMenu";
 import { VerticalZoomSlider } from "@/components/studio/VerticalZoomSlider";
 import { TrackLane } from "@/components/studio/TrackLane";
 import { TRACK_HEADER_WIDTH } from "@/components/studio/timelineMath";
@@ -133,6 +136,16 @@ export function StudioArrangementWorkspace({
   assetImportInputProps,
   markerModel,
 }: StudioArrangementWorkspaceProps) {
+  const [trackContextMenu, setTrackContextMenu] = useState<{ trackId: string; x: number; y: number } | null>(null);
+  const contextMenuTrack = useMemo(
+    () => (trackContextMenu ? displayTracks.find((track) => track.id === trackContextMenu.trackId) ?? null : null),
+    [displayTracks, trackContextMenu],
+  );
+  const contextMenuAutomationTargets = useMemo(
+    () => (contextMenuTrack ? getAutomatableParams(contextMenuTrack) : []),
+    [contextMenuTrack],
+  );
+
   return (
     <div
       className="flex min-h-0 flex-1 overflow-hidden bg-[#141518]"
@@ -256,6 +269,7 @@ export function StudioArrangementWorkspace({
                           onAutomationChange={trackLaneProps.onAutomationChange}
                           onAutomationAdd={trackLaneProps.onAutomationAdd}
                           onAutomationRemove={trackLaneProps.onAutomationRemove}
+                          onOpenTrackContextMenu={(trackId, x, y) => setTrackContextMenu({ trackId, x, y })}
                           onDeleteClip={trackLaneProps.onDeleteClip}
                           onDuplicateClip={trackLaneProps.onDuplicateClip}
                           onLinkedDuplicateClip={trackLaneProps.onLinkedDuplicateClip}
@@ -275,6 +289,31 @@ export function StudioArrangementWorkspace({
                       ))
                     )}
                   </TimelineCanvas>
+                  {trackContextMenu && contextMenuTrack ? (
+                    <TrackContextMenu
+                      x={trackContextMenu.x}
+                      y={trackContextMenu.y}
+                      trackType={contextMenuTrack.type}
+                      isMuted={contextMenuTrack.is_muted}
+                      isSoloed={contextMenuTrack.is_soloed}
+                      isArmed={trackViewStateById[contextMenuTrack.id]?.nativeArmed ?? false}
+                      hasAutomation={((contextMenuTrack.automation_lanes || []) as unknown[]).length > 0}
+                      onClose={() => setTrackContextMenu(null)}
+                      onDelete={() => trackLaneProps.onDeleteTrack(contextMenuTrack.id)}
+                      onToggleMute={() => trackLaneProps.onMuteToggle(contextMenuTrack.id)}
+                      onToggleSolo={() => trackLaneProps.onSoloToggle(contextMenuTrack.id)}
+                      onAddAutomation={
+                        trackLaneProps.onAutomationAdd
+                          ? () => {
+                              const firstTarget = contextMenuAutomationTargets[0];
+                              if (firstTarget) {
+                                trackLaneProps.onAutomationAdd(contextMenuTrack.id, firstTarget.target, firstTarget.label);
+                              }
+                            }
+                          : undefined
+                      }
+                    />
+                  ) : null}
 
                   {captureVariant ? null : <div className="flex border-t border-white/6 bg-[#232429]">
                     <div className="sticky left-0 z-10 flex w-52 shrink-0 gap-1 border-r border-white/6 bg-[#24252a] px-2 py-2">

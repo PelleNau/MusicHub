@@ -7,25 +7,25 @@ interface TrackContextMenuProps {
   x: number;
   y: number;
   trackType: "audio" | "midi" | "group" | "return";
-  currentColor: string;
+  currentColor?: string;
   isMuted: boolean;
   isSoloed: boolean;
   isArmed: boolean;
   hasAutomation: boolean;
-  pointerMode: "draw" | "select" | "erase";
+  pointerMode?: "draw" | "select" | "erase";
   onClose: () => void;
-  onColorChange: (color: string) => void;
-  onChangeIcon: () => void;
-  onDuplicate: () => void;
+  onColorChange?: (color: string) => void;
+  onChangeIcon?: () => void;
+  onDuplicate?: () => void;
   onDelete: () => void;
-  onConvertToGroup: () => void;
+  onConvertToGroup?: () => void;
   onToggleMute: () => void;
   onToggleSolo: () => void;
-  onToggleArm: () => void;
-  onShowAutomation: () => void;
-  onHideAutomation: () => void;
-  onAddAutomation: () => void;
-  onPointerModeChange: (mode: "draw" | "select" | "erase") => void;
+  onToggleArm?: () => void;
+  onShowAutomation?: () => void;
+  onHideAutomation?: () => void;
+  onAddAutomation?: () => void;
+  onPointerModeChange?: (mode: "draw" | "select" | "erase") => void;
   onSaveAsTemplate?: () => void;
 }
 
@@ -84,58 +84,70 @@ export function TrackContextMenu({
       />
       <div
         ref={menuRef}
+        role="menu"
+        aria-label="Track context menu"
         className="fixed z-[9999] min-w-[220px] rounded border border-[var(--border-strong)] bg-[var(--surface-1)] py-0.5 shadow-2xl"
         style={{ left: position.x, top: position.y }}
       >
-        <Item onClick={() => handleAction(onChangeIcon)}>Change Icon</Item>
-        <Item onClick={() => handleAction(onDuplicate)} suffix="⌘D">Duplicate</Item>
+        {onChangeIcon ? <Item onClick={() => handleAction(onChangeIcon)}>Change Icon</Item> : null}
+        {onDuplicate ? <Item onClick={() => handleAction(onDuplicate)} suffix="⌘D">Duplicate</Item> : null}
         {onSaveAsTemplate ? <Item onClick={() => handleAction(onSaveAsTemplate)}>Save as Template</Item> : null}
-        {trackType !== "group" ? <Item onClick={() => handleAction(onConvertToGroup)}>Convert to Group</Item> : null}
+        {trackType !== "group" && onConvertToGroup ? <Item onClick={() => handleAction(onConvertToGroup)}>Convert to Group</Item> : null}
         <Item onClick={() => handleAction(onDelete)} destructive suffix="⌫">Delete</Item>
 
         <Divider />
         <Item onClick={() => handleAction(onToggleMute)} suffix="M">{isMuted ? "Unmute" : "Mute"}</Item>
         <Item onClick={() => handleAction(onToggleSolo)} suffix="S">{isSoloed ? "Unsolo" : "Solo"}</Item>
-        {trackType === "audio" || trackType === "midi" ? (
+        {(trackType === "audio" || trackType === "midi") && onToggleArm ? (
           <Item onClick={() => handleAction(onToggleArm)} suffix="R">{isArmed ? "Disarm" : "Arm"}</Item>
         ) : null}
 
-        <Divider />
-        <Item onClick={() => handleAction(hasAutomation ? onHideAutomation : onShowAutomation)}>
-          {hasAutomation ? "Hide Automation" : "Show Automation"}
-        </Item>
-        <Item onClick={() => handleAction(onAddAutomation)}>Add Automation</Item>
+        {onShowAutomation || onHideAutomation || onAddAutomation ? <Divider /> : null}
+        {hasAutomation && onHideAutomation ? (
+          <Item onClick={() => handleAction(onHideAutomation)}>Hide Automation</Item>
+        ) : !hasAutomation && onShowAutomation ? (
+          <Item onClick={() => handleAction(onShowAutomation)}>Show Automation</Item>
+        ) : null}
+        {onAddAutomation ? <Item onClick={() => handleAction(onAddAutomation)}>Add Automation</Item> : null}
 
-        <Divider />
-        <Item onClick={() => handleAction(() => onPointerModeChange("select"))}>{pointerMode === "select" ? "Pointer: Select ✓" : "Pointer: Select"}</Item>
-        <Item onClick={() => handleAction(() => onPointerModeChange("draw"))}>{pointerMode === "draw" ? "Pointer: Draw ✓" : "Pointer: Draw"}</Item>
-        <Item onClick={() => handleAction(() => onPointerModeChange("erase"))}>{pointerMode === "erase" ? "Pointer: Erase ✓" : "Pointer: Erase"}</Item>
+        {onPointerModeChange && pointerMode ? (
+          <>
+            <Divider />
+            <Item onClick={() => handleAction(() => onPointerModeChange("select"))}>{pointerMode === "select" ? "Pointer: Select ✓" : "Pointer: Select"}</Item>
+            <Item onClick={() => handleAction(() => onPointerModeChange("draw"))}>{pointerMode === "draw" ? "Pointer: Draw ✓" : "Pointer: Draw"}</Item>
+            <Item onClick={() => handleAction(() => onPointerModeChange("erase"))}>{pointerMode === "erase" ? "Pointer: Erase ✓" : "Pointer: Erase"}</Item>
+          </>
+        ) : null}
 
-        <Divider />
-        <div className="px-2 py-2">
-          <div className="mb-1.5 px-1 text-[11px] text-foreground/50">Track Color</div>
-          <div className="grid grid-cols-8 gap-1">
-            {ALL_COLORS.map((color) => (
-              <button
-                key={color}
-                type="button"
-                onClick={() => {
-                  onColorChange(color);
-                  onClose();
-                }}
-                className="relative h-5 w-5 rounded border border-black/20 transition-transform hover:scale-110"
-                style={{ backgroundColor: color }}
-                title={color}
-              >
-                {currentColor.toLowerCase() === color.toLowerCase() ? (
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Check className="h-3 w-3 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" strokeWidth={3} />
-                  </div>
-                ) : null}
-              </button>
-            ))}
-          </div>
-        </div>
+        {onColorChange && currentColor ? (
+          <>
+            <Divider />
+            <div className="px-2 py-2">
+              <div className="mb-1.5 px-1 text-[11px] text-foreground/50">Track Color</div>
+              <div className="grid grid-cols-8 gap-1">
+                {ALL_COLORS.map((color) => (
+                  <button
+                    key={color}
+                    type="button"
+                    onClick={() => {
+                      onColorChange(color);
+                      onClose();
+                    }}
+                    className="relative h-5 w-5 rounded border border-black/20 transition-transform hover:scale-110"
+                    style={{ backgroundColor: color }}
+                    title={color}
+                  >
+                    {currentColor.toLowerCase() === color.toLowerCase() ? (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Check className="h-3 w-3 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]" strokeWidth={3} />
+                      </div>
+                    ) : null}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </>
+        ) : null}
       </div>
     </>
   );

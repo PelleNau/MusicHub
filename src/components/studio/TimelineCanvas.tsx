@@ -68,8 +68,10 @@ export function TimelineCanvas({
   const gridContentRef = useRef<HTMLCanvasElement>(null);
   const gridOverlayRef = useRef<HTMLCanvasElement>(null);
   const trackAreaRef = useRef<HTMLDivElement>(null);
+  const interactiveRootRef = useRef<HTMLDivElement>(null);
   const [contentHeight, setContentHeight] = useState(0);
   const [scrollState, setScrollState] = useState({ left: 0, viewportWidth: 0 });
+  const [isDraggingPlayhead, setIsDraggingPlayhead] = useState(false);
 
   const totalWidth = totalBeats * pixelsPerBeat;
 
@@ -109,6 +111,19 @@ export function TimelineCanvas({
   const viewport = useMemo(
     () => getViewportRange(scrollState.left, scrollState.viewportWidth, pixelsPerBeat, totalBeats),
     [scrollState.left, scrollState.viewportWidth, pixelsPerBeat, totalBeats],
+  );
+  const currentBeat = beatGetter ? beatGetter() : staticBeat;
+  const visiblePlayheadX = Math.max(0, (currentBeat - viewport.startBeat) * pixelsPerBeat);
+
+  const seekFromClientX = useCallback(
+    (clientX: number) => {
+      if (!onSeek || !interactiveRootRef.current) return;
+
+      const rect = interactiveRootRef.current.getBoundingClientRect();
+      const contentX = Math.max(0, clientX - rect.left - TRACK_HEADER_WIDTH + viewport.startX);
+      onSeek(xToBeat(contentX, pixelsPerBeat));
+    },
+    [onSeek, pixelsPerBeat, viewport.startX],
   );
 
   const redrawStatic = useCallback(() => {
@@ -219,8 +234,42 @@ export function TimelineCanvas({
     onSeek(xToBeat(x, pixelsPerBeat));
   }, [onSeek, pixelsPerBeat, viewport.startX]);
 
+  const handleRulerDoubleClick = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    handleRulerClick(event);
+  }, [handleRulerClick]);
+
+  const handlePlayheadPointerDown = useCallback((event: React.PointerEvent<HTMLDivElement>) => {
+    if (!onSeek) return;
+
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDraggingPlayhead(true);
+    seekFromClientX(event.clientX);
+  }, [onSeek, seekFromClientX]);
+
+  useEffect(() => {
+    if (!isDraggingPlayhead) return;
+
+    const handlePointerMove = (event: PointerEvent) => {
+      seekFromClientX(event.clientX);
+    };
+
+    const handlePointerUp = () => {
+      setIsDraggingPlayhead(false);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove);
+    window.addEventListener("pointerup", handlePointerUp);
+
+    return () => {
+      window.removeEventListener("pointermove", handlePointerMove);
+      window.removeEventListener("pointerup", handlePointerUp);
+    };
+  }, [isDraggingPlayhead, seekFromClientX]);
+
   return (
-    <>
+    <div ref={interactiveRootRef} className="relative">
       <div className="sticky top-0 z-10 flex border-b border-white/6 bg-[#1e2025]">
         {zoomHandle || (
           <div
@@ -233,7 +282,7 @@ export function TimelineCanvas({
           <canvas ref={rulerContentRef} className="absolute inset-0 pointer-events-none" />
           <canvas ref={rulerOverlayRef} className="absolute inset-0 pointer-events-none" />
           {rulerOverlayContent}
-          <div className="absolute inset-0 cursor-default" onClick={handleRulerClick} />
+          <div className="absolute inset-0 cursor-default" onClick={handleRulerClick} onDoubleClick={handleRulerDoubleClick} />
         </div>
       </div>
 
@@ -255,6 +304,21 @@ export function TimelineCanvas({
           {children}
         </div>
       </div>
-    </>
+
+      {onSeek ? (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <div
+            className="pointer-events-auto absolute top-0 bottom-0 cursor-ew-resize"
+            style={{
+              left: TRACK_HEADER_WIDTH + visiblePlayheadX - 6,
+              width: 12,
+            }}
+            onPointerDown={handlePlayheadPointerDown}
+          >
+            <div className="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-transparent" />
+          </div>
+        </div>
+      ) : null}
+    </div>
   );
 }

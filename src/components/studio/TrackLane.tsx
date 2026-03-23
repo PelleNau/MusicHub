@@ -63,6 +63,7 @@ interface TrackLaneProps {
   onAutomationChange?: (trackId: string, laneId: string, points: AutomationPoint[]) => void;
   onAutomationAdd?: (trackId: string, target: string, label: string) => void;
   onAutomationRemove?: (trackId: string, laneId: string) => void;
+  onOpenTrackContextMenu?: (trackId: string, x: number, y: number) => void;
   onDeleteClip?: (clipId: string) => void;
   onDuplicateClip?: (clipId: string) => void;
   onLinkedDuplicateClip?: (clipId: string) => void;
@@ -111,6 +112,7 @@ export const TrackLane = memo(function TrackLane({
   onAutomationChange,
   onAutomationAdd,
   onAutomationRemove,
+  onOpenTrackContextMenu,
   onDeleteClip,
   onDuplicateClip,
   onLinkedDuplicateClip,
@@ -204,6 +206,13 @@ export const TrackLane = memo(function TrackLane({
     onSelect?.(track.id);
   }, [onSelect, track.id]);
 
+  const handleTrackHeaderContextMenu = useCallback((event: React.MouseEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    onSelect?.(track.id);
+    onOpenTrackContextMenu?.(track.id, event.clientX, event.clientY);
+  }, [onOpenTrackContextMenu, onSelect, track.id]);
+
   return (
     <div className="group/track border-b border-white/[0.04] bg-[#121318]">
       {/* ── Main track row ── */}
@@ -220,6 +229,7 @@ export const TrackLane = memo(function TrackLane({
             compactCapture ? "bg-[#1d2026]" : "bg-[#181a1f]"
           }`}
           style={{ width: TRACK_HEADER_WIDTH, boxShadow: "inset -1px 0 0 rgba(255,255,255,0.015)" }}
+          onContextMenu={handleTrackHeaderContextMenu}
         >
           <button
             className="w-[4px] shrink-0 transition-all hover:w-[6px]"
@@ -431,7 +441,6 @@ export const TrackLane = memo(function TrackLane({
             </div>
           ) : null}
         </div>
-
         {/* ── Clip lane ── */}
         <div
           className="relative flex-1 overflow-visible bg-[#0f1115]"

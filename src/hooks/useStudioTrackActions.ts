@@ -15,6 +15,7 @@ import type { HostPlugin } from "@/services/pluginHostClient";
 import {
   mapSessionTracks,
   setSessionTracks,
+  updateSessionClipInCache,
   updateSessionTrackInCache,
 } from "@/domain/studio/studioSessionCache";
 import { invalidateSessionTracks } from "@/domain/studio/studioSessionQueries";
@@ -397,25 +398,35 @@ export function useStudioTrackActions({
   const handleClipResize = useCallback(
     (clipId: string, newStartBeats: number, newEndBeats: number) => {
       const clip = trackIndex.clipById[clipId];
-      const previousStart = clip?.start_beats ?? newStartBeats;
-      const previousEnd = clip?.end_beats ?? newEndBeats;
+      if (!clip) return;
+      if (newEndBeats <= newStartBeats) return;
 
-      updateClip.mutate({ clipId, updates: { start_beats: newStartBeats, end_beats: newEndBeats } });
+      const previousStart = clip.start_beats;
+      const previousEnd = clip.end_beats;
+      const updates: ClipUpdatePayload = {
+        start_beats: newStartBeats,
+        end_beats: newEndBeats,
+      };
+
+      updateSessionClipInCache(queryClient, activeSessionId, clipId, updates);
+      updateClip.mutate({ clipId, updates });
       history.push({
         label: "Resize clip",
-        undo: () =>
-          updateClip.mutate({
-            clipId,
-            updates: { start_beats: previousStart, end_beats: previousEnd },
-          }),
-        redo: () =>
-          updateClip.mutate({
-            clipId,
-            updates: { start_beats: newStartBeats, end_beats: newEndBeats },
-          }),
+        undo: () => {
+          const undoUpdates: ClipUpdatePayload = {
+            start_beats: previousStart,
+            end_beats: previousEnd,
+          };
+          updateSessionClipInCache(queryClient, activeSessionId, clipId, undoUpdates);
+          updateClip.mutate({ clipId, updates: undoUpdates });
+        },
+        redo: () => {
+          updateSessionClipInCache(queryClient, activeSessionId, clipId, updates);
+          updateClip.mutate({ clipId, updates });
+        },
       });
     },
-    [history, trackIndex, updateClip]
+    [activeSessionId, history, queryClient, trackIndex, updateClip]
   );
 
   const handleDeviceChainChange = useCallback(
