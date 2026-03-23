@@ -54,11 +54,11 @@ That means:
 
 Current phase:
 
-- `R2 route contract locked, route-unification and shell-chrome waves accepted`
+- `R2 route contract locked, route-unification, shell-chrome, and center-composition waves accepted`
 
 Objectives:
 
-- complete the next product-route composition replacement wave
+- complete the next deeper product-route surface replacement wave
 - keep `/studio` as the primary product route
 - keep `/studio` and `/studio/workspace` on one product behavior contract
 - preserve the `R1` runtime contract during replacement

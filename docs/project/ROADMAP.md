@@ -202,7 +202,8 @@ Current `R2` state:
 - route contract complete in `MH-077`
 - route unification wave complete
 - visible shell-chrome replacement wave complete
-- next executable phase is product-route composition replacement beyond shell chrome
+- center-workspace composition replacement wave complete
+- next executable phase is deeper product-route surface replacement beyond center-shell cleanup
 
 ## Post-R2 Candidates
 

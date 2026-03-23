@@ -9,7 +9,7 @@ This is the initial work backlog for `R2 Studio Replacement`.
 | Work Item ID | Area | Owner | Status | Summary |
 | --- | --- | --- | --- | --- |
 | `R2-001` | route replacement contract | `platform` | Complete | Product-route contract defined in `MH-077`; `/studio` and `/studio/workspace` are the only canonical Studio product routes and legacy review/lab routes no longer hold product authority. |
-| `R2-002` | shell replacement composition | `ui-integration` | In Progress | Route unification and replacement shell-chrome waves are accepted. The next slice replaces the remaining old-shell product composition on `/studio` and `/studio/workspace` under the `MH-077` contract. |
+| `R2-002` | shell replacement composition | `ui-integration` | In Progress | Route unification, shell-chrome replacement, and center-workspace composition replacement are accepted. The next slice replaces deeper remaining old-shell product surfaces on `/studio` and `/studio/workspace` under the `MH-077` contract. |
 | `R2-003` | runtime preservation | `runtime` | In Progress | The shared `/studio` and `/studio/workspace` baseline contract is enforced by tests. Further slices must preserve all `R1`-validated transport, arrangement, piano-roll, mixer, browser, and automation behavior through composition replacement. |
 | `R2-004` | piano-roll/tool adoption | `figmafunktioner` | Open | Move newer piano-roll/tool affordances from reference/imported surfaces into the real product routes where required by the replacement contract. |
 | `R2-005` | visual convergence | `ui-alignment` | Open | Align arrangement, piano-roll, and mixer presentation on the replaced product shell. |
@@ -29,11 +29,14 @@ This is the initial work backlog for `R2 Studio Replacement`.
   - `84cc6ba` on `codex/studio-runtime-parity`
 - accepted replacement shell-chrome commit:
   - `38bf4e9` on `codex/figma-capture-mode`
+- accepted center-workspace composition commits:
+  - `d1e382f` on `codex/figma-capture-mode`
+  - `e7fae4b` on `codex/figma-capture-mode`
 
 ## Immediate Next Slice
 
-- replace remaining legacy product-shell composition inside:
-  - `src/pages/Studio.tsx`
-  - `src/components/studio/StudioBottomWorkspace.tsx`
-  - any still-authoritative shell wrapper influencing `/studio` or `/studio/workspace`
+- replace remaining deeper product-route surface debt beyond shell cleanup, especially:
+  - product-route arrangement surface composition
+  - piano-roll/tool adoption on real routes
+  - any still-visible legacy shared-shell overlay affecting `/studio` or `/studio/workspace`
 - keep the shared route contract and runtime baseline tests green
