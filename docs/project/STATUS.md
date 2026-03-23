@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-`R2 Studio Replacement Program`
+`R2 Studio Replacement - Route Unification And Shell Replacement`
 
 ## Program Baseline
 
@@ -60,6 +60,13 @@ Machine-readable release registry:
 - the integration trunk and validation branch are aligned at the approved `R1` head
 - the next active program is `R2 Studio Replacement`
 - `R2` exists to replace the remaining old-shell assumptions on `/studio` and `/studio/workspace` with the newer integrated Studio interface while preserving `R1`-validated runtime behavior
+- `R2-001` is complete and locked in `MH-077`
+- the first implementation wave is complete:
+  - `/studio` is the primary Studio route
+  - `/studio` and `/studio/workspace` now share one product behavior contract
+- the second implementation wave is complete:
+  - replacement shell chrome is applied on the product routes
+- the next active work is product-route composition replacement beyond shell chrome
 
 ## Current Release State
 
@@ -99,7 +106,7 @@ No `R2` implementation work is accepted unless:
 
 `R2 Studio Replacement` reaches the next milestone when:
 
-- the route replacement contract is approved
-- the first shell replacement wave is assigned under `MH-077`
-- the baseline preservation rules for `R1` behavior remain explicit
-- product-route implementation starts on `/studio` and `/studio/workspace`
+- the visible shell replacement waves remain accepted
+- the next product-route composition wave is defined and assigned
+- `R1` runtime-preservation tests continue to pass under the replacement shell
+- the real Studio routes move closer to the integrated interface beyond chrome-only changes

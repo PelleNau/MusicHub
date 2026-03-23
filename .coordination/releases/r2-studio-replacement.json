@@ -3,7 +3,7 @@
   "name": "R2 Studio Replacement",
   "status": "active",
   "objective": "Replace the remaining old Studio shell on /studio and /studio/workspace with the newer integrated Studio interface while preserving R1-validated runtime behavior.",
-  "currentPhase": "route-contract-approved-and-shell-replacement-ready",
+  "currentPhase": "route-unification-and-shell-replacement-in-progress",
   "integrationTrunk": "codex/figma-capture-mode",
   "validationBranch": "codex/studio-integration-baseline",
   "programDocs": {
