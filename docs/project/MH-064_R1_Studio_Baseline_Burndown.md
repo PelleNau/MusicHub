@@ -3,7 +3,7 @@
 ## Release Status
 
 - Release: `R1 Studio Baseline`
-- Current phase: `Exit Validation`
+- Current phase: `Repair Reopened`
 - Validation branch: `codex/studio-integration-baseline`
 - Integration trunk: `codex/figma-capture-mode`
 
@@ -13,15 +13,15 @@
 | --- | --- | --- |
 | Scope gate (`MH-055`, `MH-056`) | Complete | R1 scope and QC charter are in place and now govern execution. |
 | Normalization gate (`MH-065`-`MH-070`) | Complete | Canonical spec, contradiction ledger, and mapping matrices are established and active. |
-| Validation gate (`MH-057`, `MH-058`) | Active | Validation is now running against the normalized R1 contract. |
-| Repair gate (`MH-063`) | Complete | Waves 1 through 5 are accepted and all mapped R1 repair defects are now closed. |
-| Exit gate (`MH-060`) | Active | Defect repair is complete; final exit validation and approval remain. |
+| Validation gate (`MH-057`, `MH-058`) | Active | Exit validation is now running against the normalized R1 contract and has reopened one blocker on the product route. |
+| Repair gate (`MH-063`) | Reopened | Exit validation reopened `DEF-R1-013` because the piano-roll/editor surface is still not mounted on `/studio/workspace`. |
+| Exit gate (`MH-060`) | Blocked | R1 cannot exit until the reopened product-route composition blocker is resolved and revalidated. |
 
 ## Defect Counts
 
 | Severity | Count |
 | --- | --- |
-| Blocker | 0 |
+| Blocker | 1 |
 | Critical | 0 |
 | Major | 0 |
 | Minor | 0 |
@@ -34,12 +34,12 @@
 | Shell and navigation | Stable | `/studio` and `/studio/workspace` are now routed through the normalized Studio baseline. |
 | Transport and playhead | Repair Accepted | Wave 2 restored ruler seek and playhead drag on the product route. |
 | Arrangement | Repair Accepted | Structural, interaction, and arrangement visual parity slices are accepted on the product route. |
-| Piano roll | Repair Accepted | Viewport range and extend/editing range defects are fixed at the product route level. |
+| Piano roll | Blocked | Exit validation shows `/studio/workspace` is not mounting the piano-roll/editor surface, so core piano-roll presence and note-edit reachability are still failing on the product route. |
 | Mixer | Repair Accepted | Wave 5 restored the mixer baseline routing on `/studio` and `/studio/workspace`. |
 | Browser | Repair Accepted | Wave 5 restored the browser baseline on the product workspace route. |
 | Automation | Repair Accepted | Wave 5c validated automation baseline presence on `/studio/workspace`. |
-| Editing and shortcuts | Repair Accepted | Wave 5 restored editor presence and baseline editing shortcuts on the product routes. |
-| Visual parity | Repair Accepted | Arrangement visual parity defects are accepted; full cross-domain visual audit remains. |
+| Editing and shortcuts | Reopened | Shortcut handling remains accepted, but the editor-presence contract is reopened because the product route still forces the mixer baseline instead of the piano-roll/editor surface. |
+| Visual parity | Reopened | Arrangement parity remains accepted, but piano-roll visual parity is blocked until the editor surface is mounted on `/studio/workspace`. |
 
 ## Current Execution Batch
 
@@ -67,6 +67,8 @@
    - `DEF-R1-012`
    - `DEF-R1-013`
    - `DEF-R1-014`
-6. Next phase:
-   - final exit validation
-   - approval against `MH-060`
+6. Exit validation reopen:
+   - `DEF-R1-013`
+7. Next phase:
+   - runtime correction for product-route piano-roll/editor mounting
+   - targeted revalidation of `ST-030`, `ST-033`, `ST-034`, `ST-070`, and `ST-082`
