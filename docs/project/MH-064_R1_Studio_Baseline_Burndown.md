@@ -14,8 +14,8 @@
 | Scope gate (`MH-055`, `MH-056`) | Complete | R1 scope and QC charter are in place and now govern execution. |
 | Normalization gate (`MH-065`-`MH-070`) | Complete | Canonical spec, contradiction ledger, and mapping matrices are established and active. |
 | Validation gate (`MH-057`, `MH-058`) | Active | Validation is now running against the normalized R1 contract. |
-| Repair gate (`MH-063`) | Active | Waves 1, 2, and 3 are accepted; Wave 5 partially closed the editing breadth defects and left mixer, browser, and automation breadth still open. |
-| Exit gate (`MH-060`) | Active | Core repair waves are complete, but three breadth defects still block exit. |
+| Repair gate (`MH-063`) | Active | Waves 1, 2, and 3 are accepted; Wave 5 has now closed editing, mixer, and browser breadth, leaving only automation breadth open. |
+| Exit gate (`MH-060`) | Active | Core repair waves are complete, but automation breadth still blocks exit. |
 
 ## Defect Counts
 
@@ -23,7 +23,7 @@
 | --- | --- |
 | Blocker | 0 |
 | Critical | 0 |
-| Major | 3 |
+| Major | 1 |
 | Minor | 0 |
 | Polish | 0 |
 
@@ -35,8 +35,8 @@
 | Transport and playhead | Repair Accepted | Wave 2 restored ruler seek and playhead drag on the product route. |
 | Arrangement | Repair Accepted | Structural, interaction, and arrangement visual parity slices are accepted on the product route. |
 | Piano roll | Repair Accepted | Viewport range and extend/editing range defects are fixed at the product route level. |
-| Mixer | Failing | Wave 4 validation found the mixer baseline and core controls still failing R1 acceptance. |
-| Browser | Failing | Wave 4 validation found the browser baseline still failing on the product workspace route. |
+| Mixer | Repair Accepted | Wave 5 restored the mixer baseline routing on `/studio` and `/studio/workspace`. |
+| Browser | Repair Accepted | Wave 5 restored the browser baseline on the product workspace route. |
 | Editing and shortcuts | Repair Accepted | Wave 5 restored editor presence and baseline editing shortcuts on the product routes. |
 | Visual parity | Repair Accepted | Arrangement visual parity defects are accepted; full cross-domain visual audit remains. |
 
@@ -61,9 +61,9 @@
    - `DEF-R1-013`
    - `DEF-R1-014`
 5. Wave 5 accepted repairs:
+   - `DEF-R1-010`
+   - `DEF-R1-011`
    - `DEF-R1-013`
    - `DEF-R1-014`
 6. Next wave:
-   - mixer baseline breadth repair
-   - browser baseline repair
    - automation baseline repair

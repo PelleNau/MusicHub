@@ -42,10 +42,10 @@ Every `R1` requirement must map to:
 | `PRL-004` | `ST-032` | short video | Pass | validated at the product-route model layer during Wave 1 acceptance |
 | `PRL-005` | `ST-033` | short video | Not run |  |
 | `PRL-006` | `ST-035` | code inspection + route screenshot | Pass | code inspection confirmed the product route mounts live `PianoRoll` wiring rather than preview-only imported affordances. |
-| `MIX-001` | `ST-040` | screenshot | Fail | `DEF-R1-010` |
-| `MIX-002` | `ST-041` | screenshot + short video | Fail | `DEF-R1-010` |
+| `MIX-001` | `ST-040` | screenshot | Pass | validated during Wave 5 UI acceptance by restoring mixer-first baseline routing on the product Studio routes |
+| `MIX-002` | `ST-041` | screenshot + short video | Pass | validated during Wave 5 UI acceptance by restoring coherent mixer baseline controls on the product Studio routes |
 | `MIX-003` | N/A | N/A | Deferred | Out of `R1`. |
-| `BRW-001` | `ST-050` | screenshot | Fail | `DEF-R1-011` |
+| `BRW-001` | `ST-050` | screenshot | Pass | validated during Wave 5 UI acceptance by exposing the browser panel on `/studio/workspace` through the real arrangement workspace surface |
 | `BRW-002` | N/A | N/A | Deferred | Out of `R1`. |
 | `AUT-001` | `ST-060` | screenshot + short video | Fail | `DEF-R1-012` |
 | `AUT-002` | N/A | N/A | Deferred | Out of `R1`. |
