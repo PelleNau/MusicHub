@@ -28,20 +28,20 @@ Every `R1` requirement must map to:
 | `SHL-003` | `ST-003` | screenshot + short video | Not run | New test required in `MH-058`. |
 | `TRN-001` | `ST-010` | screenshot | Not run |  |
 | `TRN-002` | `ST-021` | screenshot | Not run | also affected by `DEF-R1-001`, `DEF-R1-009` |
-| `TRN-003` | `ST-012` | short video | Fail | `DEF-R1-004` |
-| `TRN-004` | `ST-011` | short video or before/after screenshots | Fail | `DEF-R1-003` |
-| `ARR-001` | `ST-020` | short video | Fail | `DEF-R1-001` |
-| `ARR-002` | `ST-021` | screenshot | Fail | `DEF-R1-008` |
-| `ARR-003` | `ST-020`, `ST-021` | screenshot + short video | Fail | `DEF-R1-009` |
-| `ARR-004` | `ST-022` | short video | Fail | `DEF-R1-002` |
-| `ARR-005` | `ST-023` | screenshot | Fail | `DEF-R1-005` |
-| `ARR-006` | `ST-024` | short video + console check | Not run | New test required in `MH-058`. |
+| `TRN-003` | `ST-012` | short video | Pass | validated on the product route during Wave 2 repair acceptance |
+| `TRN-004` | `ST-011` | short video or before/after screenshots | Pass | validated on the product route during Wave 2 repair acceptance |
+| `ARR-001` | `ST-020` | short video | Pass | validated on the normalized Studio product route during Wave 1 acceptance |
+| `ARR-002` | `ST-021` | screenshot | Pass | compact arrangement header/ruler geometry restored during Wave 3 acceptance |
+| `ARR-003` | `ST-020`, `ST-021` | screenshot + short video | Pass | arrangement grid and lane boundary parity restored during Wave 3 acceptance |
+| `ARR-004` | `ST-022` | short video | Pass | validated on the product route during Wave 2 repair acceptance |
+| `ARR-005` | `ST-023` | screenshot | Pass | validated on the product route during Wave 2 repair acceptance |
+| `ARR-006` | `ST-024` | short video + console check | Pass | code inspection and product-route validation confirmed live runtime-backed clip actions on `/studio/workspace`. |
 | `PRL-001` | `ST-030` | screenshot | Not run |  |
 | `PRL-002` | `ST-034` | screenshot | Not run | New test required in `MH-058`. |
-| `PRL-003` | `ST-031` | short video | Fail | `DEF-R1-006` |
-| `PRL-004` | `ST-032` | short video | Fail | `DEF-R1-007` |
+| `PRL-003` | `ST-031` | short video | Pass | validated at the product-route model layer during Wave 1 acceptance |
+| `PRL-004` | `ST-032` | short video | Pass | validated at the product-route model layer during Wave 1 acceptance |
 | `PRL-005` | `ST-033` | short video | Not run |  |
-| `PRL-006` | `ST-035` | code inspection + route screenshot | Not run | New validation needed to prove imported Figma affordances are product-wired. |
+| `PRL-006` | `ST-035` | code inspection + route screenshot | Pass | code inspection confirmed the product route mounts live `PianoRoll` wiring rather than preview-only imported affordances. |
 | `MIX-001` | `ST-040` | screenshot | Not run | New test required in `MH-058`. |
 | `MIX-002` | `ST-041` | screenshot + short video | Not run | New test required in `MH-058`. |
 | `MIX-003` | N/A | N/A | Deferred | Out of `R1`. |
@@ -52,7 +52,7 @@ Every `R1` requirement must map to:
 | `EDT-001` | `ST-070` | short video | Not run | New cross-surface edit-contract test required. |
 | `EDT-002` | `ST-071` | short video or key-event recording | Not run | New shortcut validation required. |
 | `VIS-001` | `ST-080` | screenshot set | Not run | New visual audit test required. |
-| `VIS-002` | `ST-021`, `ST-081` | screenshot set | Not run | `ST-081` must be added for arrangement parity sweep. |
+| `VIS-002` | `ST-021`, `ST-081` | screenshot set | Pass | arrangement visual parity accepted on the product route during Wave 3 repair review |
 | `VIS-003` | `ST-030`, `ST-082` | screenshot set | Not run | `ST-082` must be added for piano-roll parity sweep. |
 
 ## Immediate Validation Batch

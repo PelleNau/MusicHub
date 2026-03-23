@@ -22,8 +22,8 @@ Every active release defect must map to:
 | DEF-R1-005 | `ARR-005` | `ST-023` | Major | interaction | `/studio/workspace` | `runtime` | Closed | Track-head context menu now renders on the product route. |
 | DEF-R1-006 | `PRL-003` | `ST-031` | Blocker | interaction | `/studio/workspace` | `figmafunktioner` | Closed | Piano roll can now scroll beyond the initial visible range. |
 | DEF-R1-007 | `PRL-004` | `ST-032` | Blocker | interaction | `/studio/workspace` | `figmafunktioner` | Closed | Piano roll can now extend the editing area beyond the initial visible width. |
-| DEF-R1-008 | `ARR-002`, `VIS-002` | `ST-021` | Major | visual parity | `/studio/workspace` | `ui-alignment` | Open | Arrangement header and ruler geometry do not match the approved compact layout. |
-| DEF-R1-009 | `ARR-003` | `ST-020`, `ST-021` | Major | visual parity | `/studio/workspace` | `ui-alignment` | Open | Arrangement grid treatment and lane boundaries are unstable or visually incoherent. |
+| DEF-R1-008 | `ARR-002`, `VIS-002` | `ST-021` | Major | visual parity | `/studio/workspace` | `ui-integration` | Closed | Arrangement header and ruler geometry are restored to the compact product layout on the accepted Studio route. |
+| DEF-R1-009 | `ARR-003` | `ST-020`, `ST-021` | Major | visual parity | `/studio/workspace` | `ui-integration` | Closed | Arrangement grid treatment and lane boundaries are now stable and readable on the product route. |
 
 ## Recording Rules
 
