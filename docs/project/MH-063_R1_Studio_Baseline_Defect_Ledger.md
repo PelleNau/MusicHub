@@ -15,13 +15,13 @@ Every active release defect must map to:
 
 | Defect ID | Requirement IDs | Test IDs | Severity | Type | Route | Owner | Status | Summary |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| DEF-R1-001 | `ARR-001` | `ST-020` | Blocker | structural/layout | `/studio/workspace` | `ui-integration` | Open | Arrangement surface shows detached or duplicated viewport behavior. |
-| DEF-R1-002 | `ARR-004` | `ST-022` | Blocker | interaction | `/studio/workspace` | `runtime` | Open | Resizing arrangement clips can delete the clip instead of resizing it. |
-| DEF-R1-003 | `TRN-004` | `ST-011` | Major | interaction | `/studio/workspace` | `runtime` | Open | Double-clicking the ruler does not move the playhead. |
-| DEF-R1-004 | `TRN-003` | `ST-012` | Major | interaction | `/studio/workspace` | `runtime` | Open | Dragging the playhead does not work. |
-| DEF-R1-005 | `ARR-005` | `ST-023` | Major | interaction | `/studio/workspace` | `runtime` | Open | Right-click track-head context menu is missing. |
-| DEF-R1-006 | `PRL-003` | `ST-031` | Blocker | interaction | `/studio/workspace` | `figmafunktioner` | Open | Piano roll cannot scroll beyond the initial visible range. |
-| DEF-R1-007 | `PRL-004` | `ST-032` | Blocker | interaction | `/studio/workspace` | `figmafunktioner` | Open | Piano roll cannot extend the editing area beyond the visible width. |
+| DEF-R1-001 | `ARR-001` | `ST-020` | Blocker | structural/layout | `/studio/workspace` | `ui-integration` | Closed | Arrangement surface now resolves through one coherent Studio composition and no longer presents detached or duplicated viewport behavior. |
+| DEF-R1-002 | `ARR-004` | `ST-022` | Blocker | interaction | `/studio/workspace` | `runtime` | Closed | Arrangement clip resize now updates clip bounds on the live route without deleting the clip. |
+| DEF-R1-003 | `TRN-004` | `ST-011` | Major | interaction | `/studio/workspace` | `runtime` | Closed | Ruler seek is restored on the product route, including double-clicking to move the playhead. |
+| DEF-R1-004 | `TRN-003` | `ST-012` | Major | interaction | `/studio/workspace` | `runtime` | Closed | Playhead dragging is restored on the product route. |
+| DEF-R1-005 | `ARR-005` | `ST-023` | Major | interaction | `/studio/workspace` | `runtime` | Closed | Track-head context menu now renders on the product route. |
+| DEF-R1-006 | `PRL-003` | `ST-031` | Blocker | interaction | `/studio/workspace` | `figmafunktioner` | Closed | Piano roll can now scroll beyond the initial visible range. |
+| DEF-R1-007 | `PRL-004` | `ST-032` | Blocker | interaction | `/studio/workspace` | `figmafunktioner` | Closed | Piano roll can now extend the editing area beyond the initial visible width. |
 | DEF-R1-008 | `ARR-002`, `VIS-002` | `ST-021` | Major | visual parity | `/studio/workspace` | `ui-alignment` | Open | Arrangement header and ruler geometry do not match the approved compact layout. |
 | DEF-R1-009 | `ARR-003` | `ST-020`, `ST-021` | Major | visual parity | `/studio/workspace` | `ui-alignment` | Open | Arrangement grid treatment and lane boundaries are unstable or visually incoherent. |
 
