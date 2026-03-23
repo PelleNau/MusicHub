@@ -49,9 +49,15 @@ vi.mock("@/components/studio/StudioArrangementWorkspace", () => ({
 }));
 
 vi.mock("@/components/studio/StudioBottomWorkspace", () => ({
-  StudioBottomWorkspace: (props: { showMixer: boolean }) => {
+  StudioBottomWorkspace: (props: { showMixer: boolean; showPianoRoll: boolean }) => {
     mockStudioBottomWorkspace(props);
-    return <div data-testid="bottom-workspace" data-show-mixer={String(props.showMixer)} />;
+    return (
+      <div
+        data-testid="bottom-workspace"
+        data-show-mixer={String(props.showMixer)}
+        data-show-piano-roll={String(props.showPianoRoll)}
+      />
+    );
   },
 }));
 
@@ -327,7 +333,7 @@ describe("Studio baseline workspace", () => {
     expect(screen.getByTestId("arrangement-workspace")).toHaveAttribute("data-show-browser-panel", "true");
   });
 
-  it("keeps the workspace on the mixer baseline without auto-seeding the piano roll on /studio/workspace", async () => {
+  it("auto-seeds the piano roll/editor surface on /studio/workspace", async () => {
     const onClipSelect = vi.fn();
     const openPanel = vi.fn();
     const setBottomTab = vi.fn();
@@ -350,11 +356,25 @@ describe("Studio baseline workspace", () => {
     );
 
     await waitFor(() => {
-      expect(setBottomTab).toHaveBeenCalledWith("mixer");
+      expect(onClipSelect).toHaveBeenCalledWith("clip-1", "track-1");
     });
 
-    expect(onClipSelect).not.toHaveBeenCalled();
-    expect(openPanel).not.toHaveBeenCalled();
+    expect(openPanel).toHaveBeenCalledWith("pianoRoll");
+    expect(setBottomTab).not.toHaveBeenCalledWith("mixer");
+  });
+
+  it("preserves an already-open editor surface on /studio/workspace", () => {
+    mockUseStudioPageRuntime.mockReturnValue(createRuntimeResult({ showBottomWorkspace: true, showPianoRoll: true }));
+
+    render(
+      <MemoryRouter initialEntries={["/studio/workspace"]}>
+        <Routes>
+          <Route path="*" element={<Studio />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    expect(screen.getByTestId("bottom-workspace")).toHaveAttribute("data-show-piano-roll", "true");
   });
 
   it("keeps at least one visible automation lane on the product workspace route", () => {
