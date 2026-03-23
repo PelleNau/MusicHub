@@ -1,9 +1,9 @@
 {
   "releaseId": "R1-STUDIO-BASELINE",
   "name": "R1 Studio Baseline",
-  "status": "active",
+  "status": "approved",
   "objective": "Ship the new Studio interface as the primary baseline on /studio.",
-  "currentPhase": "spec-normalization-and-validation-audit",
+  "currentPhase": "release-publishing-and-stabilization",
   "integrationTrunk": "codex/figma-capture-mode",
   "validationBranch": "codex/studio-integration-baseline",
   "programDocs": {

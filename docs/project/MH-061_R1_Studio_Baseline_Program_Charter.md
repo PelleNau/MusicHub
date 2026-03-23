@@ -58,14 +58,14 @@ The program uses two layers:
 
 Current phase:
 
-- `R1 Studio Baseline Spec Normalization and Validation Audit`
+- `R1 Approved / Release Publishing and Stabilization`
 
 Objectives:
 
-- freeze feature drift on the baseline branch
-- normalize the export corpus into one contradiction-resolved release contract
-- snapshot known defects against canonical requirement IDs
-- prevent further Studio repair work outside the audit contract
+- publish and synchronize the approved baseline state across the release branches
+- freeze `codex/studio-integration-baseline` against feature drift during stabilization
+- run the bounded stabilization regression pack and log only post-approval defects
+- prepare the next release target without starting new feature work on the baseline
 
 ## Approval Authority
 

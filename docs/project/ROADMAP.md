@@ -12,11 +12,10 @@ Current release target:
 
 The roadmap is now release-driven:
 
-1. normalize the Figma/export corpus into a contradiction-resolved canonical spec
-2. validate the baseline against that normalized contract
-3. repair structural and interaction defects
-4. revalidate domain by domain
-5. release the Studio baseline only when exit criteria are met
+1. approve the Studio baseline under the normalized `R1` contract
+2. publish and synchronize the approved baseline branches
+3. run a bounded stabilization window against the shipped baseline
+4. only then open the next release train
 
 ## R1 — Studio Baseline
 
@@ -55,6 +54,10 @@ Turn the Studio baseline into a formal release program.
 - freeze feature drift on the baseline branch
 - snapshot current known defects into `MH-063`
 
+Status:
+
+- complete
+
 ## Phase B — Spec Normalization And Validation Audit
 
 ### Goal
@@ -70,6 +73,10 @@ Turn the mixed Figma/export corpus into one contradiction-resolved `R1` release 
 - map product-route UI/component/CSS surfaces
 - bind validation to the normalized spec
 
+Status:
+
+- complete
+
 ## Phase C — Structural Baseline Repair
 
 ### Goal
@@ -83,6 +90,10 @@ Repair the baseline in the order that minimizes rework.
 3. core interactions
 4. visual parity
 5. secondary baseline gaps
+
+Status:
+
+- complete
 
 ## Phase D — Full Revalidation
 
@@ -100,6 +111,10 @@ Re-run the Studio baseline against the approved requirement and test set.
 6. browser/devices
 7. shortcuts/editing
 8. visual parity sweep
+
+Status:
+
+- complete
 
 ## Phase E — Release Gate
 
@@ -120,6 +135,37 @@ R1 is accepted only when:
 - `Major = 0` in core Studio flows
 - the approved deviation list contains only accepted `Minor` and `Polish` items
 
+Status:
+
+- complete
+
+## Phase F — Release Publishing And Stabilization
+
+### Goal
+
+Publish the approved baseline and keep it stable while it is synchronized, tagged, and regression-checked.
+
+### Outcomes
+
+- synchronize `main`, `codex/figma-capture-mode`, and `codex/studio-integration-baseline`
+- create release tag `r1-studio-baseline`
+- freeze the validation branch against feature drift
+- run the reduced stabilization regression pack
+- log post-approval issues only in `MH-072` and `MH-073`
+
+### Stabilization Scope
+
+- regression fixes only
+- release documentation updates
+- validation evidence
+- packaging/publishing fixes
+
+### Exclusions During Stabilization
+
+- no new Studio redesign
+- no speculative cleanup
+- no plugin-host expansion unless a shipped baseline defect proves dependency
+
 ## Post-R1 Candidates
 
 These are not in the current release path by default:
@@ -128,3 +174,7 @@ These are not in the current release path by default:
 - deeper routing/device-chain completeness
 - backend/native maturity work beyond Studio baseline validation
 - broader product-surface expansion outside the Studio release path
+
+Default next release candidate after stabilization:
+
+- `R2 Studio Expansion`

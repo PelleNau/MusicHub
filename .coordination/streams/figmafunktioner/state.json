@@ -5,9 +5,9 @@
   "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/figma-function-mapping",
   "status": "idle",
   "activeTaskId": null,
-  "latestInboxMessageId": null,
-  "latestAcknowledgedInboxMessageId": null,
-  "latestOutboxMessageId": null,
-  "latestCompletedTaskId": null,
-  "updatedAt": "2026-03-22T00:00:00.000Z"
+  "latestInboxMessageId": "MH-TASK-20260323153929-figmafunktioner-assignment-mn3cpyz1",
+  "latestAcknowledgedInboxMessageId": "MH-TASK-20260323153929-figmafunktioner-assignment-mn3cpyz1",
+  "latestOutboxMessageId": "MH-TASK-20260323153929-figmafunktioner-completed-mn3dxd30",
+  "latestCompletedTaskId": "MH-TASK-20260323153929-figmafunktioner",
+  "updatedAt": "2026-03-23T16:13:13.980Z"
 }
