@@ -65,7 +65,7 @@ const APP_FLAVOR = import.meta.env.VITE_APP_FLAVOR === "design" ? "design" : "ma
 const TAURI_PREVIEW_ROUTE =
   APP_FLAVOR === "design"
     ? "/design-studio"
-    : "/lab/studio?capture=true&captureBar=false&captureScenario=arrangement&mode=standard";
+    : "/studio/workspace";
 
 if (isInTauriShell() && !window.location.hash) {
   window.location.replace(`#${TAURI_PREVIEW_ROUTE}`);
@@ -319,6 +319,8 @@ const App = () => {
               <Route path="/learn/course/:courseId/module/:moduleId/studio-entry" element={<ProtectedRoute><StudioLessonEntry /></ProtectedRoute>} />
               <Route path="/inventory" element={<ProtectedRoute><Inventory /></ProtectedRoute>} />
               <Route path="/lab" element={<ProtectedRoute><Lab /></ProtectedRoute>} />
+              <Route path="/studio" element={<ProtectedRoute><Studio /></ProtectedRoute>} />
+              <Route path="/studio/workspace" element={<ProtectedRoute><Studio /></ProtectedRoute>} />
               <Route path="/design-studio" element={<ProtectedRoute><DesignStudio /></ProtectedRoute>} />
               <Route path="/lab/deep-dive" element={<ProtectedRoute><DeepDive /></ProtectedRoute>} />
               <Route path="/lab/patch-lab" element={<ProtectedRoute><Playground /></ProtectedRoute>} />

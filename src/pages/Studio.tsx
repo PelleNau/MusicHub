@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useSettings } from "@/hooks/useSettings";
 import { useAuth } from "@/hooks/useAuth";
 import { useStudioPageRuntime } from "@/hooks/useStudioPageRuntime";
@@ -26,29 +26,41 @@ function ArrangementHover({ children }: { children: React.ReactNode }) {
 }
 
 export default function Studio() {
+  const location = useLocation();
   const navigate = useNavigate();
   const { settings } = useSettings();
   const { signOut } = useAuth();
   const captureMode = isCaptureMode();
   const captureScenario = getCaptureScenario();
   const captureOverlay = getCaptureOverlay();
+  const baselineWorkspaceRoute =
+    location.pathname === "/studio" || location.pathname === "/studio/workspace";
+  const effectiveCaptureMode = captureMode && !baselineWorkspaceRoute;
   const showCollapsedMixerFooter =
-    captureMode && (captureScenario === "standard-mode" || captureScenario === "arrangement");
-  const compactTracksCapture = captureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
-  const arrangementWithPianoRollCapture = captureMode && captureScenario === "arrangement-piano-roll";
-  const arrangementOnlyCapture = captureMode && captureScenario === "arrangement";
-  const cleanCaptureShell = captureMode;
-  const headerCaptureVariant = captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
+    effectiveCaptureMode && (captureScenario === "standard-mode" || captureScenario === "arrangement");
+  const compactTracksCapture =
+    effectiveCaptureMode && captureScenario === "piano-roll" && captureOverlay === "compact-tracks";
+  const arrangementWithPianoRollCapture =
+    effectiveCaptureMode && captureScenario === "arrangement-piano-roll";
+  const arrangementOnlyCapture = effectiveCaptureMode && captureScenario === "arrangement";
+  const cleanCaptureShell = effectiveCaptureMode;
+  const headerCaptureVariant =
+    effectiveCaptureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll")
     ? "figma"
     : null;
   const arrangementCaptureVariant = compactTracksCapture
     ? "figma-compact"
-    : captureMode && (captureScenario === "standard-mode" || captureScenario === "piano-roll" || captureScenario === "arrangement")
+    : effectiveCaptureMode &&
+        (captureScenario === "standard-mode" ||
+          captureScenario === "piano-roll" ||
+          captureScenario === "arrangement")
       ? "figma"
       : null;
-  const hideGuideForCapture = captureMode && (captureScenario === "piano-roll" || captureScenario === "arrangement-piano-roll");
+  const hideGuideForCapture =
+    effectiveCaptureMode &&
+    (captureScenario === "piano-roll" || captureScenario === "arrangement-piano-roll");
   const pianoRollOverlayMode =
-    captureMode && captureScenario === "piano-roll"
+    effectiveCaptureMode && captureScenario === "piano-roll"
       ? captureOverlay === "humanize-dialog"
         ? "humanize-dialog"
         : captureOverlay === "pitch-menu"
@@ -79,26 +91,35 @@ export default function Studio() {
     preferredMode: settings.studioModePreference,
   });
   const seededEditorSessionIdsRef = useRef<Set<string>>(new Set());
-  const showGuideSidebar = studioModeModel.shell.showGuideSidebar;
-  const showBrowserPanel = captureMode && (captureScenario === "piano-roll" || captureScenario === "arrangement" || captureScenario === "arrangement-piano-roll")
+  const showGuideSidebar = baselineWorkspaceRoute ? false : studioModeModel.shell.showGuideSidebar;
+  const showBrowserPanel = baselineWorkspaceRoute
     ? false
-    : studioModeModel.shell.showBrowserPanel;
-  const arrangementDefaultSize = arrangementOnlyCapture
-    ? 97
-    : arrangementWithPianoRollCapture
-      ? 73
-    : captureMode && captureScenario === "piano-roll"
-    ? 79
-    : studioModeModel.shell.arrangementDefaultSize;
-  const bottomDefaultSize = arrangementOnlyCapture
-    ? 3
-    : arrangementWithPianoRollCapture
-      ? 27
-    : captureMode && captureScenario === "piano-roll"
-    ? 21
-    : showCollapsedMixerFooter
-      ? 8
-      : studioModeModel.shell.bottomDefaultSize;
+    : effectiveCaptureMode &&
+        (captureScenario === "piano-roll" ||
+          captureScenario === "arrangement" ||
+          captureScenario === "arrangement-piano-roll")
+      ? false
+      : studioModeModel.shell.showBrowserPanel;
+  const arrangementDefaultSize = baselineWorkspaceRoute
+    ? 100
+    : arrangementOnlyCapture
+      ? 97
+      : arrangementWithPianoRollCapture
+        ? 73
+        : effectiveCaptureMode && captureScenario === "piano-roll"
+          ? 79
+          : studioModeModel.shell.arrangementDefaultSize;
+  const bottomDefaultSize = baselineWorkspaceRoute
+    ? 0
+    : arrangementOnlyCapture
+      ? 3
+      : arrangementWithPianoRollCapture
+        ? 27
+        : effectiveCaptureMode && captureScenario === "piano-roll"
+          ? 21
+          : showCollapsedMixerFooter
+            ? 8
+            : studioModeModel.shell.bottomDefaultSize;
   const arrangementTrackHeight = arrangementOnlyCapture
     ? 72
     : compactTracksCapture
@@ -106,13 +127,13 @@ export default function Studio() {
       : presentation.arrangementWorkspaceModel.trackHeight;
 
   useEffect(() => {
-    if (!captureMode) return;
+    if (!effectiveCaptureMode && !baselineWorkspaceRoute) return;
     if (routeModel.activeSessionId || sessions.length === 0) return;
     routeModel.selectSession(sessions[0].id);
-  }, [captureMode, routeModel, sessions]);
+  }, [baselineWorkspaceRoute, effectiveCaptureMode, routeModel, sessions]);
 
   useEffect(() => {
-    if (!captureMode || !routeModel.activeSessionId || isLoading) return;
+    if (!effectiveCaptureMode || !routeModel.activeSessionId || isLoading) return;
 
     if (captureScenario === "mixer") {
       if (presentation.bottomWorkspaceModel.showMixer) return;
@@ -130,7 +151,7 @@ export default function Studio() {
       commandDispatch.openPanel("pianoRoll");
     }
   }, [
-    captureMode,
+    effectiveCaptureMode,
     captureScenario,
     commandDispatch,
     isLoading,
@@ -141,7 +162,7 @@ export default function Studio() {
   ]);
 
   useEffect(() => {
-    if (captureMode || isLoading || !routeModel.activeSessionId) {
+    if (effectiveCaptureMode || baselineWorkspaceRoute || isLoading || !routeModel.activeSessionId) {
       return;
     }
 
@@ -171,7 +192,8 @@ export default function Studio() {
     presentation.arrangementWorkspaceModel.trackLaneProps.onClipSelect(midiClip.id, midiTrack.id);
     commandDispatch.openPanel("pianoRoll");
   }, [
-    captureMode,
+    baselineWorkspaceRoute,
+    effectiveCaptureMode,
     commandDispatch,
     isLoading,
     presentation.arrangementWorkspaceModel.selectedClipIds,
@@ -183,7 +205,7 @@ export default function Studio() {
   ]);
 
   if (!routeModel.activeSessionId) {
-    if (captureMode && sessions.length > 0) {
+    if ((effectiveCaptureMode || baselineWorkspaceRoute) && sessions.length > 0) {
       return (
         <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
           <Package className="h-6 w-6 animate-pulse text-primary" />
@@ -260,7 +282,10 @@ export default function Studio() {
           />
         ) : null}
 
-        <TransportBar {...presentation.transportBarModel} captureVariant={captureMode ? "figma" : null} />
+        <TransportBar
+          {...presentation.transportBarModel}
+          captureVariant={effectiveCaptureMode ? "figma" : null}
+        />
         {!cleanCaptureShell ? <ConnectionAlert {...presentation.connectionAlertModel} /> : null}
 
         <div
@@ -318,7 +343,7 @@ export default function Studio() {
               />
             </ResizablePanel>
 
-            {(studioModeModel.shell.showBottomWorkspace || arrangementOnlyCapture) ? (
+            {!baselineWorkspaceRoute && (studioModeModel.shell.showBottomWorkspace || arrangementOnlyCapture) ? (
               <>
                 {arrangementOnlyCapture ? null : (
                   <ResizableHandle
@@ -352,9 +377,10 @@ export default function Studio() {
                       pianoRollOverlayMode ? <PianoRollCaptureOverlay mode={pianoRollOverlayMode} /> : undefined
                     }
                     captureVariant={
-                      captureMode && (captureScenario === "piano-roll" || captureScenario === "arrangement-piano-roll")
+                      effectiveCaptureMode &&
+                      (captureScenario === "piano-roll" || captureScenario === "arrangement-piano-roll")
                         ? "figma"
-                        : captureMode && captureScenario === "mixer"
+                        : effectiveCaptureMode && captureScenario === "mixer"
                           ? "figma-mixer"
                           : null
                     }
