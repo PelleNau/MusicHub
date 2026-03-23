@@ -42,15 +42,15 @@ Every `R1` requirement must map to:
 | `PRL-004` | `ST-032` | short video | Pass | validated at the product-route model layer during Wave 1 acceptance |
 | `PRL-005` | `ST-033` | short video | Not run |  |
 | `PRL-006` | `ST-035` | code inspection + route screenshot | Pass | code inspection confirmed the product route mounts live `PianoRoll` wiring rather than preview-only imported affordances. |
-| `MIX-001` | `ST-040` | screenshot | Not run | New test required in `MH-058`. |
-| `MIX-002` | `ST-041` | screenshot + short video | Not run | New test required in `MH-058`. |
+| `MIX-001` | `ST-040` | screenshot | Fail | `DEF-R1-010` |
+| `MIX-002` | `ST-041` | screenshot + short video | Fail | `DEF-R1-010` |
 | `MIX-003` | N/A | N/A | Deferred | Out of `R1`. |
-| `BRW-001` | `ST-050` | screenshot | Not run | New test required in `MH-058`. |
+| `BRW-001` | `ST-050` | screenshot | Fail | `DEF-R1-011` |
 | `BRW-002` | N/A | N/A | Deferred | Out of `R1`. |
-| `AUT-001` | `ST-060` | screenshot + short video | Not run | New test required in `MH-058`. |
+| `AUT-001` | `ST-060` | screenshot + short video | Fail | `DEF-R1-012` |
 | `AUT-002` | N/A | N/A | Deferred | Out of `R1`. |
-| `EDT-001` | `ST-070` | short video | Not run | New cross-surface edit-contract test required. |
-| `EDT-002` | `ST-071` | short video or key-event recording | Not run | New shortcut validation required. |
+| `EDT-001` | `ST-070` | short video | Fail | `DEF-R1-013` |
+| `EDT-002` | `ST-071` | short video or key-event recording | Fail | `DEF-R1-014` |
 | `VIS-001` | `ST-080` | screenshot set | Not run | New visual audit test required. |
 | `VIS-002` | `ST-021`, `ST-081` | screenshot set | Pass | arrangement visual parity accepted on the product route during Wave 3 repair review |
 | `VIS-003` | `ST-030`, `ST-082` | screenshot set | Not run | `ST-082` must be added for piano-roll parity sweep. |
