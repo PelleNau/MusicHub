@@ -36,7 +36,13 @@ vi.mock("@/components/studio/TransportBar", () => ({
 }));
 
 vi.mock("@/components/studio/StudioArrangementWorkspace", () => ({
-  StudioArrangementWorkspace: (props: { showBrowserPanel: boolean }) => {
+  StudioArrangementWorkspace: (props: {
+    showBrowserPanel: boolean;
+    displayTracks: Array<{
+      id: string;
+      automation_lanes?: Array<{ id: string; visible: boolean }>;
+    }>;
+  }) => {
     mockStudioArrangementWorkspace(props);
     return <div data-testid="arrangement-workspace" data-show-browser-panel={String(props.showBrowserPanel)} />;
   },
@@ -123,6 +129,12 @@ function createRuntimeResult({
         id: "track-1",
         type: "midi",
         clips: [{ id: "clip-1", is_midi: true }],
+        automation_lanes: [
+          {
+            id: "lane-1",
+            visible: true,
+          },
+        ],
       },
     ];
 
@@ -343,5 +355,25 @@ describe("Studio baseline workspace", () => {
 
     expect(onClipSelect).not.toHaveBeenCalled();
     expect(openPanel).not.toHaveBeenCalled();
+  });
+
+  it("keeps at least one visible automation lane on the product workspace route", () => {
+    mockUseStudioPageRuntime.mockReturnValue(createRuntimeResult({ showBottomWorkspace: true, showPianoRoll: false }));
+
+    render(
+      <MemoryRouter initialEntries={["/studio/workspace"]}>
+        <Routes>
+          <Route path="*" element={<Studio />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    const arrangementCall = mockStudioArrangementWorkspace.mock.calls.at(-1)?.[0] as
+      | { displayTracks?: Array<{ automation_lanes?: Array<{ visible: boolean }> }> }
+      | undefined;
+
+    expect(arrangementCall?.displayTracks?.some((track) => track.automation_lanes?.some((lane) => lane.visible))).toBe(
+      true,
+    );
   });
 });
