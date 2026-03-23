@@ -10,6 +10,8 @@ const mockUseStudioPageRuntime = vi.fn();
 const mockIsCaptureMode = vi.fn();
 const mockGetCaptureScenario = vi.fn();
 const mockGetCaptureOverlay = vi.fn();
+const mockStudioArrangementWorkspace = vi.fn();
+const mockStudioBottomWorkspace = vi.fn();
 
 vi.mock("@/hooks/useSettings", () => ({
   useSettings: () => mockUseSettings(),
@@ -34,11 +36,17 @@ vi.mock("@/components/studio/TransportBar", () => ({
 }));
 
 vi.mock("@/components/studio/StudioArrangementWorkspace", () => ({
-  StudioArrangementWorkspace: () => <div data-testid="arrangement-workspace" />,
+  StudioArrangementWorkspace: (props: { showBrowserPanel: boolean }) => {
+    mockStudioArrangementWorkspace(props);
+    return <div data-testid="arrangement-workspace" data-show-browser-panel={String(props.showBrowserPanel)} />;
+  },
 }));
 
 vi.mock("@/components/studio/StudioBottomWorkspace", () => ({
-  StudioBottomWorkspace: () => <div data-testid="bottom-workspace" />,
+  StudioBottomWorkspace: (props: { showMixer: boolean }) => {
+    mockStudioBottomWorkspace(props);
+    return <div data-testid="bottom-workspace" data-show-mixer={String(props.showMixer)} />;
+  },
 }));
 
 vi.mock("@/components/studio/StudioHeaderBar", () => ({
@@ -95,6 +103,7 @@ function createRuntimeResult({
   displayTracks,
   onClipSelect,
   openPanel,
+  setBottomTab,
 }: {
   showBottomWorkspace?: boolean;
   showPianoRoll?: boolean;
@@ -105,6 +114,7 @@ function createRuntimeResult({
   }>;
   onClipSelect?: (clipId: string, trackId: string) => void;
   openPanel?: (panel: "detail" | "pianoRoll" | "mixer") => void;
+  setBottomTab?: (tab: "editor" | "mixer") => void;
 }) {
   const tracks =
     displayTracks ??
@@ -222,7 +232,7 @@ function createRuntimeResult({
       },
       bottomWorkspaceModel: {
         bottomTab: "editor",
-        setBottomTab: vi.fn(),
+        setBottomTab: setBottomTab ?? vi.fn(),
         showPianoRoll,
         showMixer: false,
         showDetail: false,
@@ -268,10 +278,31 @@ describe("Studio baseline workspace", () => {
     mockIsCaptureMode.mockReturnValue(false);
     mockGetCaptureScenario.mockReturnValue(null);
     mockGetCaptureOverlay.mockReturnValue(null);
+    mockStudioArrangementWorkspace.mockReset();
+    mockStudioBottomWorkspace.mockReset();
   });
 
-  it("renders the bottom workspace on /studio/workspace when the shell exposes it", () => {
-    mockUseStudioPageRuntime.mockReturnValue(createRuntimeResult({ showBottomWorkspace: true, showPianoRoll: true }));
+  it("opens the mixer baseline on /studio", async () => {
+    const setBottomTab = vi.fn();
+    mockUseStudioPageRuntime.mockReturnValue(
+      createRuntimeResult({ showBottomWorkspace: false, showPianoRoll: false, setBottomTab }),
+    );
+
+    render(
+      <MemoryRouter initialEntries={["/studio"]}>
+        <Routes>
+          <Route path="*" element={<Studio />} />
+        </Routes>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => {
+      expect(setBottomTab).toHaveBeenCalledWith("mixer");
+    });
+  });
+
+  it("renders the browser panel baseline on /studio/workspace", () => {
+    mockUseStudioPageRuntime.mockReturnValue(createRuntimeResult({ showBottomWorkspace: true, showPianoRoll: false }));
 
     render(
       <MemoryRouter initialEntries={["/studio/workspace"]}>
@@ -281,19 +312,20 @@ describe("Studio baseline workspace", () => {
       </MemoryRouter>,
     );
 
-    expect(screen.getByTestId("bottom-workspace")).toBeInTheDocument();
+    expect(screen.getByTestId("arrangement-workspace")).toHaveAttribute("data-show-browser-panel", "true");
   });
 
-  it("seeds the first midi clip into the piano roll on /studio/workspace", async () => {
+  it("keeps the workspace on the mixer baseline without auto-seeding the piano roll on /studio/workspace", async () => {
     const onClipSelect = vi.fn();
     const openPanel = vi.fn();
-
+    const setBottomTab = vi.fn();
     mockUseStudioPageRuntime.mockReturnValue(
       createRuntimeResult({
         showBottomWorkspace: false,
         showPianoRoll: false,
         onClipSelect,
         openPanel,
+        setBottomTab,
       }),
     );
 
@@ -306,8 +338,10 @@ describe("Studio baseline workspace", () => {
     );
 
     await waitFor(() => {
-      expect(onClipSelect).toHaveBeenCalledWith("clip-1", "track-1");
-      expect(openPanel).toHaveBeenCalledWith("pianoRoll");
+      expect(setBottomTab).toHaveBeenCalledWith("mixer");
     });
+
+    expect(onClipSelect).not.toHaveBeenCalled();
+    expect(openPanel).not.toHaveBeenCalled();
   });
 });

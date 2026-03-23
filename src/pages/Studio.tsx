@@ -33,9 +33,10 @@ export default function Studio() {
   const captureMode = isCaptureMode();
   const captureScenario = getCaptureScenario();
   const captureOverlay = getCaptureOverlay();
-  const baselineWorkspaceRoute =
-    location.pathname === "/studio" || location.pathname === "/studio/workspace";
-  const effectiveCaptureMode = captureMode && !baselineWorkspaceRoute;
+  const studioEntryRoute = location.pathname === "/studio";
+  const studioWorkspaceRoute = location.pathname === "/studio/workspace";
+  const baselineProductRoute = studioEntryRoute || studioWorkspaceRoute;
+  const effectiveCaptureMode = captureMode && !baselineProductRoute;
   const showCollapsedMixerFooter =
     effectiveCaptureMode && (captureScenario === "standard-mode" || captureScenario === "arrangement");
   const compactTracksCapture =
@@ -91,19 +92,19 @@ export default function Studio() {
     preferredMode: settings.studioModePreference,
   });
   const seededEditorSessionIdsRef = useRef<Set<string>>(new Set());
-  const showGuideSidebar = baselineWorkspaceRoute ? false : studioModeModel.shell.showGuideSidebar;
-  const showBrowserPanel = baselineWorkspaceRoute
-    ? false
-    : effectiveCaptureMode &&
-        (captureScenario === "piano-roll" ||
-          captureScenario === "arrangement" ||
-          captureScenario === "arrangement-piano-roll")
+  const showGuideSidebar = baselineProductRoute ? false : studioModeModel.shell.showGuideSidebar;
+  const showBrowserPanel = studioWorkspaceRoute
+    ? true
+    : baselineProductRoute
       ? false
-      : studioModeModel.shell.showBrowserPanel;
-  const arrangementDefaultSize = baselineWorkspaceRoute
-    ? studioModeModel.shell.showBottomWorkspace
-      ? studioModeModel.shell.arrangementDefaultSize
-      : 100
+      : effectiveCaptureMode &&
+          (captureScenario === "piano-roll" ||
+            captureScenario === "arrangement" ||
+            captureScenario === "arrangement-piano-roll")
+        ? false
+        : studioModeModel.shell.showBrowserPanel;
+  const arrangementDefaultSize = baselineProductRoute
+    ? studioModeModel.shell.arrangementDefaultSize
     : arrangementOnlyCapture
       ? 97
       : arrangementWithPianoRollCapture
@@ -111,7 +112,7 @@ export default function Studio() {
         : effectiveCaptureMode && captureScenario === "piano-roll"
           ? 79
           : studioModeModel.shell.arrangementDefaultSize;
-  const bottomDefaultSize = baselineWorkspaceRoute
+  const bottomDefaultSize = baselineProductRoute
     ? studioModeModel.shell.bottomDefaultSize
     : arrangementOnlyCapture
       ? 3
@@ -129,10 +130,10 @@ export default function Studio() {
       : presentation.arrangementWorkspaceModel.trackHeight;
 
   useEffect(() => {
-    if (!effectiveCaptureMode && !baselineWorkspaceRoute) return;
+    if (!effectiveCaptureMode && !baselineProductRoute) return;
     if (routeModel.activeSessionId || sessions.length === 0) return;
     routeModel.selectSession(sessions[0].id);
-  }, [baselineWorkspaceRoute, effectiveCaptureMode, routeModel, sessions]);
+  }, [baselineProductRoute, effectiveCaptureMode, routeModel, sessions]);
 
   useEffect(() => {
     if (!effectiveCaptureMode || !routeModel.activeSessionId || isLoading) return;
@@ -164,7 +165,28 @@ export default function Studio() {
   ]);
 
   useEffect(() => {
-    if (effectiveCaptureMode || isLoading || !routeModel.activeSessionId) {
+    if (effectiveCaptureMode || !baselineProductRoute || isLoading || !routeModel.activeSessionId) {
+      return;
+    }
+
+    if (presentation.bottomWorkspaceModel.showMixer) {
+      seededEditorSessionIdsRef.current.add(routeModel.activeSessionId);
+      return;
+    }
+
+    seededEditorSessionIdsRef.current.add(routeModel.activeSessionId);
+    presentation.bottomWorkspaceModel.setBottomTab("mixer");
+  }, [
+    baselineProductRoute,
+    effectiveCaptureMode,
+    isLoading,
+    presentation.bottomWorkspaceModel.showMixer,
+    presentation.bottomWorkspaceModel.setBottomTab,
+    routeModel.activeSessionId,
+  ]);
+
+  useEffect(() => {
+    if (effectiveCaptureMode || baselineProductRoute || isLoading || !routeModel.activeSessionId) {
       return;
     }
 
@@ -194,9 +216,9 @@ export default function Studio() {
     presentation.arrangementWorkspaceModel.trackLaneProps.onClipSelect(midiClip.id, midiTrack.id);
     commandDispatch.openPanel("pianoRoll");
   }, [
-    baselineWorkspaceRoute,
-    effectiveCaptureMode,
+    baselineProductRoute,
     commandDispatch,
+    effectiveCaptureMode,
     isLoading,
     presentation.arrangementWorkspaceModel.selectedClipIds,
     presentation.arrangementWorkspaceModel.trackLaneProps,
@@ -207,7 +229,7 @@ export default function Studio() {
   ]);
 
   if (!routeModel.activeSessionId) {
-    if ((effectiveCaptureMode || baselineWorkspaceRoute) && sessions.length > 0) {
+    if ((effectiveCaptureMode || baselineProductRoute) && sessions.length > 0) {
       return (
         <div className="flex h-screen flex-col items-center justify-center gap-4 bg-background">
           <Package className="h-6 w-6 animate-pulse text-primary" />
