@@ -103,6 +103,29 @@ Checks:
 - `ui-integration`
 - `figmafunktioner`
 
+## Release-Managed Task Metadata
+
+Once a release program is active, Chief assignments must include:
+
+- release ID
+- requirement ID(s)
+- defect ID(s), when a repair exists
+- target stream
+- validation reference
+
+For `R1 Studio Baseline`, use:
+
+- release ID:
+  - `R1-STUDIO-BASELINE`
+- requirement IDs from:
+  - `docs/project/MH-057_Studio_Requirements_Traceability_Matrix.md`
+- test IDs from:
+  - `docs/project/MH-058_Studio_Test_Catalog.md`
+- defect IDs from:
+  - `docs/project/MH-063_R1_Studio_Baseline_Defect_Ledger.md`
+
+Release work cannot bypass requirement, defect, and validation mapping once a release program is active.
+
 ## Enforcement Intent
 
 This system is intended to make the following mandatory:
@@ -111,3 +134,4 @@ This system is intended to make the following mandatory:
 - Streams must report back before the branch is considered review-ready
 - Branches cannot rely on memory or UI-only thread state
 - Branches cannot silently absorb files outside their ownership boundary
+- Release-managed work cannot proceed as freeform repair outside the approved release program

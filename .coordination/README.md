@@ -11,6 +11,8 @@ Rules:
 Structure:
 - `config.json`
   - stream registry and branch/worktree mapping
+- `releases/<release>.json`
+  - active release registry and program-doc mapping
 - `chief/queue.json`
   - active and historical task records
 - `streams/<stream>/state.json`
@@ -30,3 +32,9 @@ Primary commands:
 Enforcement:
 - `npm run check:streams`
 - `.github/workflows/stream-protocol-check.yml`
+
+Release-managed work:
+- every release task must reference a release ID
+- release tasks must map to requirement IDs and defect IDs when applicable
+- `R1 Studio Baseline` is currently registered in:
+  - `.coordination/releases/r1-studio-baseline.json`
