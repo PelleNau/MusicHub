@@ -4,13 +4,22 @@
 
 This document defines what the `R1 Studio Baseline` is expected to contain and what is explicitly deferred.
 
-It is the approval frame for all Studio baseline QC and repair work.
+It is the approval frame for the spec-normalization audit and all later Studio baseline validation and repair work.
 
 ## Source Of Truth
 
-Primary Figma-export corpus:
+Raw Figma-export corpus:
 
 - `/Users/pellenaucler/Documents/CodexProjekt/blank-canvas/Musichubfigmaexport`
+
+Normalization documents:
+
+- `docs/project/MH-065_R1_Figma_Corpus_Triage_Register.md`
+- `docs/project/MH-066_R1_Canonical_Studio_Baseline_Spec.md`
+- `docs/project/MH-067_R1_Contradiction_And_Deferral_Ledger.md`
+- `docs/project/MH-068_R1_Runtime_Backend_Mapping_Matrix.md`
+- `docs/project/MH-069_R1_UI_Component_CSS_Mapping_Matrix.md`
+- `docs/project/MH-070_R1_Validation_Mapping_Register.md`
 
 Reduced repo-side references:
 
@@ -26,6 +35,19 @@ For `R1 Studio Baseline`, "baseline" means:
 - the new Studio interface is the product baseline, not a preview-only surface
 - arrangement, piano roll, transport, mixer baseline, browser baseline, and core editing interactions are validated on the real Studio routes
 - unresolved gaps are explicit, classified, and decisioned
+
+## Authority Rule
+
+For `R1`, the approval chain is:
+
+1. raw corpus triaged in `MH-065`
+2. canonical requirement set defined in `MH-066`
+3. contradictions and deferrals decisioned in `MH-067`
+4. runtime/backend feasibility mapped in `MH-068`
+5. UI/component/CSS route mapping defined in `MH-069`
+6. validation mapping defined in `MH-070`
+
+The raw export corpus is source material, not direct acceptance truth.
 
 ## Full Figma-Export Documentation Inventory
 
@@ -210,7 +232,7 @@ These items are outside `R1 Studio Baseline` unless separately approved:
 
 This matrix is approved when these are accepted:
 
-1. The Figma-export corpus is the authoritative source for `R1 Studio Baseline`.
+1. The baseline is governed by the normalization chain `MH-065` through `MH-070`, not by raw corpus interpretation.
 2. The listed domains define the baseline scope.
 3. The explicit deferrals are accepted as outside `R1`.
-4. Repair work must target this matrix, not ad hoc product drift.
+4. Repair work must target the normalized requirement set, not ad hoc product drift.

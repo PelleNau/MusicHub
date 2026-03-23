@@ -3,6 +3,7 @@
   "name": "R1 Studio Baseline",
   "status": "active",
   "objective": "Ship the new Studio interface as the primary baseline on /studio.",
+  "currentPhase": "spec-normalization-and-validation-audit",
   "integrationTrunk": "codex/figma-capture-mode",
   "validationBranch": "codex/studio-integration-baseline",
   "programDocs": {
@@ -15,7 +16,13 @@
     "programCharter": "docs/project/MH-061_R1_Studio_Baseline_Program_Charter.md",
     "workstreamDefinitions": "docs/project/MH-062_R1_Studio_Baseline_Workstream_Definitions.md",
     "defectLedger": "docs/project/MH-063_R1_Studio_Baseline_Defect_Ledger.md",
-    "burndown": "docs/project/MH-064_R1_Studio_Baseline_Burndown.md"
+    "burndown": "docs/project/MH-064_R1_Studio_Baseline_Burndown.md",
+    "corpusTriage": "docs/project/MH-065_R1_Figma_Corpus_Triage_Register.md",
+    "canonicalSpec": "docs/project/MH-066_R1_Canonical_Studio_Baseline_Spec.md",
+    "contradictionLedger": "docs/project/MH-067_R1_Contradiction_And_Deferral_Ledger.md",
+    "runtimeBackendMapping": "docs/project/MH-068_R1_Runtime_Backend_Mapping_Matrix.md",
+    "uiComponentCssMapping": "docs/project/MH-069_R1_UI_Component_CSS_Mapping_Matrix.md",
+    "validationMapping": "docs/project/MH-070_R1_Validation_Mapping_Register.md"
   },
   "scope": {
     "include": [

@@ -8,6 +8,7 @@ Every active release defect must map to:
 
 - one or more `MH-057` requirement IDs
 - one or more `MH-058` test IDs where applicable
+- one or more contradiction or normalization decisions from `MH-067` where applicable
 - one owning stream
 
 ## Active Defects
@@ -27,5 +28,6 @@ Every active release defect must map to:
 ## Recording Rules
 
 - new defects must be added here before repair begins
+- new defects must reference the normalized requirement set from `MH-066`
 - status changes must be reflected here after triage and revalidation
 - closed defects remain in the ledger with final status rather than being deleted

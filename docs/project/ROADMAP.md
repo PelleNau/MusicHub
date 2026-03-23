@@ -12,8 +12,8 @@ Current release target:
 
 The roadmap is now release-driven:
 
-1. lock the Studio baseline scope
-2. validate the baseline against the approved Figma-export corpus
+1. normalize the Figma/export corpus into a contradiction-resolved canonical spec
+2. validate the baseline against that normalized contract
 3. repair structural and interaction defects
 4. revalidate domain by domain
 5. release the Studio baseline only when exit criteria are met
@@ -55,7 +55,22 @@ Turn the Studio baseline into a formal release program.
 - freeze feature drift on the baseline branch
 - snapshot current known defects into `MH-063`
 
-## Phase B — Structural Baseline Repair
+## Phase B — Spec Normalization And Validation Audit
+
+### Goal
+
+Turn the mixed Figma/export corpus into one contradiction-resolved `R1` release contract.
+
+### Outcomes
+
+- classify the full export corpus
+- approve the canonical `R1` requirement set
+- resolve contradictions and deferrals
+- map runtime/backend feasibility
+- map product-route UI/component/CSS surfaces
+- bind validation to the normalized spec
+
+## Phase C — Structural Baseline Repair
 
 ### Goal
 
@@ -69,7 +84,7 @@ Repair the baseline in the order that minimizes rework.
 4. visual parity
 5. secondary baseline gaps
 
-## Phase C — Full Revalidation
+## Phase D — Full Revalidation
 
 ### Goal
 
@@ -86,7 +101,7 @@ Re-run the Studio baseline against the approved requirement and test set.
 7. shortcuts/editing
 8. visual parity sweep
 
-## Phase D — Release Gate
+## Phase E — Release Gate
 
 ### Goal
 

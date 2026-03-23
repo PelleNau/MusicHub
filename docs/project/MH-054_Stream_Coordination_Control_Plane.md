@@ -111,7 +111,7 @@ Once a release program is active, Chief assignments must include:
 - requirement ID(s)
 - defect ID(s), when a repair exists
 - target stream
-- validation reference
+- validation test ID(s)
 
 For `R1 Studio Baseline`, use:
 

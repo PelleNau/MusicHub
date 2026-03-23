@@ -36,5 +36,6 @@ Enforcement:
 Release-managed work:
 - every release task must reference a release ID
 - release tasks must map to requirement IDs and defect IDs when applicable
+- release tasks must map to validation test IDs when applicable
 - `R1 Studio Baseline` is currently registered in:
   - `.coordination/releases/r1-studio-baseline.json`

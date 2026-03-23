@@ -4,6 +4,11 @@
 
 This catalog defines the executable validation set for `R1 Studio Baseline`.
 
+It is bound to:
+
+- `MH-066_R1_Canonical_Studio_Baseline_Spec.md`
+- `MH-070_R1_Validation_Mapping_Register.md`
+
 Each test case includes:
 
 - test ID
@@ -47,6 +52,22 @@ Each test case includes:
   - screenshot
 - Severity If Failed:
   - `Critical`
+
+### ST-003 Studio Modes
+
+- Requirement IDs: `SHL-003`
+- Route: `/studio`
+- Preconditions: dev server running; Studio entry available
+- Steps:
+  1. Switch between Guided, Standard, and Focused modes if available on the product route.
+  2. Observe chrome density, visible controls, and layout stability.
+- Expected Result:
+  - Modes behave as states of the same Studio product.
+  - No route split or legacy fallback is required.
+- Evidence:
+  - screenshots or short video
+- Severity If Failed:
+  - `Major`
 
 ## Transport And Playhead
 
@@ -218,6 +239,186 @@ Each test case includes:
   2. Resize a note.
   3. Delete a note.
   4. Select multiple notes.
+- Expected Result:
+  - Core note editing works on the product route.
+- Evidence:
+  - short video
+- Severity If Failed:
+  - `Major`
+
+## Additional Product-Route Validation
+
+### ST-024 Arrangement Runtime Wiring
+
+- Requirement IDs: `ARR-006`
+- Route: `/studio/workspace`
+- Preconditions: at least one clip exists
+- Steps:
+  1. Trigger approved arrangement clip operations on the product route.
+  2. Observe whether behavior routes through real runtime-backed outcomes.
+- Expected Result:
+  - Product-route operations behave as runtime-backed features, not preview-only stand-ins.
+- Evidence:
+  - short video and console check
+- Severity If Failed:
+  - `Critical`
+
+### ST-034 Piano Roll Playhead Visibility
+
+- Requirement IDs: `PRL-002`
+- Route: `/studio/workspace`
+- Preconditions: piano roll open
+- Steps:
+  1. Observe playhead across ruler and note area.
+  2. Move or seek transport if needed.
+- Expected Result:
+  - Playhead is visible and coherent across the piano-roll surface.
+- Evidence:
+  - screenshot
+- Severity If Failed:
+  - `Major`
+
+### ST-035 Product Wiring Of Figma Piano Roll Affordances
+
+- Requirement IDs: `PRL-006`
+- Route: `/studio/workspace`
+- Preconditions: piano roll open
+- Steps:
+  1. Inspect whether piano-roll affordances present on the product route are the live wired versions.
+  2. Confirm they are not only available in preview/import/reference-only surfaces.
+- Expected Result:
+  - Product route uses live wired affordances.
+- Evidence:
+  - route screenshot and code inspection note
+- Severity If Failed:
+  - `Major`
+
+### ST-040 Mixer Baseline Presence
+
+- Requirement IDs: `MIX-001`
+- Route: `/studio`
+- Preconditions: Studio loaded
+- Steps:
+  1. Open or inspect the mixer baseline surface from the product Studio route.
+- Expected Result:
+  - Mixer baseline is part of the product Studio experience.
+- Evidence:
+  - screenshot
+- Severity If Failed:
+  - `Major`
+
+### ST-041 Mixer Core Controls
+
+- Requirement IDs: `MIX-002`
+- Route: `/studio`
+- Preconditions: mixer visible
+- Steps:
+  1. Inspect mixer channels.
+  2. Verify presence of core controls and meters expected in the baseline.
+- Expected Result:
+  - Core controls are present and visually coherent.
+- Evidence:
+  - screenshot or short video
+- Severity If Failed:
+  - `Major`
+
+### ST-050 Browser Baseline Presence
+
+- Requirement IDs: `BRW-001`
+- Route: `/studio/workspace`
+- Preconditions: Studio loaded
+- Steps:
+  1. Inspect browser/library panel presence and coherence.
+- Expected Result:
+  - Browser baseline is visible and coherent on the product route.
+- Evidence:
+  - screenshot
+- Severity If Failed:
+  - `Major`
+
+### ST-060 Automation Baseline Presence
+
+- Requirement IDs: `AUT-001`
+- Route: `/studio/workspace`
+- Preconditions: arrangement visible
+- Steps:
+  1. Inspect whether baseline automation presence and approved interactions are available on the product route.
+- Expected Result:
+  - Automation baseline exists where required for the Studio baseline.
+- Evidence:
+  - screenshot or short video
+- Severity If Failed:
+  - `Major`
+
+### ST-070 Tool And Edit Contract
+
+- Requirement IDs: `EDT-001`
+- Route: `/studio/workspace`
+- Preconditions: arrangement and piano roll available
+- Steps:
+  1. Inspect and exercise core editing tools used on the product route.
+- Expected Result:
+  - Tool language remains coherent and maps to real behavior.
+- Evidence:
+  - short video
+- Severity If Failed:
+  - `Major`
+
+### ST-071 Core Shortcut Contract
+
+- Requirement IDs: `EDT-002`
+- Route: `/studio/workspace`
+- Preconditions: Studio loaded
+- Steps:
+  1. Execute baseline keyboard shortcuts on the product route.
+- Expected Result:
+  - Core shortcut contract works without console/runtime errors.
+- Evidence:
+  - short video or key-event log
+- Severity If Failed:
+  - `Major`
+
+### ST-080 Visual Design-System Sweep
+
+- Requirement IDs: `VIS-001`
+- Route: `/studio`, `/studio/workspace`
+- Preconditions: Studio loaded
+- Steps:
+  1. Inspect overall design-system consistency across the baseline shell and controls.
+- Expected Result:
+  - Core Studio surfaces read as one coherent design system.
+- Evidence:
+  - screenshot set
+- Severity If Failed:
+  - `Major`
+
+### ST-081 Arrangement Visual Parity Sweep
+
+- Requirement IDs: `VIS-002`
+- Route: `/studio/workspace`
+- Preconditions: arrangement visible
+- Steps:
+  1. Inspect header, ruler, grid, clips, track headers, and playhead as one arrangement system.
+- Expected Result:
+  - Arrangement surface is visually coherent and close to approved intent.
+- Evidence:
+  - screenshot set
+- Severity If Failed:
+  - `Major`
+
+### ST-082 Piano Roll Visual Parity Sweep
+
+- Requirement IDs: `VIS-003`
+- Route: `/studio/workspace`
+- Preconditions: piano roll open
+- Steps:
+  1. Inspect keyboard, grid, notes, playhead, and feedback styling.
+- Expected Result:
+  - Piano-roll surface is visually coherent and close to approved intent.
+- Evidence:
+  - screenshot set
+- Severity If Failed:
+  - `Major`
 - Expected Result:
   - Core editing interactions work without corruption or console errors.
 - Evidence:
