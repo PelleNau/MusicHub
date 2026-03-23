@@ -2,157 +2,114 @@
 
 ## Purpose
 
-This roadmap defines the intended implementation sequence for the current architecture phase.
+This roadmap defines the delivery sequence for the current product release, not just the architecture program.
 
-It is ordered to reduce risk:
+Current release target:
 
-1. architecture and contracts first
-2. integration boundaries second
-3. frontend redesign on top of stable behavior
+- `R1 Studio Baseline`
 
----
+## Release Strategy
 
-## Phase 1 — Architectural Foundation
+The roadmap is now release-driven:
 
-### Goal
+1. lock the Studio baseline scope
+2. validate the baseline against the approved Figma-export corpus
+3. repair structural and interaction defects
+4. revalidate domain by domain
+5. release the Studio baseline only when exit criteria are met
 
-Establish the target Studio domain model and interaction flows as implementation references.
-
-### Outcomes
-
-- stable Studio domain model
-- interaction flow definitions
-- project control surface in repo
-- coordination docs aligned with architecture
-
-### Status
-
-In progress / largely seeded
-
----
-
-## Phase 2 — Domain Types and Store Boundary
+## R1 — Studio Baseline
 
 ### Goal
 
-Introduce target domain types and prepare the codebase for a normalized Studio state model.
+Ship the new Studio interface as the primary baseline on `/studio`.
 
-### Outcomes
+### In Scope
 
-- target TypeScript domain types
-- clear distinction between current runtime types and target domain model
-- plan for store normalization
-- mapping strategy from current host payloads to target model
+- Studio shell and route authority
+- transport and playhead
+- arrangement baseline
+- piano-roll baseline
+- mixer baseline
+- browser baseline
+- core editing interactions
+- visual parity sufficient for baseline approval
 
-### Dependencies
+### Out Of Scope
 
-- Phase 1
+- plugin-host completeness unless required by a proven Studio blocker
+- advanced routing and device-chain completeness
+- full backend/native completeness beyond baseline validation needs
+- broader learning/product-surface work not needed for the Studio baseline
 
----
-
-## Phase 3 — Host Adapter and Observable State API
-
-### Goal
-
-Move from ad hoc host-facing UI state to stable adapter and selector boundaries.
-
-### Outcomes
-
-- host adapter layer
-- normalized host-to-domain mapping
-- stable Studio observable state selectors
-- reduced leakage of raw host payloads into UI surfaces
-
-### Dependencies
-
-- Phase 2
-
----
-
-## Phase 4 — Command Bus
+## Phase A — Program Lock
 
 ### Goal
 
-Introduce a unified command layer for UI, Guide, templates, and AI.
+Turn the Studio baseline into a formal release program.
 
 ### Outcomes
 
-- typed Studio commands
-- typed transport commands
-- typed lesson/browser/content commands
-- success/failure/ack handling
-- command logging for validation and debugging
+- approve `MH-055` through `MH-060`
+- create `MH-061` through `MH-064`
+- freeze feature drift on the baseline branch
+- snapshot current known defects into `MH-063`
 
-### Dependencies
-
-- Phase 3
-
----
-
-## Phase 5 — Guide Runtime
+## Phase B — Structural Baseline Repair
 
 ### Goal
 
-Introduce the learning-native layer as a first-class subsystem instead of UI glue.
+Repair the baseline in the order that minimizes rework.
 
-### Outcomes
+### Repair Order
 
-- lesson runtime
-- lesson bindings
-- anchor-driven highlight/hint system
-- validation context and step progression
+1. arrangement structural integrity
+2. piano-roll structural integrity
+3. core interactions
+4. visual parity
+5. secondary baseline gaps
 
-### Dependencies
-
-- Phase 4
-
----
-
-## Phase 6 — Studio Surface Refactor
+## Phase C — Full Revalidation
 
 ### Goal
 
-Refactor Studio UI to consume selectors and commands instead of mixed page-local integration logic.
+Re-run the Studio baseline against the approved requirement and test set.
 
-### Outcomes
+### Validation Order
 
-- thinner `Studio.tsx`
-- clearer surface boundaries
-- better separation between composition, state, and behavior
+1. shell and navigation
+2. transport and playhead
+3. arrangement
+4. piano roll
+5. mixer
+6. browser/devices
+7. shortcuts/editing
+8. visual parity sweep
 
-### Dependencies
-
-- Phase 3
-- Phase 4
-
----
-
-## Phase 7 — Frontend Product Redesign
+## Phase D — Release Gate
 
 ### Goal
 
-Redesign Studio/Guide/browser UX on top of stable architecture.
+Decide whether `R1 Studio Baseline` is approved, conditionally approved, or blocked.
 
-### Outcomes
+### Gate Rules
 
-- beginner/guided/pro layouts
-- Guide overlays
-- better browser/content insertion workflows
-- stronger onboarding and learning flows
+Use:
 
-### Dependencies
+- `docs/project/MH-060_Studio_Exit_Criteria.md`
 
-- Phase 5
-- Phase 6
+R1 is accepted only when:
 
----
+- `Blocker = 0`
+- `Critical = 0`
+- `Major = 0` in core Studio flows
+- the approved deviation list contains only accepted `Minor` and `Polish` items
 
-## Current Execution Rule
+## Post-R1 Candidates
 
-Do not prioritize deep frontend redesign work ahead of:
+These are not in the current release path by default:
 
-- domain model adoption
-- adapter boundaries
-- command bus introduction
-
-Unless the user explicitly asks for a design spike or isolated concept work.
+- plugin-host completeness
+- deeper routing/device-chain completeness
+- backend/native maturity work beyond Studio baseline validation
+- broader product-surface expansion outside the Studio release path
