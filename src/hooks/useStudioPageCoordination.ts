@@ -24,6 +24,8 @@ interface UseStudioPageCoordinationOptions {
     play: () => void;
     pause: () => void;
     deleteClip: (clipId: string) => void;
+    duplicateClip: (clipId: string, linked?: boolean) => void;
+    clearSelection: () => void;
     updateClip: (clipId: string, patch: { name?: string; color?: number; muted?: boolean }) => void;
     openPanel: (panel: "detail" | "mixer" | "pianoRoll") => void;
     setLoop: (enabled: boolean, start: number, end: number) => void;

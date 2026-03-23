@@ -54,6 +54,38 @@ describe("useStudioKeyboardShortcuts", () => {
     expect(updateClip).toHaveBeenNthCalledWith(1, "clip-1", { muted: false });
     expect(updateClip).toHaveBeenNthCalledWith(2, "clip-2", { muted: false });
   });
+
+  it("duplicates selected clips with Cmd/Ctrl+D outside the piano roll", () => {
+    const duplicateClip = vi.fn();
+    renderKeyboardShortcuts({
+      selectedClipIds: new Set(["clip-1", "clip-2"]),
+      commands: {
+        duplicateClip,
+      },
+    });
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "d", metaKey: true }));
+
+    expect(duplicateClip).toHaveBeenNthCalledWith(1, "clip-1", false);
+    expect(duplicateClip).toHaveBeenNthCalledWith(2, "clip-2", false);
+  });
+
+  it("clears clip selection on Escape outside the piano roll", () => {
+    const clearSelection = vi.fn();
+    const clearSelectedClipIds = vi.fn();
+    renderKeyboardShortcuts({
+      selectedClipIds: new Set(["clip-1"]),
+      clearSelectedClipIds,
+      commands: {
+        clearSelection,
+      },
+    });
+
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" }));
+
+    expect(clearSelection).toHaveBeenCalledTimes(1);
+    expect(clearSelectedClipIds).toHaveBeenCalledTimes(1);
+  });
 });
 
 function renderKeyboardShortcuts(overrides: Record<string, unknown>) {
@@ -88,6 +120,8 @@ function renderKeyboardShortcuts(overrides: Record<string, unknown>) {
       play: vi.fn(),
       pause: vi.fn(),
       deleteClip: vi.fn(),
+      duplicateClip: vi.fn(),
+      clearSelection: vi.fn(),
       updateClip: vi.fn(),
       openPanel: vi.fn(),
       setLoop: vi.fn(),

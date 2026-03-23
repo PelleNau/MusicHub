@@ -113,6 +113,8 @@ export function useStudioPageRuntime({
       play: commandDispatch.play,
       pause: commandDispatch.pause,
       deleteClip: commandDispatch.deleteClip,
+      duplicateClip: commandDispatch.duplicateClip,
+      clearSelection: commandDispatch.clearSelection,
       updateClip: commandDispatch.updateClip,
       openPanel: commandDispatch.openPanel,
       setLoop: commandDispatch.setLoop,

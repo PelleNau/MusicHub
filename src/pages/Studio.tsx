@@ -101,7 +101,9 @@ export default function Studio() {
       ? false
       : studioModeModel.shell.showBrowserPanel;
   const arrangementDefaultSize = baselineWorkspaceRoute
-    ? 100
+    ? studioModeModel.shell.showBottomWorkspace
+      ? studioModeModel.shell.arrangementDefaultSize
+      : 100
     : arrangementOnlyCapture
       ? 97
       : arrangementWithPianoRollCapture
@@ -110,7 +112,7 @@ export default function Studio() {
           ? 79
           : studioModeModel.shell.arrangementDefaultSize;
   const bottomDefaultSize = baselineWorkspaceRoute
-    ? 0
+    ? studioModeModel.shell.bottomDefaultSize
     : arrangementOnlyCapture
       ? 3
       : arrangementWithPianoRollCapture
@@ -162,7 +164,7 @@ export default function Studio() {
   ]);
 
   useEffect(() => {
-    if (effectiveCaptureMode || baselineWorkspaceRoute || isLoading || !routeModel.activeSessionId) {
+    if (effectiveCaptureMode || isLoading || !routeModel.activeSessionId) {
       return;
     }
 
@@ -343,7 +345,7 @@ export default function Studio() {
               />
             </ResizablePanel>
 
-            {!baselineWorkspaceRoute && (studioModeModel.shell.showBottomWorkspace || arrangementOnlyCapture) ? (
+            {studioModeModel.shell.showBottomWorkspace || arrangementOnlyCapture ? (
               <>
                 {arrangementOnlyCapture ? null : (
                   <ResizableHandle

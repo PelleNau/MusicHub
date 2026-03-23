@@ -27,6 +27,8 @@ interface StudioCommandSurfaceForShortcuts {
   play: () => void;
   pause: () => void;
   deleteClip: (clipId: string) => void;
+  duplicateClip: (clipId: string, linked?: boolean) => void;
+  clearSelection: () => void;
   updateClip: (
     clipId: string,
     patch: Partial<{
@@ -183,6 +185,16 @@ export function useStudioKeyboardShortcuts({
         }
       }
 
+      if (event.key === "Escape" && !isTyping && !insidePianoRoll) {
+        const ids = selectedClipIdsRef.current;
+        if (ids.size > 0) {
+          event.preventDefault();
+          commandsRef.current.clearSelection();
+          clearSelectedClipIds();
+          return;
+        }
+      }
+
       if (event.key === "m" && !isTyping && !(event.metaKey || event.ctrlKey)) {
         const ids = selectedClipIdsRef.current;
         event.preventDefault();
@@ -258,6 +270,14 @@ export function useStudioKeyboardShortcuts({
           event.preventDefault();
           currentGrid.setGridMode(currentGrid.gridMode === "adaptive" ? "fixed" : "adaptive");
           break;
+        case "d":
+        case "D": {
+          const ids = selectedClipIdsRef.current;
+          if (ids.size === 0 || insidePianoRoll || showPianoRollRef.current) break;
+          event.preventDefault();
+          for (const id of ids) commandsRef.current.duplicateClip(id, false);
+          break;
+        }
         case "m":
         case "M":
           event.preventDefault();
