@@ -26,7 +26,7 @@ Every active release defect must map to:
 | DEF-R1-009 | `ARR-003` | `ST-020`, `ST-021` | Major | visual parity | `/studio/workspace` | `ui-integration` | Closed | Arrangement grid treatment and lane boundaries are now stable and readable on the product route. |
 | DEF-R1-010 | `MIX-001`, `MIX-002` | `ST-040`, `ST-041` | Major | baseline breadth | `/studio`, `/studio/workspace` | `ui-integration` | Closed | Mixer baseline routing is restored on the product Studio routes and the workspace now opens the approved mixer-first baseline state. |
 | DEF-R1-011 | `BRW-001` | `ST-050` | Major | baseline breadth | `/studio/workspace` | `ui-integration` | Closed | Browser/library baseline is restored on the product workspace route via the real arrangement workspace surface. |
-| DEF-R1-012 | `AUT-001` | `ST-060` | Major | baseline breadth | `/studio/workspace` | `runtime` | Open | Automation baseline presence and approved lane behavior are not product-routable on the Studio workspace route. |
+| DEF-R1-012 | `AUT-001` | `ST-060` | Major | baseline breadth | `/studio/workspace` | `runtime` | Closed | Automation baseline presence is now validated on the product workspace route through visible automation lane data in the live arrangement workspace surface. |
 | DEF-R1-013 | `EDT-001` | `ST-070` | Major | editing contract | `/studio`, `/studio/workspace` | `runtime` | Closed | Product routes now restore the expected editor presence and tool/edit affordance contract needed for baseline editing. |
 | DEF-R1-014 | `EDT-002` | `ST-071` | Major | editing contract | `/studio`, `/studio/workspace` | `runtime` | Closed | Core baseline editing shortcuts are now wired on the product routes for duplicate and escape-driven selection clearing. |
 

@@ -47,7 +47,7 @@ Every `R1` requirement must map to:
 | `MIX-003` | N/A | N/A | Deferred | Out of `R1`. |
 | `BRW-001` | `ST-050` | screenshot | Pass | validated during Wave 5 UI acceptance by exposing the browser panel on `/studio/workspace` through the real arrangement workspace surface |
 | `BRW-002` | N/A | N/A | Deferred | Out of `R1`. |
-| `AUT-001` | `ST-060` | screenshot + short video | Fail | `DEF-R1-012` |
+| `AUT-001` | `ST-060` | screenshot + short video | Pass | validated during Wave 5c runtime acceptance by proving visible automation lane presence on `/studio/workspace` |
 | `AUT-002` | N/A | N/A | Deferred | Out of `R1`. |
 | `EDT-001` | `ST-070` | short video | Pass | validated during Wave 5 runtime acceptance by restoring editor presence and the product-route editing contract |
 | `EDT-002` | `ST-071` | short video or key-event recording | Pass | validated during Wave 5 runtime acceptance for duplicate and escape shortcut handling on the product routes |
