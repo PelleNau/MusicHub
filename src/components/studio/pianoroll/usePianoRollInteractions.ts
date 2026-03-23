@@ -60,6 +60,7 @@ export function usePianoRollInteractions({
   activeChord, pxPerBeat, keyHeight, ccLaneType,
   setShowTranspose, setTool,
 }: UsePianoRollInteractionsArgs) {
+  const [viewportWidth, setViewportWidth] = useState(0);
   const { playNote: localPlayNote } = useNoteAudition();
   // In connected mode, route audition through native MIDI; fallback to local oscillator
   const playNote = useCallback((pitch: number, velocity: number) => {
@@ -111,6 +112,28 @@ export function usePianoRollInteractions({
       scrollRef.current.scrollTop = Math.max(0, offset);
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const node = scrollRef.current;
+    if (!node) return;
+
+    const updateViewportWidth = () => {
+      setViewportWidth(node.clientWidth);
+    };
+
+    updateViewportWidth();
+
+    if (typeof ResizeObserver !== "undefined") {
+      const observer = new ResizeObserver(() => {
+        updateViewportWidth();
+      });
+      observer.observe(node);
+      return () => observer.disconnect();
+    }
+
+    window.addEventListener("resize", updateViewportWidth);
+    return () => window.removeEventListener("resize", updateViewportWidth);
+  }, [pxPerBeat]);
 
   /* ── CC data change ── */
   const handleCCChange = useCallback((laneType: CCLaneType, points: CCPoint[]) => {
@@ -540,11 +563,15 @@ export function usePianoRollInteractions({
   }, [notes, clip.id, clip.start_beats, selectedIds, onNotesChange, clipDuration, beatsPerBar, snapBeats, onClipResize, chopNotesOnGrid, snap, globalBeat, playNote, quantizeStrength, maybeLockPitch, setSplitMode, setShowTranspose, setTool]);
 
   /* ── Computed ── */
-  const displayClipDuration = useMemo(() => {
-    const base = clipExtendDelta === 0 ? clipDuration : Math.max(beatsPerBar, clipDuration + clipExtendDelta / pxPerBeat);
-    // Always show at least 1 extra bar so user can draw beyond current clip end
-    return base + beatsPerBar;
-  }, [clipDuration, clipExtendDelta, beatsPerBar, pxPerBeat]);
+  const displayClipDuration = useMemo(() => (
+    getDisplayClipDuration({
+      clipDuration,
+      clipExtendDelta,
+      beatsPerBar,
+      pxPerBeat,
+      viewportWidth,
+    })
+  ), [clipDuration, clipExtendDelta, beatsPerBar, pxPerBeat, viewportWidth]);
 
   const applyTransform = useCallback((fn: (notes: MidiNote[], ids: Set<string>) => MidiNote[]) => {
     if (selectedIds.size === 0) return;
@@ -677,4 +704,33 @@ export function usePianoRollInteractions({
     pasteNotes,
     hasClipboard,
   };
+}
+
+interface DisplayClipDurationArgs {
+  clipDuration: number;
+  clipExtendDelta: number;
+  beatsPerBar: number;
+  pxPerBeat: number;
+  viewportWidth: number;
+}
+
+export function getDisplayClipDuration({
+  clipDuration,
+  clipExtendDelta,
+  beatsPerBar,
+  pxPerBeat,
+  viewportWidth,
+}: DisplayClipDurationArgs) {
+  const extendedClipDuration =
+    clipExtendDelta === 0
+      ? clipDuration
+      : Math.max(beatsPerBar, clipDuration + clipExtendDelta / pxPerBeat);
+
+  const viewportBeatWidth = viewportWidth > 0 ? viewportWidth / pxPerBeat : 0;
+  const minimumScrollableDuration =
+    viewportBeatWidth > 0
+      ? Math.ceil(viewportBeatWidth / beatsPerBar) * beatsPerBar + beatsPerBar
+      : 0;
+
+  return Math.max(extendedClipDuration + beatsPerBar, minimumScrollableDuration);
 }
