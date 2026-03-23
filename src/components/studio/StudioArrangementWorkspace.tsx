@@ -11,7 +11,6 @@ import { StudioArrangementToolbar } from "@/components/studio/StudioArrangementT
 import { TimelineMarkerFlags, TimelineMarkerLines } from "@/components/studio/TimelineMarkerOverlay";
 import { TimelineCanvas } from "@/components/studio/TimelineCanvas";
 import { TrackContextMenu } from "@/components/studio/TrackContextMenu";
-import { VerticalZoomSlider } from "@/components/studio/VerticalZoomSlider";
 import { TrackLane } from "@/components/studio/TrackLane";
 import { TRACK_HEADER_WIDTH } from "@/components/studio/timelineMath";
 import { Flag, Plus, Undo2, Upload } from "lucide-react";
@@ -177,7 +176,7 @@ export function StudioArrangementWorkspace({
             <div
               ref={timelineRef}
               data-timeline
-              className="relative min-h-0 flex-1 overflow-auto bg-[#131417]"
+              className="relative min-h-0 flex-1 overflow-auto bg-[#171a20]"
               {...timelineContainerProps}
             >
               {arrangementWrapper(
@@ -192,17 +191,12 @@ export function StudioArrangementWorkspace({
                     onSeek={onSeek}
                     beatGetter={playheadBeatGetter}
                     staticBeat={effectiveBeat}
-                    zoomHandle={captureVariant ? (
+                    zoomHandle={
                       <div
                         className="sticky left-0 z-10 shrink-0 border-r border-white/8 bg-[#1d1f24]"
                         style={{ width: TRACK_HEADER_WIDTH }}
                       />
-                    ) : (
-                      <VerticalZoomSlider
-                        value={(trackHeight - 32) / (200 - 32)}
-                        onChange={(value) => onSetTrackHeight(32 + value * (200 - 32))}
-                      />
-                    )}
+                    }
                     rulerOverlayContent={
                       <TimelineMarkerFlags
                         markers={markerModel.sortedMarkers}

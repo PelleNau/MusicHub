@@ -270,14 +270,14 @@ export function TimelineCanvas({
 
   return (
     <div ref={interactiveRootRef} className="relative">
-      <div className="sticky top-0 z-10 flex border-b border-white/6 bg-[#1e2025]">
+      <div className="sticky top-0 z-10 flex border-b border-white/8 bg-[#20232a]">
         {zoomHandle || (
           <div
             className="shrink-0 border-r border-white/8 bg-[#1d1f24] sticky left-0 z-10"
             style={{ width: TRACK_HEADER_WIDTH }}
           />
         )}
-        <div className="relative bg-[#1f2127]" style={{ height: RULER_HEIGHT, minWidth: totalWidth }}>
+        <div className="relative bg-[#262a31]" style={{ height: RULER_HEIGHT, minWidth: totalWidth }}>
           <canvas ref={rulerBgRef} className="absolute inset-0 pointer-events-none" />
           <canvas ref={rulerContentRef} className="absolute inset-0 pointer-events-none" />
           <canvas ref={rulerOverlayRef} className="absolute inset-0 pointer-events-none" />
@@ -286,7 +286,7 @@ export function TimelineCanvas({
         </div>
       </div>
 
-      <div className="relative">
+      <div className="relative bg-[#1a1d23]">
         <div
           className="absolute inset-y-0 pointer-events-none"
           style={{ left: TRACK_HEADER_WIDTH, width: totalWidth }}

@@ -45,10 +45,10 @@ export function StudioArrangementToolbar({
   const heightLabel = figmaCapture ? "Medium" : trackHeight >= 120 ? "Tall" : trackHeight >= 96 ? "Medium" : "Compact";
 
   return (
-    <div className="border-b border-white/5 bg-[#1b1d22] px-1.5 py-[2px]">
-      <div className="flex h-[26px] items-center justify-between gap-1.5">
+    <div className="border-b border-white/5 bg-[#1b1d22] px-1 py-px">
+      <div className="flex h-[22px] items-center justify-between gap-1">
         <div className="flex min-w-0 items-center gap-[3px]">
-          <button className="flex h-[22px] items-center gap-1 rounded-[4px] border border-white/6 bg-[#25272d] px-2 text-[9px] font-medium text-white/76 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
+          <button className="flex h-[20px] items-center gap-1 rounded-[4px] border border-white/6 bg-[#25272d] px-2 text-[9px] font-medium text-white/76 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
             <MousePointer2 className="h-3.5 w-3.5" />
             Pointer 1
             <ChevronDown className="h-3.5 w-3.5 text-white/36" />
@@ -59,7 +59,7 @@ export function StudioArrangementToolbar({
             onCreateReturnTrack={onCreateReturnTrack}
           >
             <button
-              className="flex h-[22px] items-center gap-1 rounded-[4px] border border-white/6 bg-[#25272d] px-2 text-[9px] font-medium text-white/76 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]"
+              className="flex h-[20px] items-center gap-1 rounded-[4px] border border-white/6 bg-[#25272d] px-2 text-[9px] font-medium text-white/76 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]"
             >
               <Plus className="h-3.5 w-3.5" />
               Track
@@ -74,17 +74,17 @@ export function StudioArrangementToolbar({
 
           {showExtendedTrackActions ? (
             <div className="ml-1 flex items-center gap-0.5 rounded-[4px] border border-white/5 bg-[#16181d] px-1 py-0.5">
-              <Button size="sm" variant="ghost" className="h-[18px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onCreateMidiTrack}>
+              <Button size="sm" variant="ghost" className="h-[17px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onCreateMidiTrack}>
                 MIDI
               </Button>
-              <Button size="sm" variant="ghost" className="h-[18px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onCreateReturnTrack}>
+              <Button size="sm" variant="ghost" className="h-[17px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onCreateReturnTrack}>
                 Return
               </Button>
-              <Button size="sm" variant="ghost" className="h-[18px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onOpenAudioUpload}>
+              <Button size="sm" variant="ghost" className="h-[17px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onOpenAudioUpload}>
                 <Upload className="mr-1 h-3 w-3" />
                 Import
               </Button>
-              <Button size="sm" variant="ghost" className="h-[18px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onAddMarkerAtPlayhead}>
+              <Button size="sm" variant="ghost" className="h-[17px] rounded px-2 text-[8px] text-white/56 hover:bg-white/6 hover:text-white" onClick={onAddMarkerAtPlayhead}>
                 <Flag className="mr-1 h-3 w-3" />
                 Marker
               </Button>
@@ -93,11 +93,11 @@ export function StudioArrangementToolbar({
         </div>
 
           <div className="flex items-center gap-[4px] text-white/62">
-            <div className="flex h-[22px] items-center gap-1 rounded-[4px] border border-white/6 bg-[#25272d] px-1 py-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
+            <div className="flex h-[20px] items-center gap-1 rounded-[4px] border border-white/6 bg-[#25272d] px-1 py-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
               <Button
                 size="sm"
                 variant="ghost"
-                className={`h-[18px] rounded-[3px] px-1.5 text-[8px] font-medium ${snapEnabled ? "bg-[#355fa9] text-white hover:bg-[#426bb2]" : "text-white/60 hover:bg-white/6 hover:text-white"}`}
+                className={`h-[17px] rounded-[3px] px-1.5 text-[8px] font-medium ${snapEnabled ? "bg-[#355fa9] text-white hover:bg-[#426bb2]" : "text-white/60 hover:bg-white/6 hover:text-white"}`}
                 onClick={onToggleSnap}
               >
                 <Grid3X3 className="mr-1 h-3.5 w-3.5" />
@@ -108,26 +108,26 @@ export function StudioArrangementToolbar({
 
           {figmaCapture ? null : (
             <button
-              className={`flex h-[22px] items-center rounded-[4px] border border-white/6 px-2 text-[8px] font-medium ${tripletMode ? "bg-[#355fa9] text-white" : "bg-[#25272d] text-white/68"}`}
+              className={`flex h-[20px] items-center rounded-[4px] border border-white/6 px-2 text-[8px] font-medium ${tripletMode ? "bg-[#355fa9] text-white" : "bg-[#25272d] text-white/68"}`}
               onClick={onToggleTriplet}
             >
               Triplet
             </button>
           )}
 
-            <div className="flex h-[22px] items-center gap-0.5 rounded-[4px] border border-white/5 bg-[#16181d] px-1 py-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
-            <button className="flex h-[18px] w-[18px] items-center justify-center rounded-[3px] hover:bg-white/6 hover:text-white" onClick={onNarrowGrid} title="Zoom out timeline grid">
+            <div className="flex h-[20px] items-center gap-0.5 rounded-[4px] border border-white/5 bg-[#16181d] px-1 py-0 shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
+            <button className="flex h-[17px] w-[17px] items-center justify-center rounded-[3px] hover:bg-white/6 hover:text-white" onClick={onNarrowGrid} title="Zoom out timeline grid">
               <Minus className="h-3.5 w-3.5" />
             </button>
-            <button className="flex h-[18px] w-[18px] items-center justify-center rounded-[3px] hover:bg-white/6 hover:text-white" onClick={onWidenGrid} title="Zoom in timeline grid">
+            <button className="flex h-[17px] w-[17px] items-center justify-center rounded-[3px] hover:bg-white/6 hover:text-white" onClick={onWidenGrid} title="Zoom in timeline grid">
               <ZoomIn className="h-3.5 w-3.5" />
             </button>
-            <button className="flex h-[18px] w-[18px] items-center justify-center rounded-[3px] hover:bg-white/6 hover:text-white">
+            <button className="flex h-[17px] w-[17px] items-center justify-center rounded-[3px] hover:bg-white/6 hover:text-white">
               <Maximize2 className="h-3.5 w-3.5" />
             </button>
           </div>
 
-          <div className="flex h-[22px] items-center gap-1.5 rounded-[4px] border border-white/6 bg-[#25272d] px-2 py-0 text-[8px] shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
+          <div className="flex h-[20px] items-center gap-1.5 rounded-[4px] border border-white/6 bg-[#25272d] px-2 py-0 text-[8px] shadow-[inset_0_1px_0_rgba(255,255,255,0.025)]">
             <span className="text-white/48">Height:</span>
             <span className="font-medium text-white/84">{heightLabel}</span>
             <ChevronDown className="h-3.5 w-3.5 text-white/36" />

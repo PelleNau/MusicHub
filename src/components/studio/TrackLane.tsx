@@ -214,11 +214,11 @@ export const TrackLane = memo(function TrackLane({
   }, [onOpenTrackContextMenu, onSelect, track.id]);
 
   return (
-    <div className="group/track border-b border-white/[0.04] bg-[#121318]">
+    <div className="group/track border-b border-white/[0.08] bg-transparent">
       {/* ── Main track row ── */}
       <div
         className={`relative flex cursor-pointer transition-colors ${
-          isSelected ? "bg-white/[0.025]" : "hover:bg-white/[0.015]"
+          isSelected ? "bg-white/[0.018]" : "hover:bg-white/[0.01]"
         }`}
         style={{ height: trackHeight ?? 72, minHeight: trackHeight ?? 72, maxHeight: trackHeight ?? 72 }}
         onClick={handleLaneSelect}
@@ -443,7 +443,7 @@ export const TrackLane = memo(function TrackLane({
         </div>
         {/* ── Clip lane ── */}
         <div
-          className="relative flex-1 overflow-visible bg-[#0f1115]"
+          className="relative flex-1 overflow-visible bg-transparent"
           style={{ minWidth: laneWidth }}
           onDoubleClick={(e) => {
             if (track.type === "midi" && onCreateMidiClip) {
@@ -457,13 +457,14 @@ export const TrackLane = memo(function TrackLane({
           }}
         >
           <div
-            className="absolute h-full"
+            className="absolute inset-0"
             style={{
-              width: laneWidth,
               background:
-                "linear-gradient(180deg, rgba(255,255,255,0.003) 0%, rgba(255,255,255,0.001) 18%, rgba(0,0,0,0.018) 100%)",
+                "linear-gradient(180deg, rgba(255,255,255,0.018) 0%, rgba(255,255,255,0.008) 12%, rgba(0,0,0,0.02) 100%)",
             }}
           />
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-white/[0.10]" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-px bg-black/35" />
           {(track.clips || []).map((clip) => (
             <ClipBlock
               key={clip.id}

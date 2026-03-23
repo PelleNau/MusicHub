@@ -1,5 +1,5 @@
 export const TRACK_HEADER_WIDTH = 180;
-export const RULER_HEIGHT = 18;
+export const RULER_HEIGHT = 14;
 export const GRID_EPSILON = 1e-9;
 
 export interface TimelineViewportRange {
