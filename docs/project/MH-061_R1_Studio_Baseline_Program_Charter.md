@@ -45,25 +45,27 @@ The program uses two layers:
 
 1. Scope gate
    - `MH-055` and `MH-056` approved
-2. Validation gate
-   - `MH-057` and `MH-058` current and in use
-3. Repair gate
+2. Normalization gate
+   - `MH-065` through `MH-070` approved and treated as the release contract
+3. Validation gate
+   - `MH-057` and `MH-058` refactored to match the normalized spec
+4. Repair gate
    - all active failures logged in `MH-063`
-4. Exit gate
+5. Exit gate
    - `MH-060` satisfied
 
 ## Immediate Program Phase
 
 Current phase:
 
-- `R1 Studio Baseline QC and Repair`
+- `R1 Studio Baseline Spec Normalization and Validation Audit`
 
 Objectives:
 
 - freeze feature drift on the baseline branch
-- snapshot known defects
-- repair structural baseline issues before visual parity work
-- revalidate domain by domain
+- normalize the export corpus into one contradiction-resolved release contract
+- snapshot known defects against canonical requirement IDs
+- prevent further Studio repair work outside the audit contract
 
 ## Approval Authority
 

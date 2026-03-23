@@ -10,6 +10,8 @@
 - Primary branch:
   - `codex/studio-integration-baseline`
 - Spec source:
+  - `MH-066_R1_Canonical_Studio_Baseline_Spec.md`
+- Raw source material:
   - `/Users/pellenaucler/Documents/CodexProjekt/blank-canvas/Musichubfigmaexport`
 
 ## Purpose
@@ -20,10 +22,11 @@ It does not exist to invent new feature scope or absorb unrelated product work.
 
 ## Goals
 
-1. Prove that the new Studio interface is the real product baseline.
-2. Validate core editing behavior against the approved spec.
-3. Record all deviations as explicit defects or approved deferrals.
-4. Produce a release-quality decision: `Approved`, `Conditionally Approved`, or `Blocked`.
+1. Normalize the Figma/export corpus into one contradiction-resolved canonical `R1` spec.
+2. Prove that the new Studio interface is the real product baseline.
+3. Validate core editing behavior against the canonical spec.
+4. Record all deviations as explicit defects or approved deferrals.
+5. Produce a release-quality decision: `Approved`, `Conditionally Approved`, or `Blocked`.
 
 ## Non-Goals
 
@@ -95,10 +98,17 @@ Only these methods are valid:
 - no subsystem signoff without evidence
 - no product approval based on "looks fine"
 - no preview-route success counted as product-route success
+- no raw-corpus interpretation bypassing the canonical spec
 
 ## Deliverables
 
 - `MH-055` baseline approval matrix
+- `MH-065` corpus triage register
+- `MH-066` canonical baseline spec
+- `MH-067` contradiction and deferral ledger
+- `MH-068` runtime/backend mapping matrix
+- `MH-069` UI/component/CSS mapping matrix
+- `MH-070` validation mapping register
 - `MH-057` requirements traceability matrix
 - `MH-058` test catalog
 - `MH-059` defect triage rules
@@ -115,3 +125,4 @@ This charter is approved when these are accepted:
 3. The validation domains are sufficient.
 4. The validation methods and working rules are acceptable.
 5. The release gate must run through this charter.
+6. No Studio repair work should proceed until the normalization audit is approved.

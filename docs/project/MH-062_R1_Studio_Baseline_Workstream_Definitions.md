@@ -4,6 +4,16 @@
 
 This document defines exact release responsibilities for `R1 Studio Baseline`.
 
+## Assignment Standard
+
+Every release-managed task must reference:
+
+- release ID
+- requirement ID(s)
+- defect ID(s), if failing behavior exists
+- validation test ID(s)
+- one owning stream only
+
 ## Chief / Program
 
 Owns:
