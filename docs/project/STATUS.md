@@ -85,6 +85,9 @@ Machine-readable release registry:
 - the seventh implementation wave is complete:
   - browser rail shell is refined on the product routes
   - top Studio header shell is refined on the product routes
+- the eighth implementation wave is complete:
+  - bottom workspace shell is refined on the product routes
+  - status bar shell is refined on the product routes
 - the next active work is deeper behavior-level and composition-level replacement beyond shell cleanup
 
 ## Current Release State
@@ -130,6 +133,7 @@ No `R2` implementation work is accepted unless:
 - the component-chrome replacement wave remains accepted
 - the overlay-chrome replacement wave remains accepted
 - the navigation-shell refinement wave remains accepted
+- the footer-shell refinement wave remains accepted
 - `R1` runtime-preservation tests continue to pass under the replacement shell
 - the real Studio routes continue converging toward the integrated interface beyond shell and chrome cleanup
 - deeper behavior-level and composition-level replacement can be scoped without reopening route authority or baseline-runtime work
