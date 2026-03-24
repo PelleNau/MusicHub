@@ -221,6 +221,8 @@ Current `R2` state:
 - footer-shell refinement wave complete:
   - bottom workspace shell refined on the product routes
   - status bar shell refined on the product routes
+- header-composition replacement wave complete:
+  - top Studio header composition replaced on the product routes
 - next executable phase is deeper product-route behavior and composition replacement beyond shell cleanup
 
 ## Post-R2 Candidates
