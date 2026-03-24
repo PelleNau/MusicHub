@@ -90,6 +90,9 @@ Machine-readable release registry:
   - status bar shell is refined on the product routes
 - the ninth implementation wave is complete:
   - top Studio header composition is replaced on the product routes
+- the tenth implementation wave is complete:
+  - browser is replaced on the product routes with the new DAW browser composition
+  - mixer is replaced on the product routes with the new strip shell and shared DAW primitives
 - the next active work is deeper behavior-level and composition-level replacement beyond shell cleanup
 
 ## Current Release State
@@ -137,6 +140,7 @@ No `R2` implementation work is accepted unless:
 - the navigation-shell refinement wave remains accepted
 - the footer-shell refinement wave remains accepted
 - the header-composition replacement wave remains accepted
+- the browser and mixer replacement wave remains accepted
 - `R1` runtime-preservation tests continue to pass under the replacement shell
 - the real Studio routes continue converging toward the integrated interface beyond shell and chrome cleanup
 - deeper behavior-level and composition-level replacement can be scoped without reopening route authority or baseline-runtime work

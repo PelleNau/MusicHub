@@ -223,6 +223,9 @@ Current `R2` state:
   - status bar shell refined on the product routes
 - header-composition replacement wave complete:
   - top Studio header composition replaced on the product routes
+- browser and mixer replacement wave complete:
+  - browser replaced on the product routes using shared DAW primitives
+  - mixer replaced on the product routes using shared DAW primitives and new strip shells
 - next executable phase is deeper product-route behavior and composition replacement beyond shell cleanup
 
 ## Post-R2 Candidates
