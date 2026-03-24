@@ -203,7 +203,11 @@ Current `R2` state:
 - route unification wave complete
 - visible shell-chrome replacement wave complete
 - center-workspace composition replacement wave complete
-- next executable phase is deeper product-route surface replacement beyond center-shell cleanup
+- deeper surface-chrome replacement wave complete:
+  - floating dock removed from `/studio` and `/studio/workspace`
+  - arrangement surface chrome softened on product routes
+  - piano-roll shell chrome tightened on product routes
+- next executable phase is deeper product-route component replacement beyond shell and surface chrome
 
 ## Post-R2 Candidates
 

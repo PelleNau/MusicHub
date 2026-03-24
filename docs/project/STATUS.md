@@ -70,7 +70,11 @@ Machine-readable release registry:
   - product-route center workspace composition is tightened
   - the browser reads as an integrated left rail on the product routes
   - legacy center-frame cues are reduced on `/studio` and `/studio/workspace`
-- the next active work is deeper product-route surface replacement beyond center-shell cleanup
+- the fourth implementation wave is complete:
+  - the global floating dock is removed from the Studio product routes
+  - arrangement surface chrome is softened on the product routes
+  - piano-roll shell chrome is tightened on the product routes
+- the next active work is deeper component-level product-route replacement beyond shell and surface chrome
 
 ## Current Release State
 
@@ -114,3 +118,4 @@ No `R2` implementation work is accepted unless:
 - the center-workspace replacement wave remains accepted
 - `R1` runtime-preservation tests continue to pass under the replacement shell
 - the real Studio routes continue converging toward the integrated interface beyond chrome-only changes
+- deeper component-level replacement can be scoped without reopening route authority or baseline-runtime work
