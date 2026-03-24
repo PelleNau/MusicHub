@@ -54,7 +54,7 @@ That means:
 
 Current phase:
 
-- `R2 route contract locked; route-unification, shell-chrome, center-composition, surface-chrome, component-chrome, and overlay-chrome waves accepted`
+- `R2 route contract locked; route-unification, shell-chrome, center-composition, surface-chrome, component-chrome, overlay-chrome, and navigation-shell refinement waves accepted`
 
 Objectives:
 

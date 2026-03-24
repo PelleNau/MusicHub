@@ -215,7 +215,10 @@ Current `R2` state:
   - track context menu updated to the replacement shell language
   - clip context menu updated to the replacement shell language
   - piano-roll compact toolbar and context menu updated to the replacement shell language
-- next executable phase is deeper product-route behavior and composition replacement beyond shell and chrome cleanup
+- navigation-shell refinement wave complete:
+  - browser rail refined on the product routes
+  - top Studio header refined on the product routes
+- next executable phase is deeper product-route behavior and composition replacement beyond shell cleanup
 
 ## Post-R2 Candidates
 
