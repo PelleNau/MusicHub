@@ -12,7 +12,7 @@ This is the initial work backlog for `R2 Studio Replacement`.
 | `R2-002` | shell replacement composition | `ui-integration` | In Progress | Route unification, shell-chrome replacement, center-workspace composition replacement, surface-chrome replacement, component-chrome replacement, overlay-chrome replacement, navigation-shell refinement, footer-shell refinement, header-composition replacement, and product-route browser/mixer replacement are accepted. The next slice replaces deeper remaining old-shell product behavior and composition on `/studio` and `/studio/workspace` under the `MH-077` contract. |
 | `R2-003` | runtime preservation | `runtime` | In Progress | The shared `/studio` and `/studio/workspace` baseline contract is enforced by tests. Further slices must preserve all `R1`-validated transport, arrangement, piano-roll, mixer, browser, and automation behavior through composition replacement. |
 | `R2-004` | piano-roll/tool adoption | `figmafunktioner` | Open | Move newer piano-roll/tool affordances from reference/imported surfaces into the real product routes where required by the replacement contract. |
-| `R2-005` | visual convergence | `ui-alignment` | Open | Align arrangement, piano-roll, and mixer presentation on the replaced product shell. |
+| `R2-005` | visual convergence | `ui-alignment` | In Progress | Browser and mixer are now using the DAW visual-library layer on the product routes. The next slice applies the same system to arrangement, track headers, piano-roll tool chrome, and the footer/status surfaces. |
 
 ## Execution Rules
 
@@ -51,13 +51,15 @@ This is the initial work backlog for `R2 Studio Replacement`.
   - `bdfba00` on `codex/figma-capture-mode`
 - accepted browser and mixer replacement commit:
   - `b3a61f4` on `codex/figma-capture-mode`
+- accepted DAW visual-library and mixer/browser fidelity commit:
+  - `a168d93` on `codex/figma-capture-mode`
 
 ## Immediate Next Slice
 
 - replace remaining deeper product-route behavior and composition debt beyond shell and chrome cleanup, especially:
-  - arrangement and bottom-workspace composition choices that still reflect the old product shell
+  - arrangement toolbar and header micro-control fidelity
+  - arrangement canvas, lane, and clip treatment using the DAW visual-library tokens
   - piano-roll tool and dialog adoption on real routes
-  - deeper browser and mixer behavior parity where the new replaced surfaces expose richer product affordances
-  - guide/browser/editor composition behavior when moving between product routes
+  - footer/status convergence under the same DAW primitive layer
   - any still-visible legacy interaction behavior affecting `/studio` or `/studio/workspace`
 - keep the shared route contract and runtime baseline tests green

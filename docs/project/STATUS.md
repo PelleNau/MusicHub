@@ -2,7 +2,7 @@
 
 ## Current Phase
 
-`R2 Studio Replacement - Route Unification And Shell Replacement`
+`R2 Studio Replacement - DAW Visual Library And Arrangement Convergence`
 
 ## Program Baseline
 
@@ -93,7 +93,15 @@ Machine-readable release registry:
 - the tenth implementation wave is complete:
   - browser is replaced on the product routes with the new DAW browser composition
   - mixer is replaced on the product routes with the new strip shell and shared DAW primitives
-- the next active work is deeper behavior-level and composition-level replacement beyond shell cleanup
+- the eleventh implementation wave is complete:
+  - the Studio route now mounts a DAW-scoped token library through the product shell
+  - browser behavior is corrected to a source-scope + faceted-filter + resolved-results model
+  - mixer strip fidelity is materially closer to the console reference while preserving runtime controls
+- the next active work is arrangement-side convergence:
+  - arrangement toolbar density
+  - track-header micro-controls
+  - arrangement canvas/lane/grid treatment
+  - footer and piano-roll tool/dialog adoption through the same DAW library
 
 ## Current Release State
 
@@ -141,6 +149,7 @@ No `R2` implementation work is accepted unless:
 - the footer-shell refinement wave remains accepted
 - the header-composition replacement wave remains accepted
 - the browser and mixer replacement wave remains accepted
+- the DAW visual-library and mixer/browser fidelity wave remains accepted
 - `R1` runtime-preservation tests continue to pass under the replacement shell
 - the real Studio routes continue converging toward the integrated interface beyond shell and chrome cleanup
-- deeper behavior-level and composition-level replacement can be scoped without reopening route authority or baseline-runtime work
+- arrangement-side convergence can be scoped without reopening route authority or baseline-runtime work
