@@ -211,7 +211,11 @@ Current `R2` state:
   - track controls tightened on product routes
   - piano-roll keyboard updated to the replacement shell language
   - piano-roll velocity lane updated to the replacement shell language
-- next executable phase is deeper product-route interaction and overlay replacement beyond shell, surface, and component chrome
+- overlay-chrome replacement wave complete:
+  - track context menu updated to the replacement shell language
+  - clip context menu updated to the replacement shell language
+  - piano-roll compact toolbar and context menu updated to the replacement shell language
+- next executable phase is deeper product-route behavior and composition replacement beyond shell and chrome cleanup
 
 ## Post-R2 Candidates
 

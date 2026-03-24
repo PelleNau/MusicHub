@@ -78,7 +78,11 @@ Machine-readable release registry:
   - track control chrome is replaced on the product routes
   - piano-roll keyboard chrome is replaced on the product routes
   - piano-roll velocity-lane chrome is replaced on the product routes
-- the next active work is deeper interaction and overlay replacement beyond shell, surface, and component chrome
+- the sixth implementation wave is complete:
+  - track context menu chrome is replaced on the product routes
+  - clip context menu chrome is replaced on the product routes
+  - piano-roll compact toolbar and context menu chrome are replaced on the product routes
+- the next active work is deeper behavior-level and composition-level replacement beyond shell, surface, component, and overlay chrome
 
 ## Current Release State
 
@@ -121,6 +125,7 @@ No `R2` implementation work is accepted unless:
 - the visible shell replacement waves remain accepted
 - the center-workspace replacement wave remains accepted
 - the component-chrome replacement wave remains accepted
+- the overlay-chrome replacement wave remains accepted
 - `R1` runtime-preservation tests continue to pass under the replacement shell
-- the real Studio routes continue converging toward the integrated interface beyond shell and component chrome
-- deeper interaction and overlay replacement can be scoped without reopening route authority or baseline-runtime work
+- the real Studio routes continue converging toward the integrated interface beyond shell and chrome cleanup
+- deeper behavior-level and composition-level replacement can be scoped without reopening route authority or baseline-runtime work

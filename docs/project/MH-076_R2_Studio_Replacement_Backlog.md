@@ -9,7 +9,7 @@ This is the initial work backlog for `R2 Studio Replacement`.
 | Work Item ID | Area | Owner | Status | Summary |
 | --- | --- | --- | --- | --- |
 | `R2-001` | route replacement contract | `platform` | Complete | Product-route contract defined in `MH-077`; `/studio` and `/studio/workspace` are the only canonical Studio product routes and legacy review/lab routes no longer hold product authority. |
-| `R2-002` | shell replacement composition | `ui-integration` | In Progress | Route unification, shell-chrome replacement, center-workspace composition replacement, surface-chrome replacement, and component-chrome replacement are accepted. The next slice replaces deeper remaining old-shell product interactions and overlays on `/studio` and `/studio/workspace` under the `MH-077` contract. |
+| `R2-002` | shell replacement composition | `ui-integration` | In Progress | Route unification, shell-chrome replacement, center-workspace composition replacement, surface-chrome replacement, component-chrome replacement, and overlay-chrome replacement are accepted. The next slice replaces deeper remaining old-shell product behavior and composition on `/studio` and `/studio/workspace` under the `MH-077` contract. |
 | `R2-003` | runtime preservation | `runtime` | In Progress | The shared `/studio` and `/studio/workspace` baseline contract is enforced by tests. Further slices must preserve all `R1`-validated transport, arrangement, piano-roll, mixer, browser, and automation behavior through composition replacement. |
 | `R2-004` | piano-roll/tool adoption | `figmafunktioner` | Open | Move newer piano-roll/tool affordances from reference/imported surfaces into the real product routes where required by the replacement contract. |
 | `R2-005` | visual convergence | `ui-alignment` | Open | Align arrangement, piano-roll, and mixer presentation on the replaced product shell. |
@@ -41,12 +41,14 @@ This is the initial work backlog for `R2 Studio Replacement`.
   - `a311e1b` on `codex/figma-capture-mode`
 - accepted component-chrome replacement commit:
   - `fede925` on `codex/figma-capture-mode`
+- accepted overlay-chrome replacement commit:
+  - `5a4b116` on `codex/figma-capture-mode`
 
 ## Immediate Next Slice
 
-- replace remaining deeper product-route interaction and overlay debt beyond shell, surface, and component chrome, especially:
-  - track-head context-menu and overlay treatments
-  - clip-context and other editor overlay surfaces on real routes
+- replace remaining deeper product-route behavior and composition debt beyond shell and chrome cleanup, especially:
+  - arrangement and bottom-workspace composition choices that still reflect the old product shell
   - piano-roll tool and dialog adoption on real routes
-  - any still-visible legacy interaction behavior or overlay affecting `/studio` or `/studio/workspace`
+  - guide/browser/editor composition behavior when moving between product routes
+  - any still-visible legacy interaction behavior affecting `/studio` or `/studio/workspace`
 - keep the shared route contract and runtime baseline tests green
