@@ -207,7 +207,11 @@ Current `R2` state:
   - floating dock removed from `/studio` and `/studio/workspace`
   - arrangement surface chrome softened on product routes
   - piano-roll shell chrome tightened on product routes
-- next executable phase is deeper product-route component replacement beyond shell and surface chrome
+- component-chrome replacement wave complete:
+  - track controls tightened on product routes
+  - piano-roll keyboard updated to the replacement shell language
+  - piano-roll velocity lane updated to the replacement shell language
+- next executable phase is deeper product-route interaction and overlay replacement beyond shell, surface, and component chrome
 
 ## Post-R2 Candidates
 

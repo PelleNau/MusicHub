@@ -74,7 +74,11 @@ Machine-readable release registry:
   - the global floating dock is removed from the Studio product routes
   - arrangement surface chrome is softened on the product routes
   - piano-roll shell chrome is tightened on the product routes
-- the next active work is deeper component-level product-route replacement beyond shell and surface chrome
+- the fifth implementation wave is complete:
+  - track control chrome is replaced on the product routes
+  - piano-roll keyboard chrome is replaced on the product routes
+  - piano-roll velocity-lane chrome is replaced on the product routes
+- the next active work is deeper interaction and overlay replacement beyond shell, surface, and component chrome
 
 ## Current Release State
 
@@ -116,6 +120,7 @@ No `R2` implementation work is accepted unless:
 
 - the visible shell replacement waves remain accepted
 - the center-workspace replacement wave remains accepted
+- the component-chrome replacement wave remains accepted
 - `R1` runtime-preservation tests continue to pass under the replacement shell
-- the real Studio routes continue converging toward the integrated interface beyond chrome-only changes
-- deeper component-level replacement can be scoped without reopening route authority or baseline-runtime work
+- the real Studio routes continue converging toward the integrated interface beyond shell and component chrome
+- deeper interaction and overlay replacement can be scoped without reopening route authority or baseline-runtime work
