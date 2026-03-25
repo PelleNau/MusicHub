@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from "react";
 import { Plus, Power, X, ChevronDown, ChevronUp } from "lucide-react";
 import type { DeviceInstance, DeviceType, DeviceParam } from "@/types/studio";
-import { DEVICE_DEFS } from "@/types/studio";
+import { DEVICE_DEFS, getDeviceDisplayInfo } from "@/types/studio";
 
 /* ── Param knob (horizontal slider style) ── */
 function ParamSlider({
@@ -99,6 +99,7 @@ function DeviceCard({
   const [collapsed, setCollapsed] = useState(false);
   const def = DEVICE_DEFS.find((d) => d.type === device.type);
   if (!def) return null;
+  const display = getDeviceDisplayInfo(device);
 
   return (
     <div
@@ -120,7 +121,15 @@ function DeviceCard({
           <Power className="h-2 w-2" />
         </button>
         <span className="text-[8px] font-mono font-medium text-foreground flex-1 truncate">
-          {def.label}
+          {display.label}
+        </span>
+        {display.isHostBacked && (
+          <span className="text-[7px] font-mono uppercase text-foreground/45 shrink-0">
+            host
+          </span>
+        )}
+        <span className="text-[7px] font-mono text-foreground/45 truncate max-w-[90px]">
+          {display.subtitle}
         </span>
         <button
           onClick={() => setCollapsed(!collapsed)}
@@ -144,6 +153,11 @@ function DeviceCard({
       {/* Params */}
       {!collapsed && (
         <div className="px-1.5 pb-1 space-y-[2px]">
+          {display.isHostBacked && (
+            <div className="text-[7px] font-mono text-foreground/45">
+              Parameters open in the native host.
+            </div>
+          )}
           {def.params.map((p) => (
             <ParamSlider
               key={p.key}

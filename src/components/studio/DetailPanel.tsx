@@ -5,11 +5,15 @@ import {
   ContextMenuSeparator, ContextMenuTrigger,
 } from "@/components/ui/context-menu";
 import type { DeviceInstance, DeviceType, DeviceParam, SessionTrack } from "@/types/studio";
-import { DEVICE_DEFS } from "@/types/studio";
+import { DEVICE_DEFS, getDeviceDisplayInfo, isHostBackedDevice } from "@/types/studio";
 import { getTrackColor } from "./TrackLane";
 import { NativeParamPanel } from "./NativeParamPanel";
 import type { ChainNode, ChainParamsResponse } from "@/services/pluginHostClient";
 import type { PluginParamChangedEvent } from "@/services/pluginHostSocket";
+
+function editorActionKey(chainId: string, nodeIndex: number) {
+  return `${chainId}:${nodeIndex}`;
+}
 
 /* ── Device accent colors (Ableton-style per device type) ── */
 const DEVICE_COLORS: Partial<Record<DeviceType, string>> = {
@@ -144,6 +148,7 @@ function DeviceCard({
   onResetDefaults,
   nativeNode,
   editorOpen,
+  editorBusy,
   onLoadInHost,
   onOpenInHost,
   onCloseInHost,
@@ -160,21 +165,19 @@ function DeviceCard({
   onResetDefaults: () => void;
   nativeNode?: ChainNode;
   editorOpen?: boolean;
+  editorBusy?: boolean;
   onLoadInHost?: () => void;
-  onOpenInHost?: () => void;
-  onCloseInHost?: () => void;
+  onOpenInHost?: () => Promise<void>;
+  onCloseInHost?: () => Promise<void>;
   onToggleNativeBypass?: (bypass: boolean) => void;
 }) {
   const def = DEVICE_DEFS.find((d) => d.type === device.type);
   if (!def) return null;
 
-  const isNativeBacked = Boolean(device.nativePluginId || device.nativePluginPath);
-  const displayLabel = isNativeBacked
-    ? (device.nativePluginName || def.label)
-    : def.label;
-  const displaySubtitle = isNativeBacked
-    ? [device.nativePluginVendor, device.nativePluginFormat].filter(Boolean).join(" · ")
-    : null;
+  const display = getDeviceDisplayInfo(device);
+  const isNativeBacked = display.isHostBacked;
+  const displayLabel = display.label;
+  const displaySubtitle = display.subtitle;
   const deviceColor = DEVICE_COLORS[device.type] || "hsl(0,0%,50%)";
 
   return (
@@ -246,19 +249,21 @@ function DeviceCard({
                 <>
                   {editorOpen && onCloseInHost ? (
                     <button
-                      className="rounded-[3px] px-2 py-1 text-[8px] font-mono bg-primary/20 text-primary transition-colors hover:bg-primary/30"
-                      onClick={onCloseInHost}
+                      className="rounded-[3px] px-2 py-1 text-[8px] font-mono bg-primary/20 text-primary transition-colors hover:bg-primary/30 disabled:cursor-wait disabled:opacity-60"
+                      onClick={() => void onCloseInHost()}
+                      disabled={editorBusy}
                       title={`Close ${displayLabel} editor in the native host`}
                     >
-                      Close Editor
+                      {editorBusy ? "Closing…" : "Close Editor"}
                     </button>
                   ) : onOpenInHost ? (
                     <button
-                      className="rounded-[3px] px-2 py-1 text-[8px] font-mono bg-primary/12 text-primary transition-colors hover:bg-primary/20"
-                      onClick={onOpenInHost}
+                      className="rounded-[3px] px-2 py-1 text-[8px] font-mono bg-primary/12 text-primary transition-colors hover:bg-primary/20 disabled:cursor-wait disabled:opacity-60"
+                      onClick={() => void onOpenInHost()}
+                      disabled={editorBusy}
                       title={`Open ${displayLabel} in the native host`}
                     >
-                      Open
+                      {editorBusy ? "Opening…" : "Open in Host"}
                     </button>
                   ) : null}
                   {onToggleNativeBypass && (
@@ -342,6 +347,7 @@ function HostChainSection({
   nativeChainId,
   nativeChainNodes,
   openEditors,
+  busyEditors,
   onOpenEditor,
   onCloseEditor,
   onToggleNativeNodeBypass,
@@ -350,8 +356,9 @@ function HostChainSection({
   nativeChainId: string;
   nativeChainNodes: ChainNode[];
   openEditors?: Record<string, boolean>;
-  onOpenEditor?: (chainId: string, nodeIndex: number) => void;
-  onCloseEditor?: (chainId: string, nodeIndex: number) => void;
+  busyEditors?: Record<string, boolean>;
+  onOpenEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
+  onCloseEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
   onToggleNativeNodeBypass?: (chainId: string, nodeIndex: number, bypass: boolean) => void;
   onRemoveNativeNode?: (chainId: string, nodeIndex: number) => void;
 }) {
@@ -370,8 +377,9 @@ function HostChainSection({
       <div className="space-y-1">
         {nativeChainNodes.map((node) => (
           (() => {
-            const editorKey = `${nativeChainId}:${node.index}`;
+            const editorKey = editorActionKey(nativeChainId, node.index);
             const editorOpen = Boolean(openEditors?.[editorKey]);
+            const editorBusy = Boolean(busyEditors?.[editorKey]);
 
             return (
           <div
@@ -408,22 +416,31 @@ function HostChainSection({
             )}
             {editorOpen && onCloseEditor ? (
               <button
-                className="flex items-center gap-1 rounded-[3px] px-2 py-1 text-[8px] font-mono text-primary bg-primary/20 hover:bg-primary/30 transition-colors shrink-0"
-                onClick={() => onCloseEditor(nativeChainId, node.index)}
+                className="flex items-center gap-1 rounded-[3px] px-2 py-1 text-[8px] font-mono text-primary bg-primary/20 hover:bg-primary/30 transition-colors shrink-0 disabled:cursor-wait disabled:opacity-60"
+                onClick={() => void onCloseEditor(nativeChainId, node.index)}
+                disabled={editorBusy}
                 title={`Close ${node.pluginName} editor in native host`}
               >
                 <ExternalLink className="h-3 w-3" />
-                Close Editor
+                {editorBusy ? "Closing…" : "Close Editor"}
               </button>
-            ) : onOpenEditor ? (
+            ) : onOpenEditor && node.supportsEditor !== false ? (
               <button
-                className="flex items-center gap-1 rounded-[3px] px-2 py-1 text-[8px] font-mono text-primary bg-primary/10 hover:bg-primary/20 transition-colors shrink-0"
-                onClick={() => onOpenEditor(nativeChainId, node.index)}
+                className="flex items-center gap-1 rounded-[3px] px-2 py-1 text-[8px] font-mono text-primary bg-primary/10 hover:bg-primary/20 transition-colors shrink-0 disabled:cursor-wait disabled:opacity-60"
+                onClick={() => void onOpenEditor(nativeChainId, node.index)}
+                disabled={editorBusy}
                 title={`Open ${node.pluginName} in native host`}
               >
                 <ExternalLink className="h-3 w-3" />
-                Open in Host
+                {editorBusy ? "Opening…" : "Open in Host"}
               </button>
+            ) : node.supportsEditor === false ? (
+              <span
+                className="shrink-0 rounded-[3px] px-2 py-1 text-[8px] font-mono text-foreground/45 bg-foreground/6"
+                title={`${node.pluginName} does not expose a native editor in the host`}
+              >
+                No Editor
+              </span>
             ) : null}
             {onRemoveNativeNode && (
               <button
@@ -450,6 +467,7 @@ function BrowserDeviceChain({
   nativeChainId,
   nativeChainNodes,
   openEditors,
+  busyEditors,
   onToggle,
   onRemove,
   onParamChange,
@@ -465,14 +483,15 @@ function BrowserDeviceChain({
   nativeChainId?: string;
   nativeChainNodes?: ChainNode[];
   openEditors?: Record<string, boolean>;
+  busyEditors?: Record<string, boolean>;
   onToggle: (idx: number) => void;
   onRemove: (idx: number) => void;
   onParamChange: (idx: number, key: string, value: number) => void;
   onMoveDevice: (idx: number, direction: -1 | 1) => void;
   onResetDefaults: (idx: number) => void;
   onLoadNativeChain?: (trackId: string) => Promise<string | null>;
-  onOpenEditor?: (chainId: string, nodeIndex: number) => void;
-  onCloseEditor?: (chainId: string, nodeIndex: number) => void;
+  onOpenEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
+  onCloseEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
   onToggleNativeNodeBypass?: (chainId: string, nodeIndex: number, bypass: boolean) => void;
 }) {
   return (
@@ -495,7 +514,7 @@ function BrowserDeviceChain({
             let nativeOrdinal = -1;
 
             return devices.map((device, idx) => {
-              const isHostBacked = Boolean(device.nativePluginId || device.nativePluginPath);
+              const isHostBacked = isHostBackedDevice(device);
               const nodeIndex = isHostBacked ? ++nativeOrdinal : -1;
               const nativeNode = isHostBacked && nativeChainId && nativeChainNodes
                 ? nativeChainNodes.find((node) => node.index === nodeIndex)
@@ -519,16 +538,22 @@ function BrowserDeviceChain({
                       isHostBacked &&
                       nativeChainId &&
                       nativeNode &&
-                      openEditors?.[`${nativeChainId}:${nativeNode.index}`]
+                      openEditors?.[editorActionKey(nativeChainId, nativeNode.index)]
+                    )}
+                    editorBusy={Boolean(
+                      isHostBacked &&
+                      nativeChainId &&
+                      nativeNode &&
+                      busyEditors?.[editorActionKey(nativeChainId, nativeNode.index)]
                     )}
                     onLoadInHost={isHostBacked && !nativeNode && onLoadNativeChain
                       ? () => void onLoadNativeChain(trackId)
                       : undefined}
                     onOpenInHost={isHostBacked && nativeChainId && nativeNode && onOpenEditor
-                      ? () => onOpenEditor(nativeChainId, nativeNode.index)
+                      ? async () => { await onOpenEditor(nativeChainId, nativeNode.index); }
                       : undefined}
-                    onCloseInHost={isHostBacked && nativeChainId && nativeNode && openEditors?.[`${nativeChainId}:${nativeNode.index}`] && onCloseEditor
-                      ? () => onCloseEditor(nativeChainId, nativeNode.index)
+                    onCloseInHost={isHostBacked && nativeChainId && nativeNode && openEditors?.[editorActionKey(nativeChainId, nativeNode.index)] && onCloseEditor
+                      ? async () => { await onCloseEditor(nativeChainId, nativeNode.index); }
                       : undefined}
                     onToggleNativeBypass={isHostBacked && nativeChainId && nativeNode && onToggleNativeNodeBypass
                       ? (bypass) => onToggleNativeNodeBypass(nativeChainId, nativeNode.index, bypass)
@@ -569,6 +594,9 @@ interface DetailPanelProps {
   isConnected?: boolean;
   nativeChainId?: string;
   nativeChainNodes?: ChainNode[];
+  nativeNodeCount?: number;
+  hasHostBackedDevices?: boolean;
+  canLoadNativeChain?: boolean;
   openEditors?: Record<string, boolean>;
   onLoadNativeChain?: (trackId: string) => Promise<string | null>;
   onFetchChainParams?: (chainId: string) => Promise<ChainParamsResponse | null>;
@@ -578,8 +606,8 @@ interface DetailPanelProps {
   onRestorePluginState?: (chainId: string, nodeIndex: number, stateId: string) => Promise<boolean>;
   onSetParam?: (chainId: string, nodeIndex: number, paramId: number, value: number) => void;
   onParamChanged?: (fn: (e: PluginParamChangedEvent) => void) => () => void;
-  onOpenEditor?: (chainId: string, nodeIndex: number) => void;
-  onCloseEditor?: (chainId: string, nodeIndex: number) => void;
+  onOpenEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
+  onCloseEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
   onToggleNativeNodeBypass?: (chainId: string, nodeIndex: number, bypass: boolean) => void;
   onRemoveNativeNode?: (chainId: string, nodeIndex: number) => void;
 }
@@ -591,6 +619,9 @@ export function DetailPanel({
   isConnected,
   nativeChainId,
   nativeChainNodes,
+  nativeNodeCount,
+  hasHostBackedDevices,
+  canLoadNativeChain,
   openEditors,
   onLoadNativeChain,
   onFetchChainParams,
@@ -608,6 +639,7 @@ export function DetailPanel({
   const [showAdd, setShowAdd] = useState(false);
   const [showNativeParams, setShowNativeParams] = useState(false);
   const [loadingNativeChain, setLoadingNativeChain] = useState(false);
+  const [busyEditors, setBusyEditors] = useState<Record<string, boolean>>({});
   const trackId = track?.id;
 
   useEffect(() => {
@@ -628,10 +660,57 @@ export function DetailPanel({
     }
   }, [loadingNativeChain, onLoadNativeChain, trackId]);
 
+  const runEditorAction = useCallback(
+    async (chainId: string, nodeIndex: number, action?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown) => {
+      if (!action) return;
+
+      const key = editorActionKey(chainId, nodeIndex);
+      let started = false;
+
+      setBusyEditors((previous) => {
+        if (previous[key]) return previous;
+        started = true;
+        return { ...previous, [key]: true };
+      });
+
+      if (!started) return;
+
+      try {
+        await action(chainId, nodeIndex);
+      } finally {
+        setBusyEditors((previous) => {
+          if (!previous[key]) return previous;
+          const next = { ...previous };
+          delete next[key];
+          return next;
+        });
+      }
+    },
+    [],
+  );
+
+  const handleOpenEditor = useCallback(
+    async (chainId: string, nodeIndex: number) => {
+      await runEditorAction(chainId, nodeIndex, onOpenEditor);
+    },
+    [onOpenEditor, runEditorAction],
+  );
+
+  const handleCloseEditor = useCallback(
+    async (chainId: string, nodeIndex: number) => {
+      await runEditorAction(chainId, nodeIndex, onCloseEditor);
+    },
+    [onCloseEditor, runEditorAction],
+  );
+
   if (!track) return null;
 
   const devices = (track.device_chain || []) as DeviceInstance[];
-  const hasNativeBackedDevices = devices.some((device) => Boolean(device.nativePluginId || device.nativePluginPath));
+  const resolvedHasHostBackedDevices =
+    hasHostBackedDevices ?? devices.some((device) => isHostBackedDevice(device));
+  const resolvedCanLoadNativeChain =
+    canLoadNativeChain ?? Boolean(isConnected && resolvedHasHostBackedDevices && !nativeChainId && onLoadNativeChain);
+  const resolvedNativeNodeCount = nativeNodeCount ?? nativeChainNodes?.length ?? 0;
   const color = getTrackColor(track.color);
 
   const handleAdd = (type: DeviceType) => {
@@ -712,16 +791,17 @@ export function DetailPanel({
           </button>
         )}
 
-        {nativeChainId && nativeChainNodes && nativeChainNodes.length > 0 && (
+        {nativeChainId && resolvedNativeNodeCount > 0 && (
           <span className="text-[8px] font-mono text-foreground/55">
-            {nativeChainNodes.length} native node{nativeChainNodes.length === 1 ? "" : "s"}
+            {resolvedNativeNodeCount} native node{resolvedNativeNodeCount === 1 ? "" : "s"}
           </span>
         )}
 
-        {isConnected && hasNativeBackedDevices && !nativeChainId && onLoadNativeChain && (
+        {resolvedCanLoadNativeChain && (
           <button
-            className="flex items-center gap-1 text-[9px] font-mono px-2 py-[3px] rounded-[3px] transition-colors bg-primary/12 text-primary hover:bg-primary/20"
+            className="flex items-center gap-1 text-[9px] font-mono px-2 py-[3px] rounded-[3px] transition-colors bg-primary/12 text-primary hover:bg-primary/20 disabled:cursor-wait disabled:opacity-60"
             onClick={() => void handleLoadNativeChainClick()}
+            disabled={loadingNativeChain}
             title="Load the selected host-backed devices into the local plugin host"
           >
             <Cpu className="h-3 w-3" /> {loadingNativeChain ? "Loading…" : "Load in Host"}
@@ -790,8 +870,9 @@ export function DetailPanel({
               nativeChainId={nativeChainId}
               nativeChainNodes={nativeChainNodes}
               openEditors={openEditors}
-              onOpenEditor={onOpenEditor}
-              onCloseEditor={onCloseEditor}
+              busyEditors={busyEditors}
+              onOpenEditor={handleOpenEditor}
+              onCloseEditor={handleCloseEditor}
               onToggleNativeNodeBypass={onToggleNativeNodeBypass}
               onRemoveNativeNode={onRemoveNativeNode}
             />
@@ -813,14 +894,15 @@ export function DetailPanel({
               <div className="flex h-full items-center justify-center px-4">
                 <div className="flex max-w-[360px] flex-col items-center gap-3 text-center">
                   <span className="text-[10px] font-mono text-muted-foreground">
-                    {hasNativeBackedDevices
+                    {resolvedHasHostBackedDevices
                       ? "This track has host-backed devices, but no native chain is loaded yet"
                       : "No native chain is loaded for this track yet"}
                   </span>
-                  {hasNativeBackedDevices && onLoadNativeChain && (
+                  {resolvedCanLoadNativeChain && (
                     <button
-                      className="flex items-center gap-1 rounded-[3px] bg-primary/12 px-3 py-1.5 text-[9px] font-mono text-primary transition-colors hover:bg-primary/20"
+                      className="flex items-center gap-1 rounded-[3px] bg-primary/12 px-3 py-1.5 text-[9px] font-mono text-primary transition-colors hover:bg-primary/20 disabled:cursor-wait disabled:opacity-60"
                       onClick={() => void handleLoadNativeChainClick()}
+                      disabled={loadingNativeChain}
                     >
                       <Cpu className="h-3 w-3" />
                       {loadingNativeChain ? "Loading…" : "Load in Host"}
@@ -838,8 +920,9 @@ export function DetailPanel({
               nativeChainId={nativeChainId}
               nativeChainNodes={nativeChainNodes}
               openEditors={openEditors}
-              onOpenEditor={onOpenEditor}
-              onCloseEditor={onCloseEditor}
+              busyEditors={busyEditors}
+              onOpenEditor={handleOpenEditor}
+              onCloseEditor={handleCloseEditor}
               onToggleNativeNodeBypass={onToggleNativeNodeBypass}
               onRemoveNativeNode={onRemoveNativeNode}
             />
@@ -851,14 +934,15 @@ export function DetailPanel({
             nativeChainId={nativeChainId}
             nativeChainNodes={nativeChainNodes}
             openEditors={openEditors}
+            busyEditors={busyEditors}
             onToggle={handleToggle}
             onRemove={handleRemove}
             onParamChange={handleParamChange}
             onMoveDevice={handleMoveDevice}
             onResetDefaults={handleResetDefaults}
             onLoadNativeChain={onLoadNativeChain}
-            onOpenEditor={onOpenEditor}
-            onCloseEditor={onCloseEditor}
+            onOpenEditor={handleOpenEditor}
+            onCloseEditor={handleCloseEditor}
             onToggleNativeNodeBypass={onToggleNativeNodeBypass}
           />
         </div>

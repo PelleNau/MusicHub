@@ -1,6 +1,6 @@
 import { useMemo, type Dispatch, type MutableRefObject, type SetStateAction } from "react";
 import type { HostConnector } from "@/services/hostConnector";
-import type { ChainLoadResponse, ChainNode, MidiDevice } from "@/services/pluginHostClient";
+import { normalizeChainLoadResponseData, type ChainLoadResponse, type ChainNode, type MidiDevice } from "@/services/pluginHostClient";
 import type {
   AnalysisData,
   BounceProgress,
@@ -29,57 +29,18 @@ type ConnectorChainNodeShape = Partial<ChainNode> & {
   parameterCount?: number;
 };
 
-type ConnectorLoadedChainShape = {
-  sampleRate?: number;
-  blockSize?: number;
-  plugins?: ConnectorChainNodeShape[];
-};
-
 type ConnectorChainLoadResponseShape = Partial<ChainLoadResponse> & {
-  loadedChain?: ConnectorLoadedChainShape;
+  loadedChain?: {
+    sampleRate?: number;
+    blockSize?: number;
+    plugins?: ConnectorChainNodeShape[];
+  };
   manifest?: { name?: string };
   nodes?: ConnectorChainNodeShape[];
 };
 
 function normalizeChainLoadResponse(response: ConnectorChainLoadResponseShape, elapsedMs: number): ChainLoadResponse {
-  const loadedChain = response.loadedChain;
-  const rawNodes = response.nodes ?? loadedChain?.plugins ?? [];
-
-  const nodes = rawNodes.map((node, index) => {
-    const restoredStateBytes = typeof node.restoredStateBytes === "number" ? node.restoredStateBytes : 0;
-    const parameterCount =
-      typeof node.parameterCount === "number"
-        ? node.parameterCount
-        : (typeof node.paramCount === "number" ? node.paramCount : 0);
-
-    return {
-      index: typeof node.index === "number" ? node.index : index,
-      pluginId: String(node.pluginId ?? node.id ?? ""),
-      pluginName: String(node.pluginName ?? node.name ?? ""),
-      vendor: String(node.vendor ?? node.manufacturer ?? ""),
-      format: String(node.format ?? ""),
-      bypass: Boolean(node.bypass),
-      stateRestored: Boolean(node.stateRestored ?? (restoredStateBytes > 0)),
-      paramCount: parameterCount,
-      latencySamples: typeof node.latencySamples === "number" ? node.latencySamples : 0,
-      status: (typeof node.status === "string" ? node.status : "loaded") as "loaded" | "missing" | "error",
-      error: typeof node.error === "string" ? node.error : undefined,
-    } satisfies ChainNode;
-  });
-
-  return {
-    chainId: String(response.chainId ?? ""),
-    name: String(response.name ?? response.manifest?.name ?? ""),
-    sampleRate: Number(response.sampleRate ?? loadedChain?.sampleRate ?? 48000),
-    blockSize: Number(response.blockSize ?? loadedChain?.blockSize ?? 512),
-    nodeCount: Number(response.nodeCount ?? nodes.length),
-    nodes,
-    loadedCount: Number(response.loadedCount ?? nodes.filter((node) => node.status === "loaded").length),
-    missingCount: Number(response.missingCount ?? nodes.filter((node) => node.status === "missing").length),
-    errorCount: Number(response.errorCount ?? nodes.filter((node) => node.status === "error").length),
-    totalLatencySamples: Number(response.totalLatencySamples ?? nodes.reduce((sum, node) => sum + node.latencySamples, 0)),
-    elapsedMs: Number(response.elapsedMs ?? elapsedMs ?? 0),
-  };
+  return normalizeChainLoadResponseData(response, elapsedMs);
 }
 
 export function useHostConnectorActions({
@@ -127,9 +88,9 @@ export function useHostConnectorActions({
             delete next[`${chainId}:${nodeIndex}`];
             return next;
           });
-          return Boolean(response.data.closed);
+          return response.data;
         } catch {
-          return false;
+          return null;
         }
       },
       fetchPluginPresets: async (chainId, nodeIndex) => {

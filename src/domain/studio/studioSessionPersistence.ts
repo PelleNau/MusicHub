@@ -6,7 +6,15 @@ import type {
   TrackCreatePayload,
   TrackUpdatePayload,
 } from "@/hooks/studioMutationTypes";
-import type { Session, SessionClip, SessionTrack } from "@/types/studio";
+import { normalizeDeviceChain, type Session, type SessionClip, type SessionTrack } from "@/types/studio";
+
+function normalizeTrackPayloadDeviceChain<T extends { device_chain?: SessionTrack["device_chain"] }>(payload: T): T {
+  if (!("device_chain" in payload) || !payload.device_chain) return payload;
+  return {
+    ...payload,
+    device_chain: normalizeDeviceChain(payload.device_chain),
+  };
+}
 
 export async function fetchSessionRecord(sessionId: string): Promise<Session> {
   const { data, error } = await supabase
@@ -40,6 +48,7 @@ export async function fetchSessionTrackRecords(sessionId: string): Promise<Sessi
 
   return (trackRows || []).map((track) => ({
     ...track,
+    device_chain: normalizeDeviceChain(track.device_chain as SessionTrack["device_chain"]),
     clips: clipsByTrack[track.id] || [],
   })) as SessionTrack[];
 }
@@ -84,22 +93,28 @@ export async function insertTrackRecord(
   sessionId: string,
   track: TrackCreatePayload,
 ): Promise<SessionTrack> {
+  const normalizedTrack = normalizeTrackPayloadDeviceChain(track);
   const { data, error } = await supabase
     .from("session_tracks")
-    .insert([{ session_id: sessionId, ...track }])
+    .insert([{ session_id: sessionId, ...normalizedTrack }])
     .select()
     .single();
   if (error) throw error;
-  return { ...(data as SessionTrack), clips: [] };
+  return {
+    ...(data as SessionTrack),
+    device_chain: normalizeDeviceChain((data as SessionTrack).device_chain),
+    clips: [],
+  };
 }
 
 export async function updateTrackRecord(
   trackId: string,
   updates: TrackUpdatePayload,
 ): Promise<void> {
+  const normalizedUpdates = normalizeTrackPayloadDeviceChain(updates);
   const { error } = await supabase
     .from("session_tracks")
-    .update(updates)
+    .update(normalizedUpdates)
     .eq("id", trackId);
   if (error) throw error;
 }
@@ -183,12 +198,17 @@ export async function insertTrackRecords(
   sessionId: string,
   tracks: TrackCreatePayload[],
 ): Promise<Array<SessionTrack & { clips: SessionClip[] }>> {
+  const normalizedTracks = tracks.map(normalizeTrackPayloadDeviceChain);
   const { data, error } = await supabase
     .from("session_tracks")
-    .insert(tracks.map((track) => ({ session_id: sessionId, ...track })))
+    .insert(normalizedTracks.map((track) => ({ session_id: sessionId, ...track })))
     .select();
   if (error) throw error;
-  return (data as SessionTrack[]).map((track) => ({ ...track, clips: [] }));
+  return (data as SessionTrack[]).map((track) => ({
+    ...track,
+    device_chain: normalizeDeviceChain(track.device_chain),
+    clips: [],
+  }));
 }
 
 export async function insertClipRecords(clips: ClipCreatePayload[]): Promise<void> {
@@ -220,7 +240,7 @@ export async function importAbletonSession(
       is_muted: track.isMuted,
       is_soloed: track.isSoloed,
       sort_order: index,
-      device_chain: track.devices as SessionTrack["device_chain"],
+      device_chain: normalizeDeviceChain(track.devices as SessionTrack["device_chain"]),
     })),
   );
 

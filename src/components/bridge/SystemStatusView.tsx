@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import type { ConnectionStatus } from "@/hooks/usePluginHost";
 import type { HealthResponse } from "@/services/pluginHostClient";
+import { resolvePluginHostBaseUrl } from "@/services/pluginHostConfig";
 
 interface SystemStatusViewProps {
   connection: ConnectionStatus;
@@ -56,7 +57,7 @@ function formatUptime(seconds: number): string {
 }
 
 export function SystemStatusView({ connection, health, lastHealthCheck, onCheckHealth, onSetBaseUrl }: SystemStatusViewProps) {
-  const [urlInput, setUrlInput] = useState("http://127.0.0.1:8080");
+  const [urlInput, setUrlInput] = useState(resolvePluginHostBaseUrl);
   const [showConfig, setShowConfig] = useState(false);
 
   return (

@@ -72,6 +72,9 @@ export interface StudioDetailPanelState {
   isConnected: boolean;
   nativeChainId?: string;
   nativeChainNodes?: ChainNode[];
+  nativeNodeCount: number;
+  hasHostBackedDevices: boolean;
+  canLoadNativeChain: boolean;
   nativeMonitoring: boolean;
   nativeArmed: boolean;
   openEditors: Record<string, boolean>;

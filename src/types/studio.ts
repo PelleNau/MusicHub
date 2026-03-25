@@ -49,16 +49,104 @@ export interface DeviceDefinition {
   category: "instrument" | "effect";
 }
 
+export type HostPluginRole = "instrument" | "effect" | "midi-effect" | "analyzer";
+export type HostPluginScanStatus = "ok" | "warning" | "failed" | "quarantined";
+
+export interface HostPluginDescriptor {
+  id: string;
+  path: string;
+  name: string;
+  vendor: string;
+  format: string;
+  role: HostPluginRole;
+  scanStatus?: HostPluginScanStatus;
+}
+
 export interface DeviceInstance {
   id: string;
   type: DeviceType;
   enabled: boolean;
   params: Record<string, number>;
+  hostPlugin?: HostPluginDescriptor;
+}
+
+type LegacyNativePluginFields = {
   nativePluginId?: string;
   nativePluginPath?: string;
   nativePluginName?: string;
   nativePluginVendor?: string;
   nativePluginFormat?: string;
+  nativePluginRole?: HostPluginRole;
+  nativePluginScanStatus?: HostPluginScanStatus;
+};
+
+export function getHostPluginDescriptor(device: DeviceInstance): HostPluginDescriptor | null {
+  const legacyDevice = device as DeviceInstance & LegacyNativePluginFields;
+  if (device.hostPlugin) return device.hostPlugin;
+  if (!legacyDevice.nativePluginId || !legacyDevice.nativePluginPath) return null;
+
+  return {
+    id: legacyDevice.nativePluginId,
+    path: legacyDevice.nativePluginPath,
+    name: legacyDevice.nativePluginName ?? "",
+    vendor: legacyDevice.nativePluginVendor ?? "",
+    format: legacyDevice.nativePluginFormat ?? "",
+    role: legacyDevice.nativePluginRole ?? "effect",
+    scanStatus: legacyDevice.nativePluginScanStatus,
+  };
+}
+
+export function isHostBackedDevice(device: DeviceInstance): boolean {
+  return getHostPluginDescriptor(device) !== null;
+}
+
+export function getDeviceDisplayInfo(device: DeviceInstance): {
+  label: string;
+  subtitle: string | null;
+  isHostBacked: boolean;
+} {
+  const hostPlugin = getHostPluginDescriptor(device);
+  const def = DEVICE_DEFS.find((candidate) => candidate.type === device.type);
+
+  if (!hostPlugin) {
+    return {
+      label: def?.label ?? device.type,
+      subtitle: null,
+      isHostBacked: false,
+    };
+  }
+
+  return {
+    label: hostPlugin.name || def?.label || device.type,
+    subtitle: [hostPlugin.vendor, hostPlugin.format].filter(Boolean).join(" · ") || null,
+    isHostBacked: true,
+  };
+}
+
+export function normalizeDeviceInstance(device: DeviceInstance): DeviceInstance {
+  const hostPlugin = getHostPluginDescriptor(device);
+  if (!hostPlugin) return device;
+
+  const legacyDevice = device as DeviceInstance & LegacyNativePluginFields;
+  const {
+    nativePluginId: _nativePluginId,
+    nativePluginPath: _nativePluginPath,
+    nativePluginName: _nativePluginName,
+    nativePluginVendor: _nativePluginVendor,
+    nativePluginFormat: _nativePluginFormat,
+    nativePluginRole: _nativePluginRole,
+    nativePluginScanStatus: _nativePluginScanStatus,
+    ...normalizedDevice
+  } = legacyDevice;
+
+  return {
+    ...normalizedDevice,
+    hostPlugin,
+  };
+}
+
+export function normalizeDeviceChain(devices: DeviceInstance[] | null | undefined): DeviceInstance[] {
+  return (devices ?? []).map(normalizeDeviceInstance);
 }
 
 /* ── Effect definitions ── */
@@ -231,11 +319,12 @@ export function getAutomatableParams(track: SessionTrack): Array<{ target: strin
   for (const device of track.device_chain || []) {
     const def = DEVICE_DEFS.find(d => d.type === device.type);
     if (!def) continue;
+    const display = getDeviceDisplayInfo(device);
     for (const p of def.params) {
       const normalDefault = (p.default - p.min) / (p.max - p.min);
       params.push({
         target: `device:${device.id}:${p.key}`,
-        label: `${def.label} › ${p.label}`,
+        label: `${display.label} › ${p.label}`,
         defaultValue: normalDefault,
       });
     }

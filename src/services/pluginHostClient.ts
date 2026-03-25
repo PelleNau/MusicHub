@@ -1,4 +1,5 @@
 import type { HostGraphTrack } from "@/services/pluginHostContracts";
+import { resolvePluginHostBaseUrl } from "@/services/pluginHostConfig";
 
 /**
  * PluginHostClient — typed HTTP client for the local plugin-host backend.
@@ -182,6 +183,7 @@ export interface ChainNode {
   vendor: string;
   format: string;
   bypass: boolean;
+  supportsEditor?: boolean;
   stateRestored: boolean;
   paramCount: number;
   latencySamples: number;
@@ -202,6 +204,27 @@ export interface ChainLoadResponse {
   totalLatencySamples: number;
   elapsedMs: number;
 }
+
+type RawChainNode = Partial<ChainNode> & {
+  id?: string;
+  name?: string;
+  manufacturer?: string;
+  restoredStateBytes?: number;
+  parameterCount?: number;
+  status?: string;
+};
+
+type RawLoadedChain = {
+  sampleRate?: number;
+  blockSize?: number;
+  plugins?: RawChainNode[];
+};
+
+type RawChainLoadResponse = Partial<ChainLoadResponse> & {
+  loadedChain?: RawLoadedChain;
+  manifest?: { name?: string };
+  nodes?: RawChainNode[];
+};
 
 /* ── POST /render/preview ── */
 
@@ -259,6 +282,11 @@ export interface EditorOpenResponse {
 export interface EditorCloseRequest {
   chainId: string;
   nodeIndex: number;
+}
+
+export interface EditorCloseResponse {
+  closed: boolean;
+  alreadyClosed?: boolean;
 }
 
 /* ── POST /render/bounce ── */
@@ -386,8 +414,90 @@ export interface DiagnosticEntry {
 
 /* ── Client ── */
 
-const DEFAULT_BASE = "http://127.0.0.1:8080";
+const DEFAULT_BASE = resolvePluginHostBaseUrl();
 const TIMEOUT_MS = 30_000;
+
+export function normalizeChainLoadRequest(req: ChainLoadRequest): Record<string, unknown> {
+  return {
+    ...(req.manifestPath ? { manifest_path: req.manifestPath } : {}),
+    ...(req.manifest ? { manifest: req.manifest } : {}),
+  };
+}
+
+function normalizeChainNodeStatus(status: string | undefined): ChainNode["status"] {
+  if (status === "missing" || status === "error") {
+    return status;
+  }
+
+  return "loaded";
+}
+
+export function normalizeChainLoadResponseData(response: RawChainLoadResponse, elapsedMs: number): ChainLoadResponse {
+  const loadedChain = response.loadedChain;
+  const rawNodes = response.nodes ?? loadedChain?.plugins ?? [];
+
+  const nodes: ChainNode[] = rawNodes.map((node, index) => {
+    const restoredStateBytes = typeof node.restoredStateBytes === "number" ? node.restoredStateBytes : 0;
+    const parameterCount =
+      typeof node.parameterCount === "number"
+        ? node.parameterCount
+        : (typeof node.paramCount === "number" ? node.paramCount : 0);
+
+    return {
+      index: typeof node.index === "number" ? node.index : index,
+      pluginId: String(node.pluginId ?? node.id ?? ""),
+      pluginName: String(node.pluginName ?? node.name ?? ""),
+      vendor: String(node.vendor ?? node.manufacturer ?? ""),
+      format: String(node.format ?? ""),
+      bypass: Boolean(node.bypass),
+      supportsEditor: typeof (node as { supportsEditor?: unknown }).supportsEditor === "boolean"
+        ? Boolean((node as { supportsEditor?: unknown }).supportsEditor)
+        : undefined,
+      stateRestored: Boolean(node.stateRestored ?? (restoredStateBytes > 0)),
+      paramCount: parameterCount,
+      latencySamples: typeof node.latencySamples === "number" ? node.latencySamples : 0,
+      status: normalizeChainNodeStatus(node.status),
+      error: typeof node.error === "string" ? node.error : undefined,
+    };
+  });
+
+  return {
+    chainId: String(response.chainId ?? ""),
+    name: String(response.name ?? response.manifest?.name ?? ""),
+    sampleRate: Number(response.sampleRate ?? loadedChain?.sampleRate ?? 48000),
+    blockSize: Number(response.blockSize ?? loadedChain?.blockSize ?? 512),
+    nodeCount: Number(response.nodeCount ?? nodes.length),
+    nodes,
+    loadedCount: Number(response.loadedCount ?? nodes.filter((node) => node.status === "loaded").length),
+    missingCount: Number(response.missingCount ?? nodes.filter((node) => node.status === "missing").length),
+    errorCount: Number(response.errorCount ?? nodes.filter((node) => node.status === "error").length),
+    totalLatencySamples: Number(response.totalLatencySamples ?? nodes.reduce((sum, node) => sum + node.latencySamples, 0)),
+    elapsedMs: Number(response.elapsedMs ?? elapsedMs ?? 0),
+  };
+}
+
+export function normalizeRenderPreviewRequest(req: RenderPreviewRequest): Record<string, unknown> {
+  const overrides: Record<string, unknown> = {};
+
+  if (req.inputType) {
+    overrides.input_mode = req.inputType === "midi" ? "midi_note" : req.inputType;
+  }
+  if (typeof req.midiNote === "number") {
+    overrides.midi_note = req.midiNote;
+  }
+  if (typeof req.midiVelocity === "number") {
+    overrides.midi_velocity = req.midiVelocity;
+  }
+  if (typeof req.durationMs === "number") {
+    overrides.duration_seconds = req.durationMs / 1000;
+  }
+
+  return {
+    ...(req.chainId ? { chain_id: req.chainId } : {}),
+    ...(req.manifestPath ? { manifest_path: req.manifestPath } : {}),
+    ...(Object.keys(overrides).length > 0 ? { overrides } : {}),
+  };
+}
 
 function formatEnvelopeError(error: HostEnvelope<unknown>["error"], status: number): string {
   if (typeof error === "string" && error.trim().length > 0) {
@@ -465,7 +575,11 @@ export class HostError extends Error {
 }
 
 export class PluginHostClient {
-  constructor(public readonly baseUrl: string = DEFAULT_BASE) {}
+  constructor(public baseUrl: string = DEFAULT_BASE) {}
+
+  setBaseUrl(baseUrl: string): void {
+    this.baseUrl = baseUrl;
+  }
 
   private normalizeAudioDevices(data: NativeAudioDevicesResponse): AudioConfigResponse {
     const availableDevices: AudioDevice[] = [];
@@ -523,12 +637,16 @@ export class PluginHostClient {
 
   /* POST /chains/load */
   async loadChain(req: ChainLoadRequest): Promise<HostEnvelope<ChainLoadResponse>> {
-    return request<ChainLoadResponse>(this.baseUrl, "POST", "/chains/load", req);
+    const response = await request<RawChainLoadResponse>(this.baseUrl, "POST", "/chains/load", normalizeChainLoadRequest(req));
+    return {
+      ...response,
+      data: normalizeChainLoadResponseData(response.data, response.elapsedMs ?? 0),
+    };
   }
 
   /* POST /render/preview */
   async renderPreview(req: RenderPreviewRequest): Promise<HostEnvelope<RenderPreviewResponse>> {
-    return request<RenderPreviewResponse>(this.baseUrl, "POST", "/render/preview", req);
+    return request<RenderPreviewResponse>(this.baseUrl, "POST", "/render/preview", normalizeRenderPreviewRequest(req));
   }
 
   /* GET /chains/:chainId/params */
@@ -575,8 +693,8 @@ export class PluginHostClient {
   }
 
   /* POST /plugins/editor/close */
-  async closeEditor(req: EditorCloseRequest): Promise<HostEnvelope<{ closed: boolean }>> {
-    return request<{ closed: boolean }>(this.baseUrl, "POST", "/plugins/editor/close", req);
+  async closeEditor(req: EditorCloseRequest): Promise<HostEnvelope<EditorCloseResponse>> {
+    return request<EditorCloseResponse>(this.baseUrl, "POST", "/plugins/editor/close", req);
   }
 
   /* POST /render/bounce */

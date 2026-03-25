@@ -6,10 +6,11 @@ import type {
   AutomationPoint,
   DeviceInstance,
   DeviceType,
+  HostPluginDescriptor,
   SessionTrack,
   TrackSend,
 } from "@/types/studio";
-import { DEVICE_DEFS } from "@/types/studio";
+import { DEVICE_DEFS, normalizeDeviceChain } from "@/types/studio";
 import type { UndoRedoState } from "@/hooks/useUndoRedo";
 import type { HostPlugin } from "@/services/pluginHostClient";
 import {
@@ -30,66 +31,128 @@ import type {
 } from "@/hooks/studioMutationTypes";
 import { toast } from "sonner";
 
-const DEFAULT_NATIVE_PLUGIN_MAP: Partial<
-  Record<
-    DeviceType,
-    Pick<
-      DeviceInstance,
-      | "nativePluginId"
-      | "nativePluginPath"
-      | "nativePluginName"
-      | "nativePluginVendor"
-      | "nativePluginFormat"
-    >
-  >
-> = {
+function resolveHostPluginDeviceType(plugin: HostPlugin): DeviceType {
+  if (plugin.category === "Instrument") return "sampler";
+
+  const fingerprint = [
+    plugin.name,
+    plugin.vendor,
+    plugin.category,
+    ...(plugin.tags ?? []),
+  ].join(" ").toLowerCase();
+
+  if (fingerprint.includes("compress")) return "compressor";
+  if (fingerprint.includes("reverb") || fingerprint.includes("verb")) return "reverb";
+  if (fingerprint.includes("delay") || fingerprint.includes("echo")) return "delay";
+  if (fingerprint.includes("eq")) return "eq3";
+  return "gain";
+}
+
+function resolveHostPluginRole(plugin: HostPlugin): HostPluginDescriptor["role"] {
+  switch (plugin.category) {
+    case "Instrument":
+      return "instrument";
+    case "MIDI Effect":
+      return "midi-effect";
+    case "Analyzer":
+      return "analyzer";
+    default:
+      return "effect";
+  }
+}
+
+function buildHostPluginDescriptor(plugin: HostPlugin): HostPluginDescriptor {
+  return {
+    id: plugin.id,
+    path: plugin.path,
+    name: plugin.name,
+    vendor: plugin.vendor,
+    format: plugin.format,
+    role: resolveHostPluginRole(plugin),
+    scanStatus: plugin.scanStatus,
+  };
+}
+
+const DEFAULT_NATIVE_PLUGIN_MAP: Partial<Record<DeviceType, { hostPlugin: HostPluginDescriptor }>> = {
   subtractive: {
-    nativePluginPath: "AudioUnit:Synths/aumu,msyn,appl",
-    nativePluginName: "AUMIDISynth",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-aumidisynth",
+      path: "AudioUnit:Synths/aumu,msyn,appl",
+      name: "AUMIDISynth",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "instrument",
+    },
   },
   fm: {
-    nativePluginPath: "AudioUnit:Synths/aumu,msyn,appl",
-    nativePluginName: "AUMIDISynth",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-aumidisynth",
+      path: "AudioUnit:Synths/aumu,msyn,appl",
+      name: "AUMIDISynth",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "instrument",
+    },
   },
   sampler: {
-    nativePluginPath: "AudioUnit:Synths/aumu,samp,appl",
-    nativePluginName: "AUSampler",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-ausampler",
+      path: "AudioUnit:Synths/aumu,samp,appl",
+      name: "AUSampler",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "instrument",
+    },
   },
   eq3: {
-    nativePluginPath: "AudioUnit:Effects/aufx,nbeq,appl",
-    nativePluginName: "AUNBandEQ",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-aunbandeq",
+      path: "AudioUnit:Effects/aufx,nbeq,appl",
+      name: "AUNBandEQ",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "effect",
+    },
   },
   compressor: {
-    nativePluginPath: "AudioUnit:Effects/aufx,dcmp,appl",
-    nativePluginName: "AUDynamicsProcessor",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-audynamicsprocessor",
+      path: "AudioUnit:Effects/aufx,dcmp,appl",
+      name: "AUDynamicsProcessor",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "effect",
+    },
   },
   reverb: {
-    nativePluginPath: "AudioUnit:Effects/aufx,mrev,appl",
-    nativePluginName: "AUMatrixReverb",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-aumatrixreverb",
+      path: "AudioUnit:Effects/aufx,mrev,appl",
+      name: "AUMatrixReverb",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "effect",
+    },
   },
   delay: {
-    nativePluginPath: "AudioUnit:Effects/aufx,dely,appl",
-    nativePluginName: "AUDelay",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-audelay",
+      path: "AudioUnit:Effects/aufx,dely,appl",
+      name: "AUDelay",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "effect",
+    },
   },
   gain: {
-    nativePluginPath: "AudioUnit:Effects/aufx,lmtr,appl",
-    nativePluginName: "AUPeakLimiter",
-    nativePluginVendor: "Apple",
-    nativePluginFormat: "AudioUnit",
+    hostPlugin: {
+      id: "builtin-aupeaklimiter",
+      path: "AudioUnit:Effects/aufx,lmtr,appl",
+      name: "AUPeakLimiter",
+      vendor: "Apple",
+      format: "AudioUnit",
+      role: "effect",
+    },
   },
 };
 
@@ -420,15 +483,16 @@ export function useStudioTrackActions({
   const handleDeviceChainChange = useCallback(
     (trackId: string, devices: DeviceInstance[]) => {
       const track = tracks.find((candidate) => candidate.id === trackId);
-      const previousDevices = (track?.device_chain || []) as DeviceInstance[];
+      const previousDevices = normalizeDeviceChain((track?.device_chain || []) as DeviceInstance[]);
+      const normalizedDevices = normalizeDeviceChain(devices);
 
-      updateSessionTrackInCache(queryClient, activeSessionId, trackId, { device_chain: devices });
+      updateSessionTrackInCache(queryClient, activeSessionId, trackId, { device_chain: normalizedDevices });
 
-      updateTrack.mutate({ trackId, updates: { device_chain: devices } });
+      updateTrack.mutate({ trackId, updates: { device_chain: normalizedDevices } });
       history.push({
         label: "Change device chain",
         undo: () => updateTrack.mutate({ trackId, updates: { device_chain: previousDevices } }),
-        redo: () => updateTrack.mutate({ trackId, updates: { device_chain: devices } }),
+        redo: () => updateTrack.mutate({ trackId, updates: { device_chain: normalizedDevices } }),
       });
     },
     [activeSessionId, history, queryClient, tracks, updateTrack]
@@ -477,14 +541,10 @@ export function useStudioTrackActions({
 
       const newDevice: DeviceInstance = {
         id: crypto.randomUUID(),
-        type: plugin.category === "Instrument" ? "sampler" : "gain",
+        type: resolveHostPluginDeviceType(plugin),
         enabled: true,
         params: {},
-        nativePluginId: plugin.id,
-        nativePluginPath: plugin.path,
-        nativePluginName: plugin.name,
-        nativePluginVendor: plugin.vendor,
-        nativePluginFormat: plugin.format,
+        hostPlugin: buildHostPluginDescriptor(plugin),
       };
 
       const existing = (track.device_chain || []) as DeviceInstance[];

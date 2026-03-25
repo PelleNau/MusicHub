@@ -1,3 +1,4 @@
+use std::net::TcpListener;
 use std::sync::Arc;
 use std::time::Duration;
 
@@ -7,10 +8,18 @@ use tauri_plugin_shell::ShellExt;
 use tokio::sync::{Mutex, Notify, RwLock};
 use tokio::time::sleep;
 
-const HEALTH_URL: &str = "http://127.0.0.1:8080/health";
 const HEALTH_INTERVAL: Duration = Duration::from_secs(3);
 const RESTART_DELAY: Duration = Duration::from_secs(2);
 const MAX_RESTART_ATTEMPTS: u32 = 5;
+const MAX_PORT_SCAN_ATTEMPTS: u16 = 50;
+
+#[derive(Clone)]
+pub struct PluginHostEndpointConfig {
+    pub port: u16,
+    pub base_url: String,
+    pub ws_url: String,
+    pub health_url: String,
+}
 
 #[derive(Clone, serde::Serialize)]
 pub struct SidecarStatus {
@@ -23,12 +32,13 @@ pub struct SidecarStatus {
 
 pub struct SidecarState {
     pub status: RwLock<SidecarStatus>,
+    pub endpoint: PluginHostEndpointConfig,
     child: Mutex<Option<CommandChild>>,
     restart_notify: Notify,
 }
 
-impl Default for SidecarState {
-    fn default() -> Self {
+impl SidecarState {
+    fn new(endpoint: PluginHostEndpointConfig) -> Self {
         Self {
             status: RwLock::new(SidecarStatus {
                 running: false,
@@ -37,14 +47,61 @@ impl Default for SidecarState {
                 healthy: false,
                 last_error: None,
             }),
+            endpoint,
             child: Mutex::new(None),
             restart_notify: Notify::new(),
         }
     }
 }
 
+fn resolve_endpoint_config() -> PluginHostEndpointConfig {
+    let requested_port = std::env::var("MUSICHUB_PLUGIN_HOST_PORT")
+        .ok()
+        .and_then(|raw| raw.parse::<u16>().ok())
+        .filter(|port| *port > 0)
+        .unwrap_or(8080);
+    let port = find_available_port(requested_port).unwrap_or(requested_port);
+
+    let base_url = format!("http://127.0.0.1:{port}");
+    let ws_url = format!("ws://127.0.0.1:{port}/ws");
+    let health_url = format!("{base_url}/health");
+
+    PluginHostEndpointConfig {
+        port,
+        base_url,
+        ws_url,
+        health_url,
+    }
+}
+
+fn find_available_port(start_port: u16) -> Option<u16> {
+    for offset in 0..MAX_PORT_SCAN_ATTEMPTS {
+        let port = start_port.saturating_add(offset);
+        if port == 0 {
+            continue;
+        }
+
+        if TcpListener::bind(("127.0.0.1", port)).is_ok() {
+            if port != start_port {
+                log::warn!(
+                    "Requested plugin_host port {} unavailable, using fallback port {}",
+                    start_port,
+                    port
+                );
+            }
+            return Some(port);
+        }
+    }
+
+    log::error!(
+        "Unable to find an available plugin_host port starting from {}",
+        start_port
+    );
+    None
+}
+
 pub async fn launch_and_monitor(app: AppHandle) {
-    let state = Arc::new(SidecarState::default());
+    let state = Arc::new(SidecarState::new(resolve_endpoint_config()));
     app.manage(state.clone());
 
     let mut restart_count: u32 = 0;
@@ -131,7 +188,8 @@ async fn spawn_sidecar(app: &AppHandle, state: &Arc<SidecarState>) -> Result<u32
     let command = shell
         .sidecar("plugin_host")
         .map_err(|err| format!("Sidecar command error: {err}"))?
-        .args(["--port", "8080", "--ws"]);
+        .env("PLUGIN_HOST_PORT", state.endpoint.port.to_string())
+        .args(["--port", &state.endpoint.port.to_string(), "--ws"]);
 
     let (mut rx, child) = command
         .spawn()
@@ -175,7 +233,7 @@ async fn monitor_sidecar(app: &AppHandle, state: &Arc<SidecarState>) -> Option<S
     loop {
         tokio::select! {
             _ = sleep(HEALTH_INTERVAL) => {
-                match check_health().await {
+                match check_health(&state.endpoint.health_url).await {
                     Ok(true) => {
                         let mut status = state.status.write().await;
                         if !status.healthy {
@@ -197,13 +255,13 @@ async fn monitor_sidecar(app: &AppHandle, state: &Arc<SidecarState>) -> Option<S
     }
 }
 
-async fn check_health() -> Result<bool, ()> {
+async fn check_health(health_url: &str) -> Result<bool, ()> {
     let client = reqwest::Client::builder()
         .timeout(Duration::from_secs(2))
         .build()
         .map_err(|_| ())?;
 
-    match client.get(HEALTH_URL).send().await {
+    match client.get(health_url).send().await {
         Ok(resp) => Ok(resp.status().is_success()),
         Err(_) => Ok(false),
     }
@@ -212,7 +270,7 @@ async fn check_health() -> Result<bool, ()> {
 async fn wait_for_healthy(app: &AppHandle, state: &Arc<SidecarState>) {
     for i in 0..20 {
         sleep(Duration::from_millis(250)).await;
-        if let Ok(true) = check_health().await {
+        if let Ok(true) = check_health(&state.endpoint.health_url).await {
             log::info!("plugin_host healthy after {}ms", (i + 1) * 250);
             let mut status = state.status.write().await;
             status.healthy = true;

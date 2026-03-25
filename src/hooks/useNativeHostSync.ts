@@ -5,17 +5,23 @@ import type { HostPlugin, ChainLoadRequest } from "@/services/pluginHostClient";
 import type { HostGraphTrack } from "@/services/pluginHostContracts";
 import type { HostConnectorActions, HostConnectorState } from "@/hooks/useHostConnector";
 import type { NativeSessionTrackState } from "@/services/pluginHostSocket";
-import type { DeviceInstance, SessionTrack } from "@/types/studio";
+import {
+  getHostPluginDescriptor,
+  isHostBackedDevice,
+  type DeviceInstance,
+  type SessionTrack,
+} from "@/types/studio";
 
 function hasNativePluginMetadata(device: DeviceInstance): boolean {
-  return Boolean(device.nativePluginId || device.nativePluginPath);
+  return isHostBackedDevice(device);
 }
 
 function buildNativeNode(trackId: string, device: DeviceInstance, index: number) {
+  const hostPlugin = getHostPluginDescriptor(device);
   return {
     instance_id: `${trackId}-${device.id || `node-${index + 1}`}`,
-    plugin_id: device.nativePluginId ?? "",
-    path: device.nativePluginPath ?? "",
+    plugin_id: hostPlugin?.id ?? "",
+    path: hostPlugin?.path ?? "",
     bypass: device.enabled === false,
     parameters: device.params ?? {},
   };
@@ -41,9 +47,15 @@ function getNativeChainSignature(track: SessionTrack): string {
     .map((device) => ({
       id: device.id,
       enabled: device.enabled,
-      nativePluginId: device.nativePluginId ?? "",
-      nativePluginPath: device.nativePluginPath ?? "",
+      hostPlugin: getHostPluginDescriptor(device),
       params: device.params ?? {},
+    }))
+    .map(({ id, enabled, hostPlugin, params }) => ({
+      id,
+      enabled,
+      pluginId: hostPlugin?.id ?? "",
+      pluginPath: hostPlugin?.path ?? "",
+      params,
     }));
 
   return JSON.stringify(nativeDevices);
@@ -68,6 +80,13 @@ function normalizeTracksForHost(
       solo,
     };
   });
+}
+
+function getHostGraphSignature(
+  tracks: SessionTrack[],
+  nativeChainIdsByTrack: Record<string, string>
+): string {
+  return JSON.stringify(normalizeTracksForHost(tracks, nativeChainIdsByTrack));
 }
 
 function resolveNativeSessionTrackIdentity(track: NativeSessionTrackState): {
@@ -114,6 +133,15 @@ export function useNativeHostSync({
   const nativeChainSignaturesRef = useRef<Record<string, string>>({});
   const pendingNativeChainLoadsRef = useRef<Set<string>>(new Set());
   const prevReadySequenceRef = useRef(hostState.readySequence);
+  const lastSyncedGraphSignatureRef = useRef<string | null>(null);
+
+  const syncHostGraph = useCallback(async (chainIdsByTrack: Record<string, string>) => {
+    const nextSignature = getHostGraphSignature(tracks, chainIdsByTrack);
+    if (lastSyncedGraphSignatureRef.current === nextSignature) return;
+
+    await hostActions.syncAudioGraph(normalizeTracksForHost(tracks, chainIdsByTrack));
+    lastSyncedGraphSignatureRef.current = nextSignature;
+  }, [hostActions, tracks]);
 
   const handleLoadNativeChainForTrack = useCallback(async (trackId: string): Promise<string | null> => {
     const track = tracks.find((candidate) => candidate.id === trackId);
@@ -137,7 +165,7 @@ export function useNativeHostSync({
 
       setNativeChainIdsByTrack((prev) => {
         const merged = { ...prev, [track.id]: loaded.chainId };
-        void hostActions.syncAudioGraph(normalizeTracksForHost(tracks, merged));
+        void syncHostGraph(merged);
         return merged;
       });
 
@@ -149,7 +177,7 @@ export function useNativeHostSync({
       toast.error(message);
       return null;
     }
-  }, [hostActions, tracks]);
+  }, [hostActions, syncHostGraph, tracks]);
 
   const handleRemoveNativeNode = useCallback((chainId: string, nodeIndex: number) => {
     const trackId = selectedTrackId;
@@ -234,13 +262,14 @@ export function useNativeHostSync({
       setNativeArmedByTrack({});
       setNativeMonitoringByTrack({});
       nativeChainSignaturesRef.current = {};
+      lastSyncedGraphSignatureRef.current = null;
     }
 
     let cancelled = false;
 
     void (async () => {
       try {
-        await hostActions.syncAudioGraph(normalizeTracksForHost(tracks, nativeChainIdsByTrack));
+        await syncHostGraph(nativeChainIdsByTrack);
 
         const nextChainIds: Record<string, string> = {};
 
@@ -267,7 +296,7 @@ export function useNativeHostSync({
         if (!cancelled && Object.keys(nextChainIds).length > 0) {
           const mergedChainIds = { ...nativeChainIdsByTrack, ...nextChainIds };
           setNativeChainIdsByTrack(mergedChainIds);
-          await hostActions.syncAudioGraph(normalizeTracksForHost(tracks, mergedChainIds));
+          await syncHostGraph(mergedChainIds);
         }
       } catch (error) {
         console.error("[Studio] Native audio graph sync failed:", error);
@@ -277,7 +306,7 @@ export function useNativeHostSync({
     return () => {
       cancelled = true;
     };
-  }, [tracks, hostState.connectionState, hostState.readySequence, hostActions, nativeChainIdsByTrack]);
+  }, [tracks, hostState.connectionState, hostState.readySequence, hostActions, nativeChainIdsByTrack, syncHostGraph]);
 
   useEffect(() => {
     const isConnected = hostState.connectionState === "connected" || hostState.connectionState === "degraded";

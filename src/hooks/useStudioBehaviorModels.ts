@@ -205,6 +205,9 @@ export function useStudioBehaviorModels({
     onDeviceChainChange,
     onClose: () => commandDispatch.select({ trackId: null }),
     isConnected: detailPanelState.isConnected,
+    nativeNodeCount: detailPanelState.nativeNodeCount,
+    hasHostBackedDevices: detailPanelState.hasHostBackedDevices,
+    canLoadNativeChain: detailPanelState.canLoadNativeChain,
     ...nativeDetailActionsModel,
   });
 
