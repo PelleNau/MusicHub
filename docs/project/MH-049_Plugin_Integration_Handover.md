@@ -13,7 +13,7 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 - Base commit:
   - `36b7bb5`
 - Current head:
-  - `05d5a50`
+  - `d3e8875`
 - Branch status:
   - worktree clean
 - Validation status:
@@ -24,7 +24,8 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 - Review note:
   - Chief ownership review completed
   - branch is narrowed to plugin-owned scope
-  - branch remains behind `main` and is not merge-ready by default
+  - current `main` is merged into this branch
+  - branch is ready for further plugin work but still requires normal review before integration
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 - Execution protocol:
@@ -86,11 +87,11 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 
 ## Next Exact Steps
 
-1. Decide whether the branch should be rebased onto `main` before further plugin work.
-2. If approved, continue in this worktree with:
+1. Continue in this worktree with:
    - plugin-host startup ownership and port behavior
    - plugin discovery and connection stability
    - device-chain insertion path
+2. Keep validating against `main...HEAD` ownership scope as new plugin work lands.
 3. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
 
 ## Validation
