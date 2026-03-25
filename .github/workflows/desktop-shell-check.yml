@@ -1,0 +1,45 @@
+name: Desktop Shell Check
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - "main"
+      - "codex/**"
+
+jobs:
+  tauri-shell:
+    if: ${{ vars.PLUGIN_HOST_DOWNLOAD_URL != '' }}
+    runs-on: macos-latest
+    permissions:
+      contents: read
+    env:
+      PLUGIN_HOST_DOWNLOAD_URL: ${{ vars.PLUGIN_HOST_DOWNLOAD_URL }}
+      PLUGIN_HOST_DOWNLOAD_SHA256: ${{ vars.PLUGIN_HOST_DOWNLOAD_SHA256 }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Browser build
+        run: npm run build
+
+      - name: Tauri cargo check
+        working-directory: src-tauri
+        run: cargo check
+
+      - name: Tauri app build
+        run: npm run tauri:build

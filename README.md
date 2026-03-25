@@ -90,8 +90,15 @@ Note:
 - by default the build looks for a sibling `plugin-host` project and uses
   `build/plugin_host_artefacts/plugin_host`
 - override the source binary with `PLUGIN_HOST_BINARY=/absolute/path/to/plugin_host`
+- download the source binary with `PLUGIN_HOST_DOWNLOAD_URL=https://.../plugin_host`
+- verify a downloaded binary with `PLUGIN_HOST_DOWNLOAD_SHA256=<sha256>`
 - override the source project with `PLUGIN_HOST_PROJECT_DIR=/absolute/path/to/plugin-host`
 - set `MUSICHUB_BUILD_PLUGIN_HOST=0` to disable auto-build and require a prebuilt binary
+
+CI/release note:
+- `.github/workflows/desktop-shell-check.yml` uses the same contract
+- set repository variable `PLUGIN_HOST_DOWNLOAD_URL`
+- optionally set `PLUGIN_HOST_DOWNLOAD_SHA256`
 
 ## How can I deploy this project?
 

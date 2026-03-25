@@ -72,6 +72,7 @@ When `src-tauri/binaries/` does not already contain the target-specific sidecar,
 
 Provisioning order:
 - `PLUGIN_HOST_BINARY=/absolute/path/to/plugin_host`
+- `PLUGIN_HOST_DOWNLOAD_URL=https://.../plugin_host`
 - `PLUGIN_HOST_PROJECT_DIR=/absolute/path/to/plugin-host`
 - a discovered ancestor sibling project at `plugin-host/`
 - `src-tauri/target/debug/plugin_host` as a final local fallback
@@ -89,3 +90,23 @@ The expected artifact is:
 
 Set `MUSICHUB_BUILD_PLUGIN_HOST=0` to disable the auto-build path and require a
 prebuilt binary source.
+
+If `PLUGIN_HOST_DOWNLOAD_URL` is set, the build script downloads the sidecar into
+`src-tauri/target/plugin_host_download/` before Tauri packaging runs. Provide
+`PLUGIN_HOST_DOWNLOAD_SHA256` to verify the binary content in CI or release jobs.
+
+## CI and release builders
+
+The repo now includes:
+- `.github/workflows/desktop-shell-check.yml`
+
+That workflow runs on macOS and uses the same build-time contract as local builds.
+To enable it:
+- set repository variable `PLUGIN_HOST_DOWNLOAD_URL`
+- optionally set repository variable `PLUGIN_HOST_DOWNLOAD_SHA256`
+
+Once those are configured, the workflow performs:
+- `npm ci`
+- `npm run build`
+- `cargo check` in `src-tauri`
+- `npm run tauri:build`
