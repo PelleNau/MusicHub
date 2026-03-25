@@ -13,7 +13,7 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 - Base commit:
   - `36b7bb5`
 - Current head:
-  - `d3e8875`
+  - current branch HEAD on `codex/plugin-integration`
 - Branch status:
   - worktree clean
 - Validation status:
@@ -26,6 +26,7 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
   - branch is narrowed to plugin-owned scope
   - current `main` is merged into this branch
   - branch is ready for further plugin work but still requires normal review before integration
+  - restored cross-stream work is preserved on `codex/plugin-scope-holding` pending stream/ownership resolution
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 - Execution protocol:
