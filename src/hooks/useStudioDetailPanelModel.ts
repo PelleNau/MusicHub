@@ -10,6 +10,9 @@ interface UseStudioDetailPanelModelOptions {
   isConnected: boolean;
   nativeChainId?: string;
   nativeChainNodes?: ChainNode[];
+  nativeNodeCount: number;
+  hasHostBackedDevices: boolean;
+  canLoadNativeChain: boolean;
   openEditors: Record<string, boolean>;
   onLoadNativeChain?: (trackId: string) => Promise<string | null>;
   onFetchChainParams?: (chainId: string) => Promise<ChainParamsResponse | null>;
@@ -19,8 +22,8 @@ interface UseStudioDetailPanelModelOptions {
   onRestorePluginState?: (chainId: string, nodeIndex: number, stateId: string) => Promise<boolean>;
   onSetParam?: (chainId: string, nodeIndex: number, paramId: number, value: number) => void;
   onParamChanged?: (fn: (e: PluginParamChangedEvent) => void) => () => void;
-  onOpenEditor?: (chainId: string, nodeIndex: number) => void;
-  onCloseEditor?: (chainId: string, nodeIndex: number) => void;
+  onOpenEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
+  onCloseEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
   onToggleNativeNodeBypass?: (chainId: string, nodeIndex: number, bypass: boolean) => void;
   onRemoveNativeNode?: (chainId: string, nodeIndex: number) => void;
 }
@@ -34,6 +37,9 @@ export function useStudioDetailPanelModel(options: UseStudioDetailPanelModelOpti
       isConnected: options.isConnected,
       nativeChainId: options.nativeChainId,
       nativeChainNodes: options.nativeChainNodes,
+      nativeNodeCount: options.nativeNodeCount,
+      hasHostBackedDevices: options.hasHostBackedDevices,
+      canLoadNativeChain: options.canLoadNativeChain,
       openEditors: options.openEditors,
       onLoadNativeChain: options.onLoadNativeChain,
       onFetchChainParams: options.onFetchChainParams,
