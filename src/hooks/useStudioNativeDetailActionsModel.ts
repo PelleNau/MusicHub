@@ -14,8 +14,8 @@ interface UseStudioNativeDetailActionsModelOptions {
   onRestorePluginState?: (chainId: string, nodeIndex: number, stateId: string) => Promise<boolean>;
   onSetParam?: (chainId: string, nodeIndex: number, paramId: number, value: number) => void;
   onParamChanged?: (fn: (e: PluginParamChangedEvent) => void) => () => void;
-  onOpenEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
-  onCloseEditor?: (chainId: string, nodeIndex: number) => Promise<unknown> | unknown;
+  onOpenEditor?: (chainId: string, nodeIndex: number) => void;
+  onCloseEditor?: (chainId: string, nodeIndex: number) => void;
   onToggleNativeNodeBypass?: (chainId: string, nodeIndex: number, bypass: boolean) => void;
   onRemoveNativeNode?: (chainId: string, nodeIndex: number) => void;
 }

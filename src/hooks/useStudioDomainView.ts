@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import type { TrackMeterData } from "@/hooks/useAudioEngine";
 import type { HostConnectorState } from "@/hooks/useHostConnector";
 import type { StudioSessionDomainRuntimeState } from "@/types/musicHubStudioRuntime";
-import { isHostBackedDevice, type SessionTrack } from "@/types/studio";
+import type { SessionTrack } from "@/types/studio";
 import {
   getDisplayReturnTracks,
   normalizeDisplayTracks,
@@ -164,20 +164,12 @@ export function useStudioDomainView({
     const nativeChainId = selectedTrackId ? nativeChainIdsByTrack[selectedTrackId] : undefined;
     const nativeChainNodes =
       selectedTrackId && nativeChainId ? hostState.nativeChains[nativeChainId] ?? [] : undefined;
-    const track = selectedTrack ?? null;
-    const hasHostBackedDevices = ((track?.device_chain ?? []) as SessionTrack["device_chain"]).some((device) =>
-      isHostBackedDevice(device),
-    );
-    const isConnected = hostState.connectionState === "connected" || hostState.connectionState === "degraded";
 
     return {
-      track,
-      isConnected,
+      track: selectedTrack ?? null,
+      isConnected: hostState.connectionState === "connected" || hostState.connectionState === "degraded",
       nativeChainId,
       nativeChainNodes,
-      nativeNodeCount: nativeChainNodes?.length ?? 0,
-      hasHostBackedDevices,
-      canLoadNativeChain: isConnected && hasHostBackedDevices && !nativeChainId,
       nativeMonitoring: selectedTrackId ? nativeMonitoringByTrack[selectedTrackId] ?? false : false,
       nativeArmed: selectedTrackId ? nativeArmedByTrack[selectedTrackId] ?? false : false,
       openEditors: hostState.openEditors,
