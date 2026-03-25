@@ -143,6 +143,13 @@ function resolveNativeSessionTrackIdentity(track: NativeSessionTrackState): {
   return { trackId, chainId };
 }
 
+function hasVerifiedNativeChainState(
+  nativeChains: Record<string, unknown>,
+  chainId: string,
+): boolean {
+  return Object.prototype.hasOwnProperty.call(nativeChains, chainId);
+}
+
 interface UseNativeHostSyncArgs {
   tracks: SessionTrack[];
   selectedTrackId: string | null;
@@ -176,7 +183,7 @@ export function useNativeHostSync({
   const pendingNativeChainLoadsRef = useRef<Set<string>>(new Set());
   const prevReadySequenceRef = useRef(hostState.readySequence);
   const lastSyncedGraphSignatureRef = useRef<string | null>(null);
-  const hydratedSessionChainIdsByTrack = useMemo(() => {
+  const sessionChainIdsByTrack = useMemo(() => {
     const nextSessionChainIds: Record<string, string> = {};
     for (const track of hostState.sessionState?.tracks ?? []) {
       const resolvedTrack = resolveNativeSessionTrackIdentity(track);
@@ -185,6 +192,14 @@ export function useNativeHostSync({
     }
     return nextSessionChainIds;
   }, [hostState.sessionState]);
+  const hydratedSessionChainIdsByTrack = useMemo(() => {
+    const nextSessionChainIds: Record<string, string> = {};
+    for (const [trackId, chainId] of Object.entries(sessionChainIdsByTrack)) {
+      if (!hasVerifiedNativeChainState(hostState.nativeChains, chainId)) continue;
+      nextSessionChainIds[trackId] = chainId;
+    }
+    return nextSessionChainIds;
+  }, [hostState.nativeChains, sessionChainIdsByTrack]);
 
   const syncHostGraph = useCallback(async (chainIdsByTrack: Record<string, string>) => {
     const nextSignature = getHostGraphSignature(tracks, chainIdsByTrack);
@@ -197,6 +212,7 @@ export function useNativeHostSync({
   const handleLoadNativeChainForTrack = useCallback(async (trackId: string): Promise<string | null> => {
     const track = tracks.find((candidate) => candidate.id === trackId);
     if (!track) return null;
+    if (pendingNativeChainLoadsRef.current.has(trackId)) return null;
 
     const manifestRequest = buildNativeChainManifest(track, hostPlugins, hostPluginsLoaded);
     if (!manifestRequest) {
@@ -210,6 +226,8 @@ export function useNativeHostSync({
       }
       return null;
     }
+
+    pendingNativeChainLoadsRef.current.add(trackId);
 
     try {
       const loaded = await hostActions.loadChain(manifestRequest);
@@ -234,6 +252,8 @@ export function useNativeHostSync({
       const message = error instanceof Error ? error.message : "Failed to load chain in host";
       toast.error(message);
       return null;
+    } finally {
+      pendingNativeChainLoadsRef.current.delete(trackId);
     }
   }, [hostActions, hostPlugins, hostPluginsLoaded, syncHostGraph, tracks]);
 
@@ -313,6 +333,18 @@ export function useNativeHostSync({
 
   useEffect(() => {
     const isConnected = hostState.connectionState === "connected" || hostState.connectionState === "degraded";
+    if (isConnected) return;
+
+    pendingNativeChainLoadsRef.current.clear();
+    nativeChainSignaturesRef.current = {};
+    lastSyncedGraphSignatureRef.current = null;
+    setNativeChainIdsByTrack({});
+    setNativeArmedByTrack({});
+    setNativeMonitoringByTrack({});
+  }, [hostState.connectionState]);
+
+  useEffect(() => {
+    const isConnected = hostState.connectionState === "connected" || hostState.connectionState === "degraded";
     const readyChanged = hostState.readySequence !== prevReadySequenceRef.current;
     prevReadySequenceRef.current = hostState.readySequence;
 
@@ -322,6 +354,7 @@ export function useNativeHostSync({
       setNativeChainIdsByTrack({});
       setNativeArmedByTrack({});
       setNativeMonitoringByTrack({});
+      pendingNativeChainLoadsRef.current.clear();
       nativeChainSignaturesRef.current = {};
       lastSyncedGraphSignatureRef.current = null;
     }
@@ -357,11 +390,18 @@ export function useNativeHostSync({
             continue;
           }
 
-          const loaded = await hostActions.loadChain(manifestRequest);
-          if (!loaded?.chainId) continue;
+          if (pendingNativeChainLoadsRef.current.has(track.id)) continue;
+          pendingNativeChainLoadsRef.current.add(track.id);
 
-          nextChainIds[track.id] = loaded.chainId;
-          nativeChainSignaturesRef.current[track.id] = nextSignature;
+          try {
+            const loaded = await hostActions.loadChain(manifestRequest);
+            if (!loaded?.chainId) continue;
+
+            nextChainIds[track.id] = loaded.chainId;
+            nativeChainSignaturesRef.current[track.id] = nextSignature;
+          } finally {
+            pendingNativeChainLoadsRef.current.delete(track.id);
+          }
         }
 
         if (!cancelled && Object.keys(nextChainIds).length > 0) {
@@ -430,18 +470,11 @@ export function useNativeHostSync({
     const hasHostBackedDevice = ((selectedTrack.device_chain || []) as DeviceInstance[]).some(hasNativePluginMetadata);
     const hasNativeChain = Boolean(hydratedSessionChainIdsByTrack[trackId] ?? nativeChainIdsByTrack[trackId]);
 
-    if (!hasHostBackedDevice || hasNativeChain || pendingNativeChainLoadsRef.current.has(trackId)) {
+    if (!hasHostBackedDevice || hasNativeChain) {
       return;
     }
 
-    pendingNativeChainLoadsRef.current.add(trackId);
     void handleLoadNativeChainForTrack(trackId);
-
-    const timeoutId = window.setTimeout(() => {
-      pendingNativeChainLoadsRef.current.delete(trackId);
-    }, 3000);
-
-    return () => window.clearTimeout(timeoutId);
   }, [
     isMock,
     hydratedSessionChainIdsByTrack,

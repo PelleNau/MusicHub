@@ -1,4 +1,4 @@
-import { renderHook, waitFor } from "@testing-library/react";
+import { act, renderHook, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { useNativeHostSync } from "@/hooks/useNativeHostSync";
@@ -175,6 +175,7 @@ describe("useNativeHostSync", () => {
 
   it("does not reload a chain that was already published by session state", async () => {
     const hostState = createHostState();
+    hostState.nativeChains = { "chain-existing": [] };
     hostState.sessionState = {
       type: "session.state",
       sessionId: "session-1",
@@ -248,6 +249,186 @@ describe("useNativeHostSync", () => {
           }),
         ]),
       );
+    });
+  });
+
+  it("reloads a chain when session state publishes an unverified chain id", async () => {
+    const hostState = createHostState();
+    hostState.nativeChains = {};
+    hostState.sessionState = {
+      type: "session.state",
+      sessionId: "session-1",
+      tracks: [{ id: "track-1", chainId: "chain-stale" }],
+      transport: {
+        state: "stopped",
+        beat: 0,
+        bpm: 120,
+      },
+    };
+    const hostActions = createHostActions();
+    const track: SessionTrack = {
+      id: "track-1",
+      session_id: "session-1",
+      name: "Synth",
+      type: "midi",
+      color: 1,
+      volume: 0.8,
+      pan: 0,
+      is_muted: false,
+      is_soloed: false,
+      sort_order: 0,
+      sends: [],
+      input_from: null,
+      created_at: new Date().toISOString(),
+      device_chain: [
+        {
+          id: "device-1",
+          type: "sampler",
+          enabled: true,
+          params: {},
+          hostPlugin: {
+            id: "plugin-1",
+            path: "AudioUnit:Synths/aumu,samp,appl",
+            name: "AUSampler",
+            vendor: "Apple",
+            format: "AudioUnit",
+            role: "instrument",
+            scanStatus: "ok",
+          },
+        },
+      ],
+    };
+
+    const { result } = renderHook(() =>
+      useNativeHostSync({
+        tracks: [track],
+        selectedTrackId: track.id,
+        selectedTrack: track,
+        selectedClipIsMidi: true,
+        activeSessionId: "session-1",
+        isMock: false,
+        hostState,
+        hostActions,
+        onDeviceChainChange: vi.fn(),
+      }),
+    );
+
+    await waitFor(() => {
+      expect(hostActions.loadChain).toHaveBeenCalledTimes(1);
+    });
+
+    await waitFor(() => {
+      expect(result.current.nativeChainIdsByTrack["track-1"]).toBe("chain-1");
+    });
+
+    expect(
+      hostActions.syncAudioGraph.mock.calls.flatMap(([tracks]) => tracks).some(
+        (syncedTrack) => syncedTrack.id === "track-1" && syncedTrack.chainId === "chain-stale",
+      ),
+    ).toBe(false);
+  });
+
+  it("does not issue duplicate native chain loads while a track load is already pending", async () => {
+    const hostState = createHostState();
+    const hostActions = createHostActions();
+    let resolveLoad: ((value: Awaited<ReturnType<HostConnectorActions["loadChain"]>>) => void) | null = null;
+    hostActions.loadChain = vi.fn().mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveLoad = resolve;
+        }),
+    );
+
+    const track: SessionTrack = {
+      id: "track-1",
+      session_id: "session-1",
+      name: "Synth",
+      type: "midi",
+      color: 1,
+      volume: 0.8,
+      pan: 0,
+      is_muted: false,
+      is_soloed: false,
+      sort_order: 0,
+      sends: [],
+      input_from: null,
+      created_at: new Date().toISOString(),
+      device_chain: [
+        {
+          id: "device-1",
+          type: "sampler",
+          enabled: true,
+          params: {},
+          hostPlugin: {
+            id: "plugin-1",
+            path: "AudioUnit:Synths/aumu,samp,appl",
+            name: "AUSampler",
+            vendor: "Apple",
+            format: "AudioUnit",
+            role: "instrument",
+            scanStatus: "ok",
+          },
+        },
+      ],
+    };
+
+    const { rerender } = renderHook(
+      ({ currentHostState }) =>
+        useNativeHostSync({
+          tracks: [track],
+          selectedTrackId: track.id,
+          selectedTrack: track,
+          selectedClipIsMidi: true,
+          activeSessionId: "session-1",
+          isMock: false,
+          hostState: currentHostState,
+          hostActions,
+          onDeviceChainChange: vi.fn(),
+        }),
+      { initialProps: { currentHostState: hostState } },
+    );
+
+    await waitFor(() => {
+      expect(hostActions.loadChain).toHaveBeenCalledTimes(1);
+    });
+
+    rerender({
+      currentHostState: {
+        ...hostState,
+        sessionState: {
+          type: "session.state",
+          sessionId: "session-1",
+          tracks: [],
+          transport: {
+            state: "stopped",
+            beat: 0,
+            bpm: 120,
+          },
+        },
+      },
+    });
+
+    await act(async () => {
+      await Promise.resolve();
+    });
+
+    expect(hostActions.loadChain).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      resolveLoad?.({
+        chainId: "chain-1",
+        name: "Track Native Chain",
+        sampleRate: 48000,
+        blockSize: 512,
+        nodeCount: 1,
+        nodes: [],
+        loadedCount: 1,
+        missingCount: 0,
+        errorCount: 0,
+        totalLatencySamples: 0,
+        elapsedMs: 1,
+      });
+      await Promise.resolve();
     });
   });
 

@@ -150,4 +150,36 @@ describe("useStudioDomainView", () => {
     expect(result.current.detailPanelState.nativeNodeCount).toBe(0);
     expect(result.current.detailPanelState.canLoadNativeChain).toBe(true);
   });
+
+  it("does not expose a stale native chain id when the current host state has no matching chain", () => {
+    const track = createTrack();
+    const hostState = createHostState();
+    hostState.nativeChains = {};
+
+    const { result } = renderHook(() =>
+      useStudioDomainView({
+        tracks: [track],
+        selectedClipIds: new Set(),
+        selectedTrackId: track.id,
+        activeClipId: null,
+        bottomTab: "editor",
+        hostState,
+        browserAudioEnabled: false,
+        hostAvailable: true,
+        effectivePlaybackState: "stopped",
+        effectiveBeat: 0,
+        mode: "connected",
+        selectedClip: undefined,
+        selectedTrack: track,
+        ghostNotes: [],
+        nativeChainIdsByTrack: { [track.id]: "chain-stale" },
+        nativeArmedByTrack: {},
+        nativeMonitoringByTrack: {},
+      }),
+    );
+
+    expect(result.current.detailPanelState.nativeChainId).toBeUndefined();
+    expect(result.current.detailPanelState.nativeNodeCount).toBe(0);
+    expect(result.current.detailPanelState.canLoadNativeChain).toBe(true);
+  });
 });

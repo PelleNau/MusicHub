@@ -161,7 +161,11 @@ export function useStudioDomainView({
   );
 
   const detailPanelState = useMemo<StudioDetailPanelState>(() => {
-    const nativeChainId = selectedTrackId ? nativeChainIdsByTrack[selectedTrackId] : undefined;
+    const candidateNativeChainId = selectedTrackId ? nativeChainIdsByTrack[selectedTrackId] : undefined;
+    const nativeChainId =
+      candidateNativeChainId && Object.prototype.hasOwnProperty.call(hostState.nativeChains, candidateNativeChainId)
+        ? candidateNativeChainId
+        : undefined;
     const nativeChainNodes =
       selectedTrackId && nativeChainId ? hostState.nativeChains[nativeChainId] ?? [] : undefined;
     const track = selectedTrack ?? null;
