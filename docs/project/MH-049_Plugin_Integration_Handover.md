@@ -12,6 +12,18 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
   - `codex/plugin-integration`
 - Base commit:
   - `36b7bb5`
+- Current head:
+  - `d8b7d3a`
+- Branch status:
+  - worktree clean
+- Validation status:
+  - `tsc --noEmit -p tsconfig.json` passed
+  - `npm test` passed
+  - `npm run build` passed
+  - `cargo check` in `src-tauri` passed
+- Review note:
+  - branch is checkpointed for Chief review
+  - branch remains behind `main` and is not merge-ready by default
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 - Execution protocol:
@@ -73,10 +85,13 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 
 ## Next Exact Steps
 
-- `todo` inspect current plugin-host startup path and define one owner for process startup
-- `todo` inspect plugin enumeration flow and verify where host plugin metadata enters the frontend
-- `todo` inspect `handleBrowserAddHostPlugin` in `useStudioTrackActions.ts`
-- `todo` verify Tauri-side host startup behavior before changing frontend assumptions
+1. Chief review the branch against plugin ownership boundaries.
+2. Decide whether the branch should be rebased onto `main` before further plugin work.
+3. If approved, continue in this worktree with:
+   - plugin-host startup ownership and port behavior
+   - plugin discovery and connection stability
+   - device-chain insertion path
+4. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
 
 ## Validation
 
