@@ -1,7 +1,6 @@
 # Tauri Shell Scaffold
 
-This repo now includes a Tauri v2 desktop shell scaffold in
-[/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src-tauri](/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src-tauri).
+This repo includes a Tauri v2 desktop shell scaffold in `src-tauri/`.
 
 ## What the shell is responsible for
 
@@ -26,12 +25,13 @@ Implemented:
 - `src-tauri/Cargo.toml`
 - `src-tauri/tauri.conf.json`
 - `src-tauri/capabilities/default.json`
+- `src-tauri/build.rs` sidecar provisioning
 - sidecar lifecycle manager
 - tray setup
 - placeholder icons
 - frontend Tauri detection and shell bridge via:
-  - [/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src/services/tauriShell.ts](/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src/services/tauriShell.ts)
-  - [/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src/services/hostConnector.ts](/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src/services/hostConnector.ts)
+  - `src/services/tauriShell.ts`
+  - `src/services/hostConnector.ts`
 - sidecar shell events surfaced into the Studio connection UI:
   - `sidecar:status`
   - `get_sidecar_status`
@@ -39,18 +39,18 @@ Implemented:
 
 Still required before shipping:
 - replace placeholder icons with real branded assets
-- place target-specific `plugin_host` sidecar binaries under `src-tauri/binaries/`
 - verify Tauri v2 capability permissions against the exact CLI/plugin versions used
 - test `tauri dev` and `tauri build` on each target platform
 - replace the updater public key and endpoint with real release infrastructure
 - harden sidecar restart/kill semantics if the host begins to manage long-lived child state
 - re-enable DMG packaging once the macOS bundle step is configured cleanly for distribution
+- make sidecar provisioning reproducible for CI and release builders, not just local developer machines
 
 ## Current macOS build output
 
 The current default `tauri:build` path produces a macOS app bundle:
 
-- `/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src-tauri/target/debug/bundle/macos/The Flightcase.app`
+- `src-tauri/target/debug/bundle/macos/The Flightcase.app`
 
 The default bundle target is temporarily set to `app` rather than `all` so local
 desktop builds succeed cleanly without blocking on DMG packaging.
@@ -61,6 +61,31 @@ The Tauri bundle config expects an external sidecar named `plugin_host`.
 At bundle time Tauri will resolve target-specific files from the `externalBin`
 declaration. Keep local binary drops under:
 
-- `/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src-tauri/binaries/`
+- `src-tauri/binaries/`
 
 The repo ignores built sidecar payloads by default.
+
+## Automatic sidecar provisioning
+
+When `src-tauri/binaries/` does not already contain the target-specific sidecar,
+`src-tauri/build.rs` now provisions it before `tauri_build::build()` runs.
+
+Provisioning order:
+- `PLUGIN_HOST_BINARY=/absolute/path/to/plugin_host`
+- `PLUGIN_HOST_PROJECT_DIR=/absolute/path/to/plugin-host`
+- a discovered ancestor sibling project at `plugin-host/`
+- `src-tauri/target/debug/plugin_host` as a final local fallback
+
+If a `plugin-host` project is found but the built artifact is missing,
+the build script runs:
+
+```sh
+cmake -S <plugin-host> -B <plugin-host>/build
+cmake --build <plugin-host>/build
+```
+
+The expected artifact is:
+- `build/plugin_host_artefacts/plugin_host`
+
+Set `MUSICHUB_BUILD_PLUGIN_HOST=0` to disable the auto-build path and require a
+prebuilt binary source.

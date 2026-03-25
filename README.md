@@ -67,8 +67,8 @@ This repo now includes a Tauri v2 desktop-shell scaffold that wraps the existing
 frontend and launches the JUCE `plugin_host` binary as a sidecar.
 
 Key paths:
-- [/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src-tauri](/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src-tauri)
-- [/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/docs/tauri-shell.md](/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/docs/tauri-shell.md)
+- `src-tauri/`
+- `docs/tauri-shell.md`
 
 Helpful commands:
 
@@ -77,18 +77,21 @@ npm run tauri:dev
 npm run tauri:build
 ```
 
-Current local macOS app output:
-
-- `/Users/pellenaucler/Documents/CodexProjekt/studio-ledger/src-tauri/target/debug/bundle/macos/The Flightcase.app`
-
 Before those work on a fresh machine you still need:
 - Rust / Cargo installed
 - the Tauri CLI dependency installed via `npm install`
-- a target-specific `plugin_host` sidecar binary placed under `src-tauri/binaries/`
+- CMake installed if the local `plugin-host` project needs to be built
 
 Note:
 - the default Tauri build is currently set to bundle the `.app` only
 - DMG packaging is intentionally deferred until the shell packaging pass is hardened
+- `src-tauri/build.rs` now provisions the target-specific sidecar automatically when
+  `src-tauri/binaries/` is empty
+- by default the build looks for a sibling `plugin-host` project and uses
+  `build/plugin_host_artefacts/plugin_host`
+- override the source binary with `PLUGIN_HOST_BINARY=/absolute/path/to/plugin_host`
+- override the source project with `PLUGIN_HOST_PROJECT_DIR=/absolute/path/to/plugin-host`
+- set `MUSICHUB_BUILD_PLUGIN_HOST=0` to disable auto-build and require a prebuilt binary
 
 ## How can I deploy this project?
 
