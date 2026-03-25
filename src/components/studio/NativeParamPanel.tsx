@@ -106,6 +106,7 @@ function PluginNodeSection({
   chainId,
   node,
   onFetchPresets,
+  onRefreshParams,
   onLoadPreset,
   onSaveState,
   onRestoreState,
@@ -114,6 +115,7 @@ function PluginNodeSection({
   chainId: string;
   node: ChainParamNode;
   onFetchPresets: (chainId: string, nodeIndex: number) => Promise<PluginPresetsResponse | null>;
+  onRefreshParams: () => Promise<void>;
   onLoadPreset: (chainId: string, nodeIndex: number, index: number) => Promise<{ loaded: boolean; name: string } | null>;
   onSaveState: (chainId: string, nodeIndex: number) => Promise<{ stateId: string } | null>;
   onRestoreState: (chainId: string, nodeIndex: number, stateId: string) => Promise<boolean>;
@@ -125,17 +127,22 @@ function PluginNodeSection({
   const [lastStateId, setLastStateId] = useState<string | null>(null);
   const [busy, setBusy] = useState<"preset" | "save" | "restore" | null>(null);
 
+  const refreshPresets = useCallback(async () => {
+    const data = await onFetchPresets(chainId, node.nodeIndex);
+    if (!data) return;
+    setPresets(data);
+    setSelectedPreset(data.currentIndex);
+  }, [chainId, node.nodeIndex, onFetchPresets]);
+
   useEffect(() => {
     let cancelled = false;
-    void onFetchPresets(chainId, node.nodeIndex).then((data) => {
-      if (cancelled || !data) return;
-      setPresets(data);
-      setSelectedPreset(data.currentIndex);
+    void refreshPresets().catch(() => {
+      if (cancelled) return;
     });
     return () => {
       cancelled = true;
     };
-  }, [chainId, node.nodeIndex, onFetchPresets]);
+  }, [refreshPresets]);
 
   return (
     <div className="space-y-1">
@@ -169,8 +176,8 @@ function PluginNodeSection({
                 setBusy("preset");
                 try {
                   const result = await onLoadPreset(chainId, node.nodeIndex, selectedPreset);
-                  if (result?.loaded && presets) {
-                    setPresets({ ...presets, currentIndex: selectedPreset });
+                  if (result?.loaded) {
+                    await Promise.all([onRefreshParams(), refreshPresets()]);
                   }
                 } finally {
                   setBusy(null);
@@ -204,7 +211,10 @@ function PluginNodeSection({
             if (!lastStateId) return;
             setBusy("restore");
             try {
-              await onRestoreState(chainId, node.nodeIndex, lastStateId);
+              const restored = await onRestoreState(chainId, node.nodeIndex, lastStateId);
+              if (restored) {
+                await Promise.all([onRefreshParams(), refreshPresets()]);
+              }
             } finally {
               setBusy(null);
             }
@@ -254,8 +264,11 @@ export function NativeParamPanel({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const loadParams = useCallback(async () => {
-    setLoading(true);
+  const loadParams = useCallback(async (options?: { silent?: boolean }) => {
+    const silent = options?.silent ?? false;
+    if (!silent) {
+      setLoading(true);
+    }
     setError(null);
 
     try {
@@ -268,9 +281,14 @@ export function NativeParamPanel({
       setParams(null);
       setError(err instanceof Error ? err.message : "Failed to fetch parameters from the native host");
     } finally {
-      setLoading(false);
+      if (!silent) {
+        setLoading(false);
+      }
     }
   }, [chainId, onFetchParams]);
+  const refreshParams = useCallback(async () => {
+    await loadParams({ silent: true });
+  }, [loadParams]);
 
   // Fetch params on mount / chainId change
   useEffect(() => {
@@ -345,6 +363,7 @@ export function NativeParamPanel({
             chainId={chainId}
             node={node}
             onFetchPresets={onFetchPresets}
+            onRefreshParams={refreshParams}
             onLoadPreset={onLoadPreset}
             onSaveState={onSaveState}
             onRestoreState={onRestoreState}
