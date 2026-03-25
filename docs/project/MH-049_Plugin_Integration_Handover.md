@@ -13,7 +13,10 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 - Base commit:
   - `36b7bb5`
 - Current head:
-  - current branch HEAD on `codex/plugin-integration`
+  - `1e2a719`
+- Divergence from `main`:
+  - `11` commits ahead
+  - `0` commits behind
 - Branch status:
   - worktree clean
 - Validation status:
@@ -28,6 +31,7 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
   - branch is ready for further plugin work but still requires normal review before integration
   - preserved plugin-coupled support changes were replayed from `codex/plugin-scope-holding`
   - `vite.config.ts` remains intentionally excluded because it is not plugin-specific
+  - review this branch only after `codex/platform-ownership-resolution`
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 - Execution protocol:
@@ -89,13 +93,19 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 
 ## Next Exact Steps
 
-1. Continue in this worktree with:
+1. Review and land:
+   - `codex/platform-ownership-resolution`
+2. Then review this branch for:
+   - sidecar startup ownership
+   - host discovery/transport stability
+   - device-chain insertion flow
+3. Continue in this worktree with:
    - plugin-host startup ownership and port behavior
    - plugin discovery and connection stability
    - device-chain insertion path
-2. Keep validating against `main...HEAD` ownership scope as new plugin work lands.
-3. Do not reintroduce generic build-config work such as `vite.config.ts` on this branch without a separate ownership decision.
-4. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
+4. Keep validating against `main...HEAD` ownership scope as new plugin work lands.
+5. Do not reintroduce generic build-config work such as `vite.config.ts` on this branch without a separate ownership decision.
+6. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
 
 ## Validation
 
