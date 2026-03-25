@@ -13,7 +13,7 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 - Base commit:
   - `36b7bb5`
 - Current head:
-  - `d8b7d3a`
+  - `05d5a50`
 - Branch status:
   - worktree clean
 - Validation status:
@@ -22,7 +22,8 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
   - `npm run build` passed
   - `cargo check` in `src-tauri` passed
 - Review note:
-  - branch is checkpointed for Chief review
+  - Chief ownership review completed
+  - branch is narrowed to plugin-owned scope
   - branch remains behind `main` and is not merge-ready by default
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
@@ -85,19 +86,19 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
 
 ## Next Exact Steps
 
-1. Chief review the branch against plugin ownership boundaries.
-2. Decide whether the branch should be rebased onto `main` before further plugin work.
-3. If approved, continue in this worktree with:
+1. Decide whether the branch should be rebased onto `main` before further plugin work.
+2. If approved, continue in this worktree with:
    - plugin-host startup ownership and port behavior
    - plugin discovery and connection stability
    - device-chain insertion path
-4. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
+3. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
 
 ## Validation
 
-- `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/node_modules/.bin/tsc --noEmit -p /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/plugin-integration/tsconfig.json`
-- `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run build`
-- `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub && npm run tauri:build`
+- `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/plugin-integration && ./node_modules/.bin/tsc --noEmit -p tsconfig.json`
+- `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/plugin-integration && npm test`
+- `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/plugin-integration && npm run build`
+- `cd /Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/plugin-integration/src-tauri && cargo check`
 
 ## Do Not Touch
 
