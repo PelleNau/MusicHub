@@ -23,10 +23,11 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
   - `cargo check` in `src-tauri` passed
 - Review note:
   - Chief ownership review completed
-  - branch is narrowed to plugin-owned scope
+  - plugin ownership was expanded for plugin-coupled support hooks, fixtures, and validation files
   - current `main` is merged into this branch
   - branch is ready for further plugin work but still requires normal review before integration
-  - restored cross-stream work is preserved on `codex/plugin-scope-holding` pending stream/ownership resolution
+  - preserved plugin-coupled support changes were replayed from `codex/plugin-scope-holding`
+  - `vite.config.ts` remains intentionally excluded because it is not plugin-specific
 - Authority:
   - `/Users/pellenaucler/Documents/CodexProjekt/MusicHub/docs/project/MusicHub_Platform_Directive.md`
 - Execution protocol:
@@ -93,7 +94,8 @@ Own plugin-host and device/plugin integration as a separate stream, isolated fro
    - plugin discovery and connection stability
    - device-chain insertion path
 2. Keep validating against `main...HEAD` ownership scope as new plugin work lands.
-3. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
+3. Do not reintroduce generic build-config work such as `vite.config.ts` on this branch without a separate ownership decision.
+4. Do not reopen unrelated Studio visual/runtime work on this branch without a new Chief assignment.
 
 ## Validation
 
