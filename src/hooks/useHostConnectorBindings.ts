@@ -25,6 +25,7 @@ import type {
   NativeTransportState,
   SyncStatus,
 } from "@/hooks/hostConnectorTypes";
+import { normalizeChainNodes } from "@/services/pluginHostClient";
 
 interface UseHostConnectorBindingsOptions {
   connector: HostConnector;
@@ -127,7 +128,10 @@ export function useHostConnectorBindings({
     }));
 
     unsubs.push(connector.on("chain.state", (event: ChainStateEvent) => {
-      setNativeChains((previous) => ({ ...previous, [event.chainId]: event.nodes }));
+      setNativeChains((previous) => ({
+        ...previous,
+        [event.chainId]: normalizeChainNodes(event.nodes),
+      }));
     }));
 
     unsubs.push(connector.on("plugin.editorClosed", (event: EditorClosedEvent) => {

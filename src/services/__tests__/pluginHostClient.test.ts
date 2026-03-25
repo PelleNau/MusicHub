@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  normalizeChainNodes,
   normalizeChainLoadRequest,
   normalizeChainLoadResponseData,
   normalizeRenderPreviewRequest,
@@ -72,7 +73,7 @@ describe("pluginHostClient request normalization", () => {
       nodeCount: 1,
       nodes: [
         {
-          index: -1,
+          index: 0,
           pluginId: "plugin-1",
           pluginName: "AUSampler",
           vendor: "Apple",
@@ -92,5 +93,58 @@ describe("pluginHostClient request normalization", () => {
       totalLatencySamples: 0,
       elapsedMs: 17,
     });
+  });
+
+  it("normalizes invalid or alternate node indexes from live host events", () => {
+    expect(
+      normalizeChainNodes([
+        {
+          index: -1,
+          nodeIndex: 4,
+          pluginId: "plugin-1",
+          pluginName: "AUMatrixReverb",
+          vendor: "Apple",
+          format: "AudioUnit",
+          status: "ok",
+        },
+        {
+          index: -1,
+          pluginId: "plugin-2",
+          pluginName: "AUSampler",
+          vendor: "Apple",
+          format: "AudioUnit",
+          status: "ok",
+        },
+      ]),
+    ).toEqual([
+      {
+        index: 4,
+        pluginId: "plugin-1",
+        pluginName: "AUMatrixReverb",
+        vendor: "Apple",
+        format: "AudioUnit",
+        bypass: false,
+        supportsEditor: undefined,
+        stateRestored: false,
+        paramCount: 0,
+        latencySamples: 0,
+        status: "loaded",
+        error: undefined,
+      },
+      {
+        index: 1,
+        pluginId: "plugin-2",
+        pluginName: "AUSampler",
+        vendor: "Apple",
+        format: "AudioUnit",
+        bypass: false,
+        supportsEditor: undefined,
+        stateRestored: false,
+        paramCount: 0,
+        latencySamples: 0,
+        status: "loaded",
+        error: undefined,
+      },
+    ]);
   });
 });

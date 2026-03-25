@@ -211,6 +211,7 @@ type RawChainNode = Partial<ChainNode> & {
   manufacturer?: string;
   restoredStateBytes?: number;
   parameterCount?: number;
+  nodeIndex?: number;
   status?: string;
 };
 
@@ -432,11 +433,20 @@ function normalizeChainNodeStatus(status: string | undefined): ChainNode["status
   return "loaded";
 }
 
-export function normalizeChainLoadResponseData(response: RawChainLoadResponse, elapsedMs: number): ChainLoadResponse {
-  const loadedChain = response.loadedChain;
-  const rawNodes = response.nodes ?? loadedChain?.plugins ?? [];
+function normalizeChainNodeIndex(node: RawChainNode, fallbackIndex: number): number {
+  if (typeof node.index === "number" && node.index >= 0) {
+    return node.index;
+  }
 
-  const nodes: ChainNode[] = rawNodes.map((node, index) => {
+  if (typeof node.nodeIndex === "number" && node.nodeIndex >= 0) {
+    return node.nodeIndex;
+  }
+
+  return fallbackIndex;
+}
+
+export function normalizeChainNodes(rawNodes: RawChainNode[]): ChainNode[] {
+  return rawNodes.map((node, index) => {
     const restoredStateBytes = typeof node.restoredStateBytes === "number" ? node.restoredStateBytes : 0;
     const parameterCount =
       typeof node.parameterCount === "number"
@@ -444,7 +454,7 @@ export function normalizeChainLoadResponseData(response: RawChainLoadResponse, e
         : (typeof node.paramCount === "number" ? node.paramCount : 0);
 
     return {
-      index: typeof node.index === "number" ? node.index : index,
+      index: normalizeChainNodeIndex(node, index),
       pluginId: String(node.pluginId ?? node.id ?? ""),
       pluginName: String(node.pluginName ?? node.name ?? ""),
       vendor: String(node.vendor ?? node.manufacturer ?? ""),
@@ -460,6 +470,12 @@ export function normalizeChainLoadResponseData(response: RawChainLoadResponse, e
       error: typeof node.error === "string" ? node.error : undefined,
     };
   });
+}
+
+export function normalizeChainLoadResponseData(response: RawChainLoadResponse, elapsedMs: number): ChainLoadResponse {
+  const loadedChain = response.loadedChain;
+  const rawNodes = response.nodes ?? loadedChain?.plugins ?? [];
+  const nodes = normalizeChainNodes(rawNodes);
 
   return {
     chainId: String(response.chainId ?? ""),
