@@ -49,6 +49,9 @@ function createBridgeInput() {
     detailPanelState: {
       track: null,
       isConnected: true,
+      nativeNodeCount: 0,
+      hasHostBackedDevices: false,
+      canLoadNativeChain: false,
       nativeMonitoring: true,
       nativeArmed: true,
       openEditors: {},

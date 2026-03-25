@@ -18,6 +18,10 @@ import {
   type RenderPreviewRequest,
   type ScanRequest,
 } from "@/services/pluginHostClient";
+import {
+  resolvePluginHostBaseUrl,
+  storePluginHostBaseUrl,
+} from "@/services/pluginHostConfig";
 
 export type ConnectionStatus = "connected" | "connecting" | "disconnected" | "error";
 
@@ -220,7 +224,8 @@ export function usePluginHost(): [PluginHostState, PluginHostActions] {
   const clearDiagnostics = useCallback(() => setDiagnostics([]), []);
 
   const setBaseUrl = useCallback((url: string) => {
-    clientRef.current = new PluginHostClient(url);
+    const normalized = storePluginHostBaseUrl(url) ?? resolvePluginHostBaseUrl();
+    clientRef.current = new PluginHostClient(normalized);
     setConnection("connecting");
     setHealth(null);
   }, []);

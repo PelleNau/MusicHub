@@ -1,4 +1,4 @@
-import type { HostPlugin, MidiDevice, BounceRequest, MidiRouteRequest, AudioConfigRequest, RecordArmRequest, MonitorTrackRequest, FileBrowserRequest, FileBrowserResponse, ChainLoadRequest, ChainLoadResponse, ChainParamsResponse, ChainNode, PluginPresetsResponse, PluginPresetLoadResponse, PluginStateSaveResponse, EditorOpenResponse } from "@/services/pluginHostClient";
+import type { HostPlugin, MidiDevice, BounceRequest, MidiRouteRequest, AudioConfigRequest, RecordArmRequest, MonitorTrackRequest, FileBrowserRequest, FileBrowserResponse, ChainLoadRequest, ChainLoadResponse, ChainParamsResponse, ChainNode, PluginPresetsResponse, PluginPresetLoadResponse, PluginStateSaveResponse, EditorOpenResponse, EditorCloseResponse } from "@/services/pluginHostClient";
 import type { ShellInfo, SidecarStatus } from "@/services/tauriShell";
 import type { HostGraphTrack, NativePlaybackTrackState } from "@/services/pluginHostContracts";
 import type {
@@ -90,7 +90,7 @@ export interface HostConnectorActions {
   removeFromChain: (chainId: string, nodeIndex: number) => void;
   addToChain: (chainId: string, pluginId: string, atIndex: number) => void;
   openEditor: (chainId: string, nodeIndex: number) => Promise<EditorOpenResponse | null>;
-  closeEditor: (chainId: string, nodeIndex: number) => Promise<boolean>;
+  closeEditor: (chainId: string, nodeIndex: number) => Promise<EditorCloseResponse | null>;
   fetchPluginPresets: (chainId: string, nodeIndex: number) => Promise<PluginPresetsResponse | null>;
   loadPluginPreset: (chainId: string, nodeIndex: number, index: number) => Promise<PluginPresetLoadResponse | null>;
   savePluginState: (chainId: string, nodeIndex: number) => Promise<PluginStateSaveResponse | null>;

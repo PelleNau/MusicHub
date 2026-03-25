@@ -14,11 +14,17 @@ pub async fn restart_sidecar(app: AppHandle) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn get_shell_info() -> serde_json::Value {
+pub fn get_shell_info(app: AppHandle) -> serde_json::Value {
+    let state = app.state::<std::sync::Arc<SidecarState>>();
+    let endpoint = &state.endpoint;
+
     serde_json::json!({
         "shell": "tauri",
         "version": env!("CARGO_PKG_VERSION"),
         "platform": std::env::consts::OS,
         "arch": std::env::consts::ARCH,
+        "pluginHostPort": endpoint.port,
+        "pluginHostBaseUrl": endpoint.base_url,
+        "pluginHostWsUrl": endpoint.ws_url,
     })
 }

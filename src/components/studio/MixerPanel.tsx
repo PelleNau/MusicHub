@@ -8,6 +8,7 @@ import React, { memo, useCallback, useMemo, useState } from "react";
 import { Volume2, Music2, Undo2, Crown, Layers, Settings2 } from "lucide-react";
 import { useStudioInfo, STUDIO_INFO } from "./StudioInfoContext";
 import type { SessionTrack, TrackSend, DeviceInstance, SoloMode, MixerStripSection } from "@/types/studio";
+import { getDeviceDisplayInfo } from "@/types/studio";
 import type { MeterLevel } from "@/services/pluginHostSocket";
 import { getTrackColor, TRACK_COLORS } from "./track/trackColors";
 import { panToDisplay } from "./track/trackHelpers";
@@ -158,19 +159,25 @@ function InsertSlots({ devices, onClick }: { devices: DeviceInstance[]; onClick?
           <span className="text-[6px] uppercase" style={{ color: "hsl(var(--studio-text-dim))" }}>Empty</span>
         </div>
       ) : (
-        slots.map((d) => (
-          <div
-            key={d.id}
-            className={`h-[14px] w-full rounded-[2px] flex items-center px-1 text-[7px] font-mono leading-none truncate transition-colors ${
-              d.enabled
-                ? "bg-primary/15 text-primary/80 group-hover:bg-primary/25"
-                : "line-through"
-            }`}
-            style={!d.enabled ? { backgroundColor: "hsl(var(--studio-surface))", color: "hsl(var(--studio-text-dim))" } : undefined}
-          >
-            {d.type}
-          </div>
-        ))
+        slots.map((d) => {
+          const display = getDeviceDisplayInfo(d);
+          return (
+            <div
+              key={d.id}
+              className={`h-[14px] w-full rounded-[2px] flex items-center gap-1 px-1 text-[7px] font-mono leading-none truncate transition-colors ${
+                d.enabled
+                  ? "bg-primary/15 text-primary/80 group-hover:bg-primary/25"
+                  : "line-through"
+              }`}
+              style={!d.enabled ? { backgroundColor: "hsl(var(--studio-surface))", color: "hsl(var(--studio-text-dim))" } : undefined}
+            >
+              <span className="truncate flex-1">{display.label}</span>
+              {display.isHostBacked && (
+                <span className="shrink-0 uppercase text-[6px] text-foreground/45">host</span>
+              )}
+            </div>
+          );
+        })
       )}
       {devices.length > 4 && (
         <span className="text-[6px] text-center" style={{ color: "hsl(var(--studio-text-dim))" }}>+{devices.length - 4}</span>

@@ -25,6 +25,7 @@ import type {
   EditorOpenRequest,
   EditorOpenResponse,
   EditorCloseRequest,
+  EditorCloseResponse,
   BounceRequest,
   BounceResponse,
   MidiDevicesResponse,
@@ -313,8 +314,8 @@ export class MockPluginHost {
     });
   }
 
-  async closeEditorHttp(req: EditorCloseRequest): Promise<HostEnvelope<{ closed: boolean }>> {
-    return envelope("plugins/editor/close", { closed: true });
+  async closeEditorHttp(req: EditorCloseRequest): Promise<HostEnvelope<EditorCloseResponse>> {
+    return envelope("plugins/editor/close", { closed: true, alreadyClosed: false });
   }
 
   async bounce(req: BounceRequest): Promise<HostEnvelope<BounceResponse>> {

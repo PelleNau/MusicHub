@@ -29,6 +29,7 @@ import {
   type EditorOpenRequest,
   type EditorOpenResponse,
   type EditorCloseRequest,
+  type EditorCloseResponse,
   type BounceRequest,
   type BounceResponse,
   type MidiDevicesResponse,
@@ -123,7 +124,7 @@ export class HostConnector {
 
   async connect(): Promise<void> {
     this.setState("connecting");
-    this.wireTauriShell();
+    await this.wireTauriShell();
 
     try {
       await this.httpClient.health();
@@ -243,19 +244,27 @@ export class HostConnector {
     this.emit("connectionStateChange", s);
   }
 
-  private wireTauriShell() {
+  private async wireTauriShell() {
     if (!this._inShell || this.tauriUnsubs.length > 0) return;
 
-    void wireTauriShellBridge(
-      (event, payload) => this.emit(event, payload),
+    const unsubs = await wireTauriShellBridge(
+      (event, payload) => {
+        if (event === "shell.info") {
+          const info = payload as ShellInfo;
+          this.httpClient.setBaseUrl(info.pluginHostBaseUrl);
+          this.wsClient.setUrl(info.pluginHostWsUrl);
+        }
+
+        this.emit(event, payload);
+      },
       () => {
         if (!this._useMock) {
           this._httpOk = true;
         }
       },
-    ).then((unsubs) => {
-      this.tauriUnsubs.push(...unsubs);
-    });
+    );
+
+    this.tauriUnsubs.push(...unsubs);
   }
 
   /* ── Health polling ── */
@@ -432,7 +441,7 @@ export class HostConnector {
     return this.api.openEditorHttp(req);
   }
 
-  async closeEditorHttp(req: EditorCloseRequest): Promise<HostEnvelope<{ closed: boolean }>> {
+  async closeEditorHttp(req: EditorCloseRequest): Promise<HostEnvelope<EditorCloseResponse>> {
     return this.api.closeEditorHttp(req);
   }
 

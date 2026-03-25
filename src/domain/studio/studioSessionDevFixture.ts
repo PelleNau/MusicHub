@@ -6,7 +6,7 @@ import type {
   TrackUpdatePayload,
 } from "@/hooks/studioMutationTypes";
 import { studioSessionKeys } from "@/domain/studio/studioSessionQueries";
-import type { Session, SessionClip, SessionTrack } from "@/types/studio";
+import { normalizeDeviceChain, type Session, type SessionClip, type SessionTrack } from "@/types/studio";
 
 export const shouldUseDevSessionFixture =
   import.meta.env.VITE_APP_FLAVOR === "design" ||
@@ -462,7 +462,7 @@ export function createDevTrack(sessionId: string, track: TrackCreatePayload): Se
     is_muted: track.is_muted ?? false,
     is_soloed: track.is_soloed ?? false,
     sort_order: track.sort_order ?? (devStore.tracksBySession[sessionId] ?? []).length,
-    device_chain: track.device_chain ?? [],
+    device_chain: normalizeDeviceChain(track.device_chain),
     sends: track.sends ?? [],
     input_from: track.input_from ?? null,
     created_at: createdAt,

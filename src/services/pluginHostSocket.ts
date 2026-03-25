@@ -1,5 +1,6 @@
 import type { ChainNode } from "@/services/pluginHostClient";
 import type { HostGraphTrack, NativePlaybackClipState } from "@/services/pluginHostContracts";
+import { resolvePluginHostWsUrl } from "@/services/pluginHostConfig";
 
 /**
  * PluginHostSocket — typed WebSocket client for the local plugin-host backend.
@@ -419,7 +420,7 @@ type EventType = keyof ListenerMap;
 
 /* ── Socket client ── */
 
-const DEFAULT_WS_URL = "ws://127.0.0.1:8080/ws";
+const DEFAULT_WS_URL = resolvePluginHostWsUrl();
 const RECONNECT_INTERVAL = 3_000;
 
 export class PluginHostSocket {
@@ -432,6 +433,15 @@ export class PluginHostSocket {
 
   constructor(url: string = DEFAULT_WS_URL) {
     this.url = url;
+  }
+
+  setUrl(url: string): void {
+    if (this.url === url) return;
+
+    this.url = url;
+    if (this.ws && this.ws.readyState !== WebSocket.CLOSED) {
+      this.disconnect();
+    }
   }
 
   get connected(): boolean {
@@ -490,11 +500,6 @@ export class PluginHostSocket {
     this.ws?.close();
     this.ws = null;
     this._connected = false;
-  }
-
-  setUrl(url: string): void {
-    this.url = url;
-    this.disconnect();
   }
 
   private scheduleReconnect(): void {

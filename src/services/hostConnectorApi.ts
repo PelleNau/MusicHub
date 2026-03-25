@@ -6,6 +6,7 @@ import type {
   ChainLoadRequest,
   ChainLoadResponse,
   ChainParamsResponse,
+  EditorCloseResponse,
   EditorCloseRequest,
   EditorOpenRequest,
   EditorOpenResponse,
@@ -110,7 +111,7 @@ export function createConnectorApi(deps: ConnectorApiDeps) {
     openEditorHttp(req: EditorOpenRequest): Promise<HostEnvelope<EditorOpenResponse>> {
       return callHost(deps, () => deps.httpClient.openEditor(req), () => deps.mock.openEditorHttp(req));
     },
-    closeEditorHttp(req: EditorCloseRequest): Promise<HostEnvelope<{ closed: boolean }>> {
+    closeEditorHttp(req: EditorCloseRequest): Promise<HostEnvelope<EditorCloseResponse>> {
       return callHost(deps, () => deps.httpClient.closeEditor(req), () => deps.mock.closeEditorHttp(req));
     },
     bounce(req: BounceRequest): Promise<HostEnvelope<BounceResponse>> {

@@ -11,6 +11,9 @@ export interface ShellInfo {
   version: string;
   platform: string;
   arch: string;
+  pluginHostPort: number;
+  pluginHostBaseUrl: string;
+  pluginHostWsUrl: string;
 }
 
 type Unlisten = () => void;
