@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/context-menu";
 import type { DeviceInstance, DeviceType, DeviceParam, SessionTrack } from "@/types/studio";
 import { DEVICE_DEFS, getDeviceDisplayInfo, isHostBackedDevice } from "@/types/studio";
+import { buildDefaultHostBackedDevice } from "@/domain/studio/hostBackedDeviceDefaults";
 import { getTrackColor } from "./TrackLane";
 import { NativeParamPanel } from "./NativeParamPanel";
 import type { ChainNode, ChainParamsResponse } from "@/services/pluginHostClient";
@@ -717,12 +718,7 @@ export function DetailPanel({
     const def = DEVICE_DEFS.find((d) => d.type === type)!;
     const defaults: Record<string, number> = {};
     for (const p of def.params) defaults[p.key] = p.default;
-    const newDevice: DeviceInstance = {
-      id: crypto.randomUUID(),
-      type,
-      enabled: true,
-      params: defaults,
-    };
+    const newDevice = buildDefaultHostBackedDevice(type, defaults);
     onDeviceChainChange(track.id, [...devices, newDevice]);
   };
 

@@ -172,4 +172,82 @@ describe("useNativeHostSync", () => {
       expect(hostActions.syncAudioGraph).toHaveBeenCalled();
     });
   });
+
+  it("does not reload a chain that was already published by session state", async () => {
+    const hostState = createHostState();
+    hostState.sessionState = {
+      type: "session.state",
+      sessionId: "session-1",
+      tracks: [{ id: "track-1", chainId: "chain-existing" }],
+      transport: {
+        state: "stopped",
+        beat: 0,
+        bpm: 120,
+      },
+    };
+    const hostActions = createHostActions();
+    const track: SessionTrack = {
+      id: "track-1",
+      session_id: "session-1",
+      name: "Synth",
+      type: "midi",
+      color: 1,
+      volume: 0.8,
+      pan: 0,
+      is_muted: false,
+      is_soloed: false,
+      sort_order: 0,
+      sends: [],
+      input_from: null,
+      created_at: new Date().toISOString(),
+      device_chain: [
+        {
+          id: "device-1",
+          type: "sampler",
+          enabled: true,
+          params: {},
+          hostPlugin: {
+            id: "plugin-1",
+            path: "AudioUnit:Synths/aumu,samp,appl",
+            name: "AUSampler",
+            vendor: "Apple",
+            format: "AudioUnit",
+            role: "instrument",
+            scanStatus: "ok",
+          },
+        },
+      ],
+    };
+
+    const { result } = renderHook(() =>
+      useNativeHostSync({
+        tracks: [track],
+        selectedTrackId: track.id,
+        selectedTrack: track,
+        selectedClipIsMidi: true,
+        activeSessionId: "session-1",
+        isMock: false,
+        hostState,
+        hostActions,
+        onDeviceChainChange: vi.fn(),
+      }),
+    );
+
+    await waitFor(() => {
+      expect(result.current.nativeChainIdsByTrack["track-1"]).toBe("chain-existing");
+    });
+
+    expect(hostActions.loadChain).not.toHaveBeenCalled();
+    await waitFor(() => {
+      expect(hostActions.syncAudioGraph).toHaveBeenCalledWith(
+        expect.arrayContaining([
+          expect.objectContaining({
+            id: "track-1",
+            chainId: "chain-existing",
+            chain_id: "chain-existing",
+          }),
+        ]),
+      );
+    });
+  });
 });

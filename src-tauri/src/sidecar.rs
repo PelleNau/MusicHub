@@ -100,9 +100,11 @@ fn find_available_port(start_port: u16) -> Option<u16> {
     None
 }
 
-pub async fn launch_and_monitor(app: AppHandle) {
-    let state = Arc::new(SidecarState::new(resolve_endpoint_config()));
-    app.manage(state.clone());
+pub fn build_state() -> Arc<SidecarState> {
+    Arc::new(SidecarState::new(resolve_endpoint_config()))
+}
+
+pub async fn launch_and_monitor(app: AppHandle, state: Arc<SidecarState>) {
 
     let mut restart_count: u32 = 0;
 

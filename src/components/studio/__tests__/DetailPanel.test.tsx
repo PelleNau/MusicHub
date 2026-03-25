@@ -88,6 +88,36 @@ describe("DetailPanel", () => {
     expect(screen.getByText("2 native nodes")).toBeInTheDocument();
   });
 
+  it("adds built-in effects as host-backed devices from the detail panel", () => {
+    const onDeviceChainChange = vi.fn();
+
+    render(
+      <DetailPanel
+        track={createTrack()}
+        onDeviceChainChange={onDeviceChainChange}
+        onClose={vi.fn()}
+        nativeNodeCount={0}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: /Add Effect/i }));
+    fireEvent.click(screen.getByRole("button", { name: "EQ Three" }));
+
+    expect(onDeviceChainChange).toHaveBeenCalledTimes(1);
+    const [, nextDevices] = onDeviceChainChange.mock.calls[0];
+    expect(nextDevices).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          type: "eq3",
+          hostPlugin: expect.objectContaining({
+            id: "builtin-aunbandeq",
+            name: "AUNBandEQ",
+          }),
+        }),
+      ]),
+    );
+  });
+
   it("shows busy state while opening a loaded host editor", async () => {
     let resolveOpen: (() => void) | null = null;
     const onOpenEditor = vi.fn().mockImplementation(

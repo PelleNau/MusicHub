@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import type { HostPlugin, ChainLoadRequest } from "@/services/pluginHostClient";
@@ -134,6 +134,15 @@ export function useNativeHostSync({
   const pendingNativeChainLoadsRef = useRef<Set<string>>(new Set());
   const prevReadySequenceRef = useRef(hostState.readySequence);
   const lastSyncedGraphSignatureRef = useRef<string | null>(null);
+  const hydratedSessionChainIdsByTrack = useMemo(() => {
+    const nextSessionChainIds: Record<string, string> = {};
+    for (const track of hostState.sessionState?.tracks ?? []) {
+      const resolvedTrack = resolveNativeSessionTrackIdentity(track);
+      if (!resolvedTrack) continue;
+      nextSessionChainIds[resolvedTrack.trackId] = resolvedTrack.chainId;
+    }
+    return nextSessionChainIds;
+  }, [hostState.sessionState]);
 
   const syncHostGraph = useCallback(async (chainIdsByTrack: Record<string, string>) => {
     const nextSignature = getHostGraphSignature(tracks, chainIdsByTrack);
@@ -269,7 +278,13 @@ export function useNativeHostSync({
 
     void (async () => {
       try {
-        await syncHostGraph(nativeChainIdsByTrack);
+        const hydratedChainIds = hydratedSessionChainIdsByTrack;
+        for (const track of tracks) {
+          if (!hydratedChainIds[track.id]) continue;
+          nativeChainSignaturesRef.current[track.id] = getNativeChainSignature(track);
+        }
+        const baselineChainIds = { ...hydratedChainIds, ...nativeChainIdsByTrack };
+        await syncHostGraph(baselineChainIds);
 
         const nextChainIds: Record<string, string> = {};
 
@@ -279,10 +294,14 @@ export function useNativeHostSync({
 
           const nextSignature = getNativeChainSignature(track);
           const currentSignature = nativeChainSignaturesRef.current[track.id];
-          const existingChainId = readyChanged ? undefined : nativeChainIdsByTrack[track.id];
+          const existingChainId = readyChanged
+            ? undefined
+            : (hydratedSessionChainIdsByTrack[track.id] ?? nativeChainIdsByTrack[track.id]);
 
-          if (existingChainId && currentSignature === nextSignature) {
-            nextChainIds[track.id] = existingChainId;
+          if (existingChainId && currentSignature === nextSignature) continue;
+
+          if (existingChainId && !currentSignature) {
+            nativeChainSignaturesRef.current[track.id] = nextSignature;
             continue;
           }
 
@@ -294,7 +313,7 @@ export function useNativeHostSync({
         }
 
         if (!cancelled && Object.keys(nextChainIds).length > 0) {
-          const mergedChainIds = { ...nativeChainIdsByTrack, ...nextChainIds };
+          const mergedChainIds = { ...baselineChainIds, ...nextChainIds };
           setNativeChainIdsByTrack(mergedChainIds);
           await syncHostGraph(mergedChainIds);
         }
@@ -306,7 +325,15 @@ export function useNativeHostSync({
     return () => {
       cancelled = true;
     };
-  }, [tracks, hostState.connectionState, hostState.readySequence, hostActions, nativeChainIdsByTrack, syncHostGraph]);
+  }, [
+    tracks,
+    hostState.connectionState,
+    hostState.readySequence,
+    hostActions,
+    hydratedSessionChainIdsByTrack,
+    nativeChainIdsByTrack,
+    syncHostGraph,
+  ]);
 
   useEffect(() => {
     const isConnected = hostState.connectionState === "connected" || hostState.connectionState === "degraded";
@@ -316,20 +343,24 @@ export function useNativeHostSync({
   }, [hostState.connectionState, refreshHostPlugins]);
 
   useEffect(() => {
-    const sessionTracks = hostState.sessionState?.tracks ?? [];
-
-    if (sessionTracks.length === 0) return;
+    if (Object.keys(hydratedSessionChainIdsByTrack).length === 0) return;
+    for (const track of tracks) {
+      const chainId = hydratedSessionChainIdsByTrack[track.id];
+      if (!chainId) continue;
+      nativeChainSignaturesRef.current[track.id] = getNativeChainSignature(track);
+    }
 
     setNativeChainIdsByTrack((prev) => {
       const next = { ...prev };
-      for (const track of sessionTracks) {
-        const resolvedTrack = resolveNativeSessionTrackIdentity(track);
-        if (!resolvedTrack) continue;
-        next[resolvedTrack.trackId] = resolvedTrack.chainId;
+      let changed = false;
+      for (const [trackId, chainId] of Object.entries(hydratedSessionChainIdsByTrack)) {
+        if (next[trackId] === chainId) continue;
+        next[trackId] = chainId;
+        changed = true;
       }
-      return next;
+      return changed ? next : prev;
     });
-  }, [hostState.sessionState]);
+  }, [hydratedSessionChainIdsByTrack, tracks]);
 
   useEffect(() => {
     const hostAvailable =
@@ -339,7 +370,7 @@ export function useNativeHostSync({
 
     const trackId = selectedTrack.id;
     const hasHostBackedDevice = ((selectedTrack.device_chain || []) as DeviceInstance[]).some(hasNativePluginMetadata);
-    const hasNativeChain = Boolean(nativeChainIdsByTrack[trackId]);
+    const hasNativeChain = Boolean(hydratedSessionChainIdsByTrack[trackId] ?? nativeChainIdsByTrack[trackId]);
 
     if (!hasHostBackedDevice || hasNativeChain || pendingNativeChainLoadsRef.current.has(trackId)) {
       return;
@@ -355,6 +386,7 @@ export function useNativeHostSync({
     return () => window.clearTimeout(timeoutId);
   }, [
     isMock,
+    hydratedSessionChainIdsByTrack,
     hostState.connectionState,
     selectedClipIsMidi,
     selectedTrack,

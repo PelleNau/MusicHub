@@ -6,7 +6,6 @@ import type {
   AutomationPoint,
   DeviceInstance,
   DeviceType,
-  HostPluginDescriptor,
   SessionTrack,
   TrackSend,
 } from "@/types/studio";
@@ -30,131 +29,11 @@ import type {
   UpdateClipMutation,
 } from "@/hooks/studioMutationTypes";
 import { toast } from "sonner";
-
-function resolveHostPluginDeviceType(plugin: HostPlugin): DeviceType {
-  if (plugin.category === "Instrument") return "sampler";
-
-  const fingerprint = [
-    plugin.name,
-    plugin.vendor,
-    plugin.category,
-    ...(plugin.tags ?? []),
-  ].join(" ").toLowerCase();
-
-  if (fingerprint.includes("compress")) return "compressor";
-  if (fingerprint.includes("reverb") || fingerprint.includes("verb")) return "reverb";
-  if (fingerprint.includes("delay") || fingerprint.includes("echo")) return "delay";
-  if (fingerprint.includes("eq")) return "eq3";
-  return "gain";
-}
-
-function resolveHostPluginRole(plugin: HostPlugin): HostPluginDescriptor["role"] {
-  switch (plugin.category) {
-    case "Instrument":
-      return "instrument";
-    case "MIDI Effect":
-      return "midi-effect";
-    case "Analyzer":
-      return "analyzer";
-    default:
-      return "effect";
-  }
-}
-
-function buildHostPluginDescriptor(plugin: HostPlugin): HostPluginDescriptor {
-  return {
-    id: plugin.id,
-    path: plugin.path,
-    name: plugin.name,
-    vendor: plugin.vendor,
-    format: plugin.format,
-    role: resolveHostPluginRole(plugin),
-    scanStatus: plugin.scanStatus,
-  };
-}
-
-const DEFAULT_NATIVE_PLUGIN_MAP: Partial<Record<DeviceType, { hostPlugin: HostPluginDescriptor }>> = {
-  subtractive: {
-    hostPlugin: {
-      id: "builtin-aumidisynth",
-      path: "AudioUnit:Synths/aumu,msyn,appl",
-      name: "AUMIDISynth",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "instrument",
-    },
-  },
-  fm: {
-    hostPlugin: {
-      id: "builtin-aumidisynth",
-      path: "AudioUnit:Synths/aumu,msyn,appl",
-      name: "AUMIDISynth",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "instrument",
-    },
-  },
-  sampler: {
-    hostPlugin: {
-      id: "builtin-ausampler",
-      path: "AudioUnit:Synths/aumu,samp,appl",
-      name: "AUSampler",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "instrument",
-    },
-  },
-  eq3: {
-    hostPlugin: {
-      id: "builtin-aunbandeq",
-      path: "AudioUnit:Effects/aufx,nbeq,appl",
-      name: "AUNBandEQ",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "effect",
-    },
-  },
-  compressor: {
-    hostPlugin: {
-      id: "builtin-audynamicsprocessor",
-      path: "AudioUnit:Effects/aufx,dcmp,appl",
-      name: "AUDynamicsProcessor",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "effect",
-    },
-  },
-  reverb: {
-    hostPlugin: {
-      id: "builtin-aumatrixreverb",
-      path: "AudioUnit:Effects/aufx,mrev,appl",
-      name: "AUMatrixReverb",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "effect",
-    },
-  },
-  delay: {
-    hostPlugin: {
-      id: "builtin-audelay",
-      path: "AudioUnit:Effects/aufx,dely,appl",
-      name: "AUDelay",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "effect",
-    },
-  },
-  gain: {
-    hostPlugin: {
-      id: "builtin-aupeaklimiter",
-      path: "AudioUnit:Effects/aufx,lmtr,appl",
-      name: "AUPeakLimiter",
-      vendor: "Apple",
-      format: "AudioUnit",
-      role: "effect",
-    },
-  },
-};
+import {
+  buildDefaultHostBackedDevice,
+  buildHostPluginDescriptor,
+  resolveHostPluginDeviceType,
+} from "@/domain/studio/hostBackedDeviceDefaults";
 
 type ReturnTrackType = Extract<SessionTrack["type"], "return">;
 
@@ -514,13 +393,7 @@ export function useStudioTrackActions({
       const defaults: Record<string, number> = {};
       for (const param of definition.params) defaults[param.key] = param.default;
 
-      const newDevice: DeviceInstance = {
-        id: crypto.randomUUID(),
-        type,
-        enabled: true,
-        params: defaults,
-        ...DEFAULT_NATIVE_PLUGIN_MAP[type],
-      };
+      const newDevice = buildDefaultHostBackedDevice(type, defaults);
 
       const existing = (track.device_chain || []) as DeviceInstance[];
       handleDeviceChainChange(track.id, [...existing, newDevice]);

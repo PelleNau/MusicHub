@@ -1,3 +1,5 @@
+use tauri::Manager;
+
 mod app_menu;
 mod commands;
 mod sidecar;
@@ -14,9 +16,11 @@ pub fn run() {
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_window_state::Builder::new().build())
         .setup(|app| {
+            let sidecar_state = sidecar::build_state();
+            app.manage(sidecar_state.clone());
             let app_handle = app.handle().clone();
             tauri::async_runtime::spawn(async move {
-                sidecar::launch_and_monitor(app_handle).await;
+                sidecar::launch_and_monitor(app_handle, sidecar_state).await;
             });
 
             tray::setup(app)?;
