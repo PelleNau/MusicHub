@@ -2,157 +2,237 @@
 
 ## Purpose
 
-This roadmap defines the intended implementation sequence for the current architecture phase.
+This roadmap defines the delivery sequence for the current product release, not just the architecture program.
 
-It is ordered to reduce risk:
+Published release:
 
-1. architecture and contracts first
-2. integration boundaries second
-3. frontend redesign on top of stable behavior
+- `R1 Studio Baseline`
 
----
+Active next release target:
 
-## Phase 1 — Architectural Foundation
+- `R2 Studio Replacement`
 
-### Goal
+## Release Strategy
 
-Establish the target Studio domain model and interaction flows as implementation references.
+The roadmap is now release-driven:
 
-### Outcomes
+1. publish the approved `R1` Studio baseline
+2. use `R1` as the stable behavioral baseline
+3. replace the remaining old-shell product surfaces in `R2`
+4. preserve `R1`-validated runtime behavior while upgrading the product routes
 
-- stable Studio domain model
-- interaction flow definitions
-- project control surface in repo
-- coordination docs aligned with architecture
-
-### Status
-
-In progress / largely seeded
-
----
-
-## Phase 2 — Domain Types and Store Boundary
+## R1 — Studio Baseline
 
 ### Goal
 
-Introduce target domain types and prepare the codebase for a normalized Studio state model.
+Ship the new Studio interface as the primary baseline on `/studio`.
 
-### Outcomes
+### In Scope
 
-- target TypeScript domain types
-- clear distinction between current runtime types and target domain model
-- plan for store normalization
-- mapping strategy from current host payloads to target model
+- Studio shell and route authority
+- transport and playhead
+- arrangement baseline
+- piano-roll baseline
+- mixer baseline
+- browser baseline
+- core editing interactions
+- visual parity sufficient for baseline approval
 
-### Dependencies
+### Out Of Scope
 
-- Phase 1
+- plugin-host completeness unless required by a proven Studio blocker
+- advanced routing and device-chain completeness
+- full backend/native completeness beyond baseline validation needs
+- broader learning/product-surface work not needed for the Studio baseline
 
----
-
-## Phase 3 — Host Adapter and Observable State API
-
-### Goal
-
-Move from ad hoc host-facing UI state to stable adapter and selector boundaries.
-
-### Outcomes
-
-- host adapter layer
-- normalized host-to-domain mapping
-- stable Studio observable state selectors
-- reduced leakage of raw host payloads into UI surfaces
-
-### Dependencies
-
-- Phase 2
-
----
-
-## Phase 4 — Command Bus
+## Phase A — Program Lock
 
 ### Goal
 
-Introduce a unified command layer for UI, Guide, templates, and AI.
+Turn the Studio baseline into a formal release program.
 
 ### Outcomes
 
-- typed Studio commands
-- typed transport commands
-- typed lesson/browser/content commands
-- success/failure/ack handling
-- command logging for validation and debugging
+- approve `MH-055` through `MH-060`
+- create `MH-061` through `MH-064`
+- freeze feature drift on the baseline branch
+- snapshot current known defects into `MH-063`
 
-### Dependencies
+Status:
 
-- Phase 3
+- complete
 
----
-
-## Phase 5 — Guide Runtime
+## Phase B — Spec Normalization And Validation Audit
 
 ### Goal
 
-Introduce the learning-native layer as a first-class subsystem instead of UI glue.
+Turn the mixed Figma/export corpus into one contradiction-resolved `R1` release contract.
 
 ### Outcomes
 
-- lesson runtime
-- lesson bindings
-- anchor-driven highlight/hint system
-- validation context and step progression
+- classify the full export corpus
+- approve the canonical `R1` requirement set
+- resolve contradictions and deferrals
+- map runtime/backend feasibility
+- map product-route UI/component/CSS surfaces
+- bind validation to the normalized spec
 
-### Dependencies
+Status:
 
-- Phase 4
+- complete
 
----
-
-## Phase 6 — Studio Surface Refactor
+## Phase C — Structural Baseline Repair
 
 ### Goal
 
-Refactor Studio UI to consume selectors and commands instead of mixed page-local integration logic.
+Repair the baseline in the order that minimizes rework.
 
-### Outcomes
+### Repair Order
 
-- thinner `Studio.tsx`
-- clearer surface boundaries
-- better separation between composition, state, and behavior
+1. arrangement structural integrity
+2. piano-roll structural integrity
+3. core interactions
+4. visual parity
+5. secondary baseline gaps
 
-### Dependencies
+Status:
 
-- Phase 3
-- Phase 4
+- complete
 
----
-
-## Phase 7 — Frontend Product Redesign
+## Phase D — Full Revalidation
 
 ### Goal
 
-Redesign Studio/Guide/browser UX on top of stable architecture.
+Re-run the Studio baseline against the approved requirement and test set.
+
+### Validation Order
+
+1. shell and navigation
+2. transport and playhead
+3. arrangement
+4. piano roll
+5. mixer
+6. browser/devices
+7. shortcuts/editing
+8. visual parity sweep
+
+Status:
+
+- complete
+
+## Phase E — Release Gate
+
+### Goal
+
+Decide whether `R1 Studio Baseline` is approved, conditionally approved, or blocked.
+
+### Gate Rules
+
+Use:
+
+- `docs/project/MH-060_Studio_Exit_Criteria.md`
+
+R1 is accepted only when:
+
+- `Blocker = 0`
+- `Critical = 0`
+- `Major = 0` in core Studio flows
+- the approved deviation list contains only accepted `Minor` and `Polish` items
+
+Status:
+
+- complete
+
+## Phase F — Release Publishing And Stabilization
+
+### Goal
+
+Publish the approved baseline and keep it stable while it is synchronized, tagged, and regression-checked.
 
 ### Outcomes
 
-- beginner/guided/pro layouts
-- Guide overlays
-- better browser/content insertion workflows
-- stronger onboarding and learning flows
+- synchronize `main`, `codex/figma-capture-mode`, and `codex/studio-integration-baseline`
+- create release tag `r1-studio-baseline`
+- freeze the validation branch against feature drift
+- run the reduced stabilization regression pack
+- log post-approval issues only in `MH-072` and `MH-073`
 
-### Dependencies
+### Stabilization Scope
 
-- Phase 5
-- Phase 6
+- regression fixes only
+- release documentation updates
+- validation evidence
+- packaging/publishing fixes
 
----
+### Exclusions During Stabilization
 
-## Current Execution Rule
+- no new Studio redesign
+- no speculative cleanup
+- no plugin-host expansion unless a shipped baseline defect proves dependency
 
-Do not prioritize deep frontend redesign work ahead of:
+## R2 — Studio Replacement
 
-- domain model adoption
-- adapter boundaries
-- command bus introduction
+### Goal
 
-Unless the user explicitly asks for a design spike or isolated concept work.
+Replace the remaining old Studio shell assumptions on `/studio` and `/studio/workspace` with the newer integrated Studio interface, without regressing the `R1`-validated runtime/editor contract.
+
+### In Scope
+
+- product-route shell replacement on `/studio` and `/studio/workspace`
+- newer arrangement, piano-roll, and mixer presentation as the primary product interface
+- preservation of `R1` transport, arrangement interaction, piano-roll interaction, mixer baseline, browser baseline, and automation baseline behavior
+- removal of route-level dependence on legacy shell composition where it is no longer required
+
+### Out Of Scope
+
+- plugin-host expansion unless explicitly promoted
+- broad learning-surface redesign
+- speculative backend architecture work unrelated to the replacement pass
+- non-product preview/import/reference surfaces except where they must be harvested into the real routes
+
+### Planned Phases
+
+1. route contract and replacement architecture
+2. product-shell replacement on real routes
+3. runtime-preserving integration of arrangement/piano-roll/mixer surfaces
+4. replacement validation against the `R1` baseline contract plus `R2` visual/interface goals
+
+Current `R2` state:
+
+- route contract complete in `MH-077`
+- route unification wave complete
+- visible shell-chrome replacement wave complete
+- center-workspace composition replacement wave complete
+- deeper surface-chrome replacement wave complete:
+  - floating dock removed from `/studio` and `/studio/workspace`
+  - arrangement surface chrome softened on product routes
+  - piano-roll shell chrome tightened on product routes
+- component-chrome replacement wave complete:
+  - track controls tightened on product routes
+  - piano-roll keyboard updated to the replacement shell language
+  - piano-roll velocity lane updated to the replacement shell language
+- overlay-chrome replacement wave complete:
+  - track context menu updated to the replacement shell language
+  - clip context menu updated to the replacement shell language
+  - piano-roll compact toolbar and context menu updated to the replacement shell language
+- navigation-shell refinement wave complete:
+  - browser rail refined on the product routes
+  - top Studio header refined on the product routes
+- footer-shell refinement wave complete:
+  - bottom workspace shell refined on the product routes
+  - status bar shell refined on the product routes
+- header-composition replacement wave complete:
+  - top Studio header composition replaced on the product routes
+- browser and mixer replacement wave complete:
+  - browser replaced on the product routes using shared DAW primitives
+  - mixer replaced on the product routes using shared DAW primitives and new strip shells
+- next executable phase is deeper product-route behavior and composition replacement beyond shell cleanup
+
+## Post-R2 Candidates
+
+These are not in the current release path by default:
+
+- plugin-host completeness
+- deeper routing/device-chain completeness
+- backend/native maturity work beyond Studio baseline validation
+- broader product-surface expansion outside the Studio release path

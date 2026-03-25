@@ -1,0 +1,13 @@
+{
+  "stream": "runtime",
+  "displayName": "MusicHub Runtime",
+  "branch": "codex/studio-runtime-parity",
+  "worktree": "/Users/pellenaucler/Documents/CodexProjekt/MusicHub-worktrees/studio-runtime-parity",
+  "status": "idle",
+  "activeTaskId": null,
+  "latestInboxMessageId": "MH-TASK-20260323210315-runtime-assignment-mn3oabtb",
+  "latestAcknowledgedInboxMessageId": "MH-TASK-20260323210315-runtime-assignment-mn3oabtb",
+  "latestOutboxMessageId": "MH-TASK-20260323210315-runtime-completed-mn3p78vy",
+  "latestCompletedTaskId": "MH-TASK-20260323210315-runtime",
+  "updatedAt": "2026-03-23T21:28:50.878Z"
+}

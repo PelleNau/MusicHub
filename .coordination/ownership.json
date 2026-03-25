@@ -1,0 +1,144 @@
+{
+  "version": 1,
+  "streams": {
+    "platform": {
+      "allow": [
+        ".coordination/**",
+        ".github/workflows/**",
+        "docs/project/MusicHub_Platform_Directive.md",
+        "docs/project/MH-053_Execution_Protocol.md",
+        "docs/project/MH-054_Stream_Coordination_Control_Plane.md",
+        "package.json",
+        "scripts/**"
+      ]
+    },
+    "persistence": {
+      "allow": [
+        "docs/project/MH-052_Supabase_Persistence_Handover.md",
+        "docs/project/MH-053_Supabase_Persistence_Inventory.md",
+        "src/domain/**/theoryPersistence.ts",
+        "src/domain/**/inventoryPersistence.ts",
+        "src/domain/inventory/**",
+        "src/hooks/useChallengeProgress.ts",
+        "src/hooks/useTheoryStats.ts",
+        "src/hooks/useInventory.ts",
+        "src/hooks/useBatchImages.ts",
+        "src/hooks/__tests__/useChallengeProgress.test.ts",
+        "src/hooks/__tests__/useTheoryStats.test.ts",
+        "src/integrations/supabase/**",
+        "supabase/**"
+      ],
+      "deny": [
+        "src/App.tsx",
+        "src/components/studio/**",
+        "src/pages/design/**",
+        "src-tauri/**"
+      ]
+    },
+    "plugins": {
+      "allow": [
+        "docs/project/MH-049_Plugin_Integration_Handover.md",
+        "src-tauri/**",
+        "src/services/hostConnector*.ts",
+        "src/services/pluginHost*.ts",
+        "src/services/tauriShell.ts",
+        "src/services/mockPluginHost.ts",
+        "src/services/pluginHostConfig.ts",
+        "src/hooks/useHostConnector*.ts",
+        "src/hooks/useNativeHostSync.ts",
+        "src/hooks/usePluginHost.ts",
+        "src/hooks/hostConnectorTypes.ts",
+        "src/components/studio/DetailPanel.tsx",
+        "src/components/studio/DeviceChain.tsx",
+        "src/components/studio/MixerPanel.tsx",
+        "src/components/bridge/SystemStatusView.tsx",
+        "src/domain/studio/studioSessionPersistence.ts",
+        "src/domain/studio/studioViewContracts.ts",
+        "src/domain/studio/**/studioGuideBridge.test.ts",
+        "src/types/studio.ts",
+        "src/types/**"
+      ],
+      "deny": [
+        "src/App.tsx",
+        "supabase/**",
+        "src/pages/design/**"
+      ]
+    },
+    "runtime": {
+      "allow": [
+        "docs/project/MH-048_Studio_Runtime_Parity_Handover.md",
+        "src/hooks/useSession.ts",
+        "src/hooks/useStudio*.ts",
+        "src/hooks/__tests__/useStudio*.ts",
+        "src/components/studio/TransportBar.tsx",
+        "src/components/studio/StudioArrangementWorkspace.tsx",
+        "src/components/studio/StudioBottomWorkspace.tsx",
+        "src/components/studio/MixerPanel.tsx",
+        "src/components/studio/DetailPanel.tsx",
+        "src/components/studio/TrackLane.tsx",
+        "src/components/studio/track/ClipContextMenu.tsx",
+        "src/domain/studio/studioClipEditing.ts",
+        "src/domain/studio/studioDeviceRouting.ts",
+        "src/domain/studio/studioSessionDevFixture.ts",
+        "src/domain/studio/studioViewContracts.ts",
+        "src/domain/studio/__tests__/studioClipEditing.test.ts",
+        "src/domain/studio/__tests__/studioDeviceRouting.test.ts",
+        "src/components/studio/__tests__/TransportBar.test.tsx"
+      ],
+      "deny": [
+        "src/App.tsx",
+        "src/pages/design/**",
+        "src/components/studio/track/ClipBlock.tsx",
+        "src/components/studio/track/ClipMidiPreview.tsx",
+        "src/components/studio/track/ClipWaveform.tsx",
+        "src/components/studio/track/TrackControls.tsx",
+        "src/components/studio/StudioArrangementToolbar.tsx",
+        "src/components/studio/timelineMath.ts",
+        "supabase/**",
+        "src-tauri/**"
+      ]
+    },
+    "ui-integration": {
+      "allow": [
+        "docs/project/MH-051_Studio_Integration_Baseline_Handover.md",
+        "src/components/studio/**",
+        "src/pages/design/**",
+        "src/domain/studio/**",
+        "src/hooks/useStudio*.ts",
+        "src/hooks/__tests__/useStudio*.ts",
+        "src/test/**"
+      ],
+      "deny": [
+        "src/App.tsx",
+        "supabase/**",
+        "src-tauri/**"
+      ]
+    },
+    "figmafunktioner": {
+      "allow": [
+        "docs/project/MH-047_Figma_Function_Mapping_Handover.md",
+        "docs/project/MH-047_Figma_Frontend_Function_Mapping.md",
+        "src/components/studio/PianoRoll.tsx",
+        "src/components/studio/PianoRollContextMenu.tsx",
+        "src/components/studio/PianoRollContextMenu.test.tsx",
+        "src/components/studio/ArpeggiatorDialog.tsx",
+        "src/components/studio/ChordToolsDialog.tsx",
+        "src/components/studio/LengthOperationsMenu.tsx",
+        "src/components/studio/NoteOperationsMenu.tsx",
+        "src/components/studio/SelectionToolsMenu.tsx",
+        "src/components/studio/VelocityOperationsMenu.tsx",
+        "src/components/studio/pianoroll/**",
+        "src/components/studio/track/ClipContextMenu.tsx",
+        "src/components/studio/track/ClipContextMenu.test.tsx",
+        "src/hooks/useStudioKeyboardShortcuts.ts",
+        "src/hooks/useStudioKeyboardShortcuts.test.tsx",
+        "src/test/setup.ts"
+      ],
+      "deny": [
+        "src/App.tsx",
+        "supabase/**",
+        "src-tauri/**"
+      ]
+    }
+  }
+}

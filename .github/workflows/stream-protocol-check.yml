@@ -1,0 +1,35 @@
+name: Stream Protocol Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - "main"
+      - "codex/figma-capture-mode"
+      - "codex/**"
+
+jobs:
+  stream-protocol:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Check stream acknowledgment
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'codex/figma-capture-mode')
+        run: node scripts/stream-check-in.mjs
+
+      - name: Check stream reporting
+        if: github.event_name == 'push' && (github.ref_name == 'main' || github.ref_name == 'codex/figma-capture-mode')
+        run: node scripts/stream-check-out.mjs
+
+      - name: Check stream ownership
+        run: node scripts/check-ownership.mjs
