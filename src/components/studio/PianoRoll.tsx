@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from "react";
 import {
   Pencil, Eraser, MousePointer, Music, X, Paintbrush, Scissors,
-  Lock, FoldVertical, Palette, ZoomIn, ZoomOut,
+  Lock, FoldVertical, Palette, ZoomIn, ZoomOut, ArrowUpDown,
   ChevronDown, Grip, Layers
 } from "lucide-react";
 import {

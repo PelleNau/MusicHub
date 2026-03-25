@@ -250,4 +250,87 @@ describe("useNativeHostSync", () => {
       );
     });
   });
+
+  it("resolves built-in host-backed defaults against the scanned host plugin catalog", async () => {
+    const hostState = createHostState();
+    const hostActions = createHostActions();
+    hostActions.fetchPlugins = vi.fn().mockResolvedValue([
+      {
+        id: "scanned-reverb",
+        name: "AUMatrixReverb",
+        vendor: "Apple",
+        version: "1.0",
+        format: "AU",
+        category: "Effect",
+        path: "AudioUnit:Effects/aufx,mrev,appl",
+        tags: [],
+        installed: true,
+        latencySamples: 0,
+        supportsStateRestore: true,
+        lastScanned: new Date().toISOString(),
+        scanStatus: "ok",
+      },
+    ]);
+    const track: SessionTrack = {
+      id: "track-1",
+      session_id: "session-1",
+      name: "Vocal",
+      type: "audio",
+      color: 1,
+      volume: 0.8,
+      pan: 0,
+      is_muted: false,
+      is_soloed: false,
+      sort_order: 0,
+      sends: [],
+      input_from: null,
+      created_at: new Date().toISOString(),
+      device_chain: [
+        {
+          id: "device-1",
+          type: "reverb",
+          enabled: true,
+          params: {},
+          hostPlugin: {
+            id: "builtin-aumatrixreverb",
+            path: "AudioUnit:Effects/aufx,mrev,appl",
+            name: "AUMatrixReverb",
+            vendor: "Apple",
+            format: "AudioUnit",
+            role: "effect",
+          },
+        },
+      ],
+    };
+
+    renderHook(() =>
+      useNativeHostSync({
+        tracks: [track],
+        selectedTrackId: track.id,
+        selectedTrack: track,
+        selectedClipIsMidi: false,
+        activeSessionId: "session-1",
+        isMock: false,
+        hostState,
+        hostActions,
+        onDeviceChainChange: vi.fn(),
+      }),
+    );
+
+    await waitFor(() => {
+      expect(hostActions.loadChain).toHaveBeenCalledTimes(1);
+      expect(hostActions.loadChain).toHaveBeenCalledWith({
+        manifest: expect.objectContaining({
+          name: "Vocal Native Chain",
+          chain: [
+            expect.objectContaining({
+              plugin_id: "scanned-reverb",
+              path: "AudioUnit:Effects/aufx,mrev,appl",
+              parameters: {},
+            }),
+          ],
+        }),
+      });
+    });
+  });
 });

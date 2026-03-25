@@ -5,10 +5,12 @@ import type { HostPlugin, ChainLoadRequest } from "@/services/pluginHostClient";
 import type { HostGraphTrack } from "@/services/pluginHostContracts";
 import type { HostConnectorActions, HostConnectorState } from "@/hooks/useHostConnector";
 import type { NativeSessionTrackState } from "@/services/pluginHostSocket";
+import { resolveHostPluginDescriptorFromCatalog } from "@/domain/studio/hostBackedDeviceDefaults";
 import {
   getHostPluginDescriptor,
   isHostBackedDevice,
   type DeviceInstance,
+  type HostPluginDescriptor,
   type SessionTrack,
 } from "@/types/studio";
 
@@ -16,27 +18,66 @@ function hasNativePluginMetadata(device: DeviceInstance): boolean {
   return isHostBackedDevice(device);
 }
 
-function buildNativeNode(trackId: string, device: DeviceInstance, index: number) {
+function isBuiltinHostPluginPlaceholder(hostPlugin: HostPluginDescriptor): boolean {
+  return hostPlugin.id.startsWith("builtin-");
+}
+
+function resolveNativeHostPluginDescriptor(
+  device: DeviceInstance,
+  hostPlugins: HostPlugin[],
+  hostPluginsLoaded: boolean,
+): HostPluginDescriptor | null {
   const hostPlugin = getHostPluginDescriptor(device);
+  if (!hostPlugin) return null;
+
+  const resolvedHostPlugin = resolveHostPluginDescriptorFromCatalog(hostPlugin, hostPlugins);
+  if (!isBuiltinHostPluginPlaceholder(hostPlugin)) {
+    return resolvedHostPlugin;
+  }
+
+  if (!hostPluginsLoaded) return null;
+  if (resolvedHostPlugin.id === hostPlugin.id) return null;
+  return resolvedHostPlugin;
+}
+
+function buildNativeNode(
+  trackId: string,
+  device: DeviceInstance,
+  index: number,
+  hostPlugin: HostPluginDescriptor,
+) {
   return {
     instance_id: `${trackId}-${device.id || `node-${index + 1}`}`,
-    plugin_id: hostPlugin?.id ?? "",
-    path: hostPlugin?.path ?? "",
+    plugin_id: hostPlugin.id,
+    path: hostPlugin.path,
     bypass: device.enabled === false,
-    parameters: device.params ?? {},
+    // Host-backed devices use host-owned parameter metadata and controls.
+    // Generic browser-device params do not map 1:1 to native plugin params.
+    parameters: {},
   };
 }
 
-function buildNativeChainManifest(track: SessionTrack): ChainLoadRequest | null {
+function buildNativeChainManifest(
+  track: SessionTrack,
+  hostPlugins: HostPlugin[],
+  hostPluginsLoaded: boolean,
+): ChainLoadRequest | null {
   const nativeDevices = (track.device_chain || []).filter(hasNativePluginMetadata);
   if (nativeDevices.length === 0) return null;
+  const chain = [];
+
+  for (const [index, device] of nativeDevices.entries()) {
+    const resolvedHostPlugin = resolveNativeHostPluginDescriptor(device, hostPlugins, hostPluginsLoaded);
+    if (!resolvedHostPlugin) return null;
+    chain.push(buildNativeNode(track.id, device, index, resolvedHostPlugin));
+  }
 
   return {
     manifest: {
       name: `${track.name} Native Chain`,
       sample_rate: 48000,
       block_size: 512,
-      chain: nativeDevices.map((device, index) => buildNativeNode(track.id, device, index)),
+      chain,
     },
   };
 }
@@ -129,6 +170,7 @@ export function useNativeHostSync({
   const [nativeArmedByTrack, setNativeArmedByTrack] = useState<Record<string, boolean>>({});
   const [nativeMonitoringByTrack, setNativeMonitoringByTrack] = useState<Record<string, boolean>>({});
   const [hostPlugins, setHostPlugins] = useState<HostPlugin[]>([]);
+  const [hostPluginsLoaded, setHostPluginsLoaded] = useState(false);
 
   const nativeChainSignaturesRef = useRef<Record<string, string>>({});
   const pendingNativeChainLoadsRef = useRef<Set<string>>(new Set());
@@ -156,9 +198,16 @@ export function useNativeHostSync({
     const track = tracks.find((candidate) => candidate.id === trackId);
     if (!track) return null;
 
-    const manifestRequest = buildNativeChainManifest(track);
+    const manifestRequest = buildNativeChainManifest(track, hostPlugins, hostPluginsLoaded);
     if (!manifestRequest) {
-      toast.info("Add a host-backed plugin to this track first");
+      const hasHostBackedDevice = ((track.device_chain || []) as DeviceInstance[]).some(hasNativePluginMetadata);
+      if (!hasHostBackedDevice) {
+        toast.info("Add a host-backed plugin to this track first");
+      } else if (!hostPluginsLoaded) {
+        toast.info("Host plugin catalog still loading");
+      } else {
+        toast.error("One or more host-backed devices could not be resolved in the host library");
+      }
       return null;
     }
 
@@ -186,7 +235,7 @@ export function useNativeHostSync({
       toast.error(message);
       return null;
     }
-  }, [hostActions, syncHostGraph, tracks]);
+  }, [hostActions, hostPlugins, hostPluginsLoaded, syncHostGraph, tracks]);
 
   const handleRemoveNativeNode = useCallback((chainId: string, nodeIndex: number) => {
     const trackId = selectedTrackId;
@@ -254,8 +303,11 @@ export function useNativeHostSync({
   }, [hostActions, hostState.recording, activeSessionId]);
 
   const refreshHostPlugins = useCallback(() => {
+    setHostPluginsLoaded(false);
     hostActions.fetchPlugins().then(setHostPlugins).catch(() => {
       setHostPlugins([]);
+    }).finally(() => {
+      setHostPluginsLoaded(true);
     });
   }, [hostActions]);
 
@@ -289,7 +341,7 @@ export function useNativeHostSync({
         const nextChainIds: Record<string, string> = {};
 
         for (const track of tracks) {
-          const manifestRequest = buildNativeChainManifest(track);
+          const manifestRequest = buildNativeChainManifest(track, hostPlugins, hostPluginsLoaded);
           if (!manifestRequest) continue;
 
           const nextSignature = getNativeChainSignature(track);
@@ -330,6 +382,8 @@ export function useNativeHostSync({
     hostState.connectionState,
     hostState.readySequence,
     hostActions,
+    hostPlugins,
+    hostPluginsLoaded,
     hydratedSessionChainIdsByTrack,
     nativeChainIdsByTrack,
     syncHostGraph,
@@ -337,10 +391,14 @@ export function useNativeHostSync({
 
   useEffect(() => {
     const isConnected = hostState.connectionState === "connected" || hostState.connectionState === "degraded";
-    if (!isConnected) return;
+    if (!isConnected) {
+      setHostPlugins([]);
+      setHostPluginsLoaded(false);
+      return;
+    }
 
     refreshHostPlugins();
-  }, [hostState.connectionState, refreshHostPlugins]);
+  }, [hostState.connectionState, hostState.readySequence, refreshHostPlugins]);
 
   useEffect(() => {
     if (Object.keys(hydratedSessionChainIdsByTrack).length === 0) return;

@@ -43,6 +43,35 @@ export function buildHostPluginDescriptor(plugin: HostPlugin): HostPluginDescrip
   };
 }
 
+function normalizeHostPluginFormat(format: string): string {
+  const normalized = format.trim().toLowerCase();
+  if (normalized === "audiounit" || normalized === "au") return "au";
+  return normalized;
+}
+
+export function resolveHostPluginDescriptorFromCatalog(
+  descriptor: HostPluginDescriptor,
+  hostPlugins: HostPlugin[],
+): HostPluginDescriptor {
+  const exactIdMatch = hostPlugins.find((plugin) => plugin.id === descriptor.id);
+  if (exactIdMatch) return buildHostPluginDescriptor(exactIdMatch);
+
+  const exactPathMatch = hostPlugins.find((plugin) => plugin.path === descriptor.path);
+  if (exactPathMatch) return buildHostPluginDescriptor(exactPathMatch);
+
+  const normalizedName = descriptor.name.trim().toLowerCase();
+  const normalizedVendor = descriptor.vendor.trim().toLowerCase();
+  const normalizedFormat = normalizeHostPluginFormat(descriptor.format);
+  const identityMatch = hostPlugins.find((plugin) => (
+    plugin.name.trim().toLowerCase() === normalizedName
+    && plugin.vendor.trim().toLowerCase() === normalizedVendor
+    && normalizeHostPluginFormat(plugin.format) === normalizedFormat
+  ));
+  if (identityMatch) return buildHostPluginDescriptor(identityMatch);
+
+  return descriptor;
+}
+
 const DEFAULT_HOST_PLUGIN_BY_DEVICE_TYPE: Partial<Record<DeviceType, HostPluginDescriptor>> = {
   subtractive: {
     id: "builtin-aumidisynth",
